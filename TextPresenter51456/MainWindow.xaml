@@ -1,0 +1,305 @@
+﻿<Window x:Class="TextPresenter51456.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TextPresenter51456"
+        xmlns:prop="clr-namespace:TextPresenter51456.Properties"
+        mc:Ignorable="d"
+        x:Name="WindowMainWindow"
+        Title="TextPresenter51456 (Beta) 0.2.0.0"
+        MinWidth="600" MinHeight="450"
+           Width="960"    Height="540"
+        Closing="WindowMainWindow_Closing"
+        MouseDown="WindowMainWindow_MouseDown"
+        Keyboard.PreviewKeyDown="WindowMainWindow_PreviewKeyDown" >
+
+    <Window.Resources>
+
+        <Style x:Key="PvwPgmItem" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Width" Value="224" />
+            <Setter Property="Height" Value="126" />
+            <Setter Property="TextBlock.Foreground" Value="#FFFFFFFF" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="Grid">
+                            <Border
+                                x:Name="Border"
+                                Background="#00000000"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="3" />
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                TextBlock.TextAlignment="Center"
+                                TextBlock.Foreground="{TemplateBinding TextBlock.Foreground}"
+                                RecognizesAccessKey="False" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PageListItem" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Width" Value="224" />
+            <Setter Property="Height" Value="126" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="BorderBrush" Value="#FFE0E0E0" />
+            <Setter Property="TextBlock.Foreground" Value="#FFFFFFFF" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Canvas
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}">
+                            <Border
+                                x:Name="Border"
+                                Background="#FF000000"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="3"
+                                Width="{TemplateBinding Width}"
+                                Height="{TemplateBinding Height}">
+                                <ContentPresenter
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        TextBlock.TextAlignment="Center"
+                                        TextBlock.Foreground="{TemplateBinding TextBlock.Foreground}"
+                                        RecognizesAccessKey="False" />
+                            </Border>
+                            <Label
+                                Content="{TemplateBinding Tag}"
+                                Canvas.Right="3"
+                                Canvas.Bottom="3"
+                                Background="#80000000"
+                                Foreground="#FFFFFFFF"
+                                TextBlock.FontWeight="Bold">
+                            </Label>
+                        </Canvas>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter
+                                    Property="Background"
+                                    Value="#80808000"
+                                    TargetName="Border" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style x:Key="PvwPgmIndicator" TargetType="Label">
+            <Setter Property="Canvas.Left" Value="3" />
+            <Setter Property="Canvas.Bottom" Value="3" />
+            <Setter Property="Background" Value="#80000000" />
+            <Setter Property="Foreground" Value="#FFFFFFFF" />
+            <Setter Property="TextBlock.FontWeight" Value="Bold" />
+        </Style>
+
+        <Style x:Key="PageNumber" TargetType="Label">
+            <Setter Property="Canvas.Right" Value="3" />
+            <Setter Property="Canvas.Bottom" Value="3" />
+            <Setter Property="Background" Value="#80000000" />
+            <Setter Property="Foreground" Value="#FFFFFFFF" />
+            <Setter Property="TextBlock.FontWeight" Value="Bold" />
+        </Style>
+
+    </Window.Resources>
+
+    
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" Executed="OpenCommandBinding_Executed" />
+    </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="Open" />
+    </Window.InputBindings>
+    
+    
+    <DockPanel>
+        
+        <!-- 메뉴 영역 -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="파일(_F)" Focusable="False">
+                <MenuItem
+                    x:Name="MenuItemOpen"
+                    Header="열기(_O)..."
+                    Command="Open"
+                    InputGestureText="Ctrl+O" />
+                <MenuItem
+                    x:Name="MenuItemRefresh"
+                    Header="현재 파일 다시 불러오기(_R)"
+                    IsEnabled="False"
+                    Click="MenuItemRefresh_Click"
+                    InputGestureText="Ctrl+R" />
+                <Separator />
+                <MenuItem
+                    x:Name="MenuItemExit"
+                    Header="종료(_X)"
+                    Click="MenuItemExit_Click"
+                    InputGestureText="Alt+F4" />
+            </MenuItem>
+            <!--
+            <MenuItem Header="설정(_S)" Focusable="False" IsEnabled="False">
+                <MenuItem
+                    x:Name="OpenSettings"
+                    Header="설정(_S)..."
+                    Click="OpenSettings_Click" />
+                <Separator />
+                <MenuItem
+                    x:Name="MenuItemDeleteRecentPgm"
+                    Header="자유 송출 기록 삭제(_D)..." />
+            </MenuItem>
+            -->
+            <MenuItem Header="도움말(_H)" Focusable="False">
+                <MenuItem
+                    x:Name="MenuItemHelpEdit"
+                    Header="텍스트 파일 편집 도움말(_E)..."
+                    Click="MenuItemHelp_Click" />
+                <MenuItem
+                    x:Name="MenuItemHelpPresentation"
+                    Header="송출 도움말(_P)..."
+                    Click="MenuItemHelp_Click" />
+                <Separator />
+                <MenuItem
+                    x:Name="MenuItemInfo"
+                    Header="TextPresenter51456 정보(_I)..."
+                    Click="MenuItemHelp_Click" />
+            </MenuItem>
+        </Menu>
+        
+        <!-- 본문 틀 -->
+        <Grid
+            x:Name="GridBody"
+            Focusable="True"
+            FocusVisualStyle="{x:Null}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="10000*" MaxWidth="1440" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 본문 영역 -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="171" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                
+                <!-- 송출 도구 영역 -->
+                <DockPanel Grid.Row="0">
+                    
+                    <!-- PVW/PGM 영역 -->
+                    <StackPanel DockPanel.Dock="Right">
+                        <DockPanel Height="35">
+                            <ToggleButton
+                                x:Name="ButtonPresenterWindow"
+                                Content="송출 창(Shift+ESC)"
+                                Margin="0,5,5,0"
+                                Width="140"
+                                Focusable="False"
+                                Checked="ButtonPresenterWindow_Checked"
+                                Unchecked="ButtonPresenterWindow_Unchecked" />
+                            <StackPanel
+                                DockPanel.Dock="Right"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Height="35">
+                                <Label
+                                    x:Name="LabelPageIndicator"
+                                    Content="/0"
+                                    Margin="0,5,5,0" />
+                                <Button
+                                    x:Name="ButtonCut"
+                                    Content="Cut"
+                                    Width="100"
+                                    Margin="0,5,5,0"
+                                    Focusable="False"
+                                    Click="ButtonCut_Click" />
+                                <Button
+                                    x:Name="ButtonClear"
+                                    Content="Clear"
+                                    Width="100"
+                                    Margin="0,5,5,0"
+                                    Focusable="False"
+                                    Click="ButtonClear_Click" />
+                            </StackPanel>
+                        </DockPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Canvas
+                                Width="224"
+                                Height="126"
+                                Margin="0,5,5,0"
+                                Background="Black">
+                                <Button
+                                    x:Name="PvwContent"
+                                    Style="{StaticResource PvwPgmItem}"
+                                    Content=""
+                                    BorderBrush="#FF00A000" />
+                                <Label
+                                    Style="{StaticResource PvwPgmIndicator}"
+                                    Content="PVW" />
+                                <Label
+                                    x:Name="PvwPage"
+                                    Style="{StaticResource PageNumber}"
+                                    Content="-" />
+                            </Canvas>
+                            <Canvas
+                                Width="224"
+                                Height="126"
+                                Margin="0,5,5,0"
+                                Background="Black">
+                                <Button
+                                    x:Name="PgmContent"
+                                    Style="{StaticResource PvwPgmItem}"
+                                    Content=""
+                                    BorderBrush="#FFC00000" />
+                                <Label
+                                    Style="{StaticResource PvwPgmIndicator}"
+                                    Content="PGM" />
+                                <Label
+                                    x:Name="PgmPage"
+                                    Style="{StaticResource PageNumber}"
+                                    Content="-" />
+                            </Canvas>
+                        </StackPanel>
+                    </StackPanel>
+                    
+                    <!-- 기타 송출 도구 영역 -->
+                    <StackPanel>
+                        
+                        <!-- <Rectangle Width="224" Stroke="Black" Margin="5,5,0,5" /> -->
+                    </StackPanel>
+                    
+                </DockPanel>
+                
+                <!-- 페이지 리스트 영역 -->
+                <ScrollViewer
+                    x:Name="ScrollViewerPageList"
+                    Grid.Row="1"
+                    Margin="5"
+                    Padding="2"
+                    Background="#FFB0B0B0"
+                    Focusable="False"
+                    PreviewMouseLeftButtonDown="ScrollViewerPageList_PreviewMouseLeftButtonDown"
+                    PreviewMouseDoubleClick="ScrollViewerPageList_PreviewMouseDoubleClick">
+                    <WrapPanel x:Name="WrapPanelPageList">
+                        <Label
+                            Content="텍스트 파일을 불러오십시오."
+                            Foreground="Gray"
+                            FontSize="24" />
+                    </WrapPanel>
+                </ScrollViewer>
+                
+            </Grid>
+            
+        </Grid>
+        
+    </DockPanel>
+    
+</Window>

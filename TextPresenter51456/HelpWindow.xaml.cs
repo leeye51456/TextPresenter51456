@@ -24,13 +24,15 @@ namespace TextPresenter51456 {
             InitializeComponent();
 
             TabControlBody.SelectedIndex = tabNum;
+            TextBlockVersion.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private void ButtonCheckVersion_Click(object sender, RoutedEventArgs e) {
+            ButtonCheckVersion.Content = "최신 버전 확인 중...";
             try {
                 WebClient client = new WebClient();
                 string reply = client.DownloadString(@"https://raw.githubusercontent.com/leeye51456/TextPresenter51456/master/TextPresenter51456/VersionInfo.txt");
-                ButtonCheckVersion.Content = reply;
+                ButtonCheckVersion.Content = "최신 버전 " + reply;
             } catch (Exception ex) {
                 ButtonCheckVersion.Content = "최신 버전 확인 실패";
             }

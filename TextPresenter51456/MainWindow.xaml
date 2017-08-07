@@ -7,7 +7,7 @@
         xmlns:prop="clr-namespace:TextPresenter51456.Properties"
         mc:Ignorable="d"
         x:Name="WindowMainWindow"
-        Title="TextPresenter51456 (Beta) 0.2.0.0"
+        Title="TextPresenter51456 (Beta)"
         MinWidth="600" MinHeight="450"
            Width="960"    Height="540"
         Closing="WindowMainWindow_Closing"

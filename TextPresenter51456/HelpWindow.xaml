@@ -168,7 +168,7 @@
                             TextWrapping="Wrap">
                             <Bold>TextPresenter51456 (Beta)</Bold>
                             <LineBreak />
-                            버전 0.2.0.0
+                            버전 <TextBlock x:Name="TextBlockVersion" />
                             <LineBreak />
                             © 2017 leeye51456, All rights reserved.
                             <LineBreak />

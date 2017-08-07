@@ -32,7 +32,7 @@ namespace TextPresenter51456 {
 
             System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
             if (sc.Length < 2) {
-                MessageBox.Show("화면 표시 장치가 하나입니다. 이 경우 별도의 설정이 없으면 화면을 모두 덮는 창이 나타나며, Shift+ESC로 닫을 수 있습니다.");
+                MessageBox.Show("화면 표시 장치가 하나입니다. 이 경우 별도의 설정이 없으면 화면을 모두 덮는 창이 나타나며, Shift+ESC로 닫을 수 있습니다.", "TextPresenter51456");
             }
 
             // 설정대로 좌표와 크기를 지정해서 열어야 함

@@ -40,6 +40,8 @@ namespace TextPresenter51456 {
 
         public MainWindow() {
             InitializeComponent();
+
+            WindowMainWindow.Title = "TextPresenter51456 (Beta) - " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private void WindowMainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -125,7 +127,7 @@ namespace TextPresenter51456 {
                 string errMsg = "파일 읽기 실패";
                 errMsg += "\nMessage: " + e.Message;
                 errMsg += "\nSource" + e.Source;
-                MessageBox.Show(errMsg);
+                MessageBox.Show(errMsg, "TextPresenter51456");
                 return;
             }
             try {   // 읽어들인 파일 표시하기 + 루프 돌면서 서식 적용
@@ -164,7 +166,7 @@ namespace TextPresenter51456 {
                 string errMsg = "파일 표시 실패";
                 errMsg += "\nMessage: " + e.Message;
                 errMsg += "\nSource" + e.Source;
-                MessageBox.Show(errMsg);
+                MessageBox.Show(errMsg, "TextPresenter51456");
             }
         }
 
@@ -210,7 +212,7 @@ namespace TextPresenter51456 {
                 pw.AddHandler(UnloadedEvent, new RoutedEventHandler(OnPwUnloaded));
                 UpdatePgm();
             } else {
-                MessageBox.Show("이미 송출 창이 열려 있습니다.\n이 메시지를 보고 있다면 개발자에게 알리십시오.");
+                MessageBox.Show("이미 송출 창이 열려 있습니다.\n이 메시지를 보고 있다면 개발자에게 알리십시오.", "TextPresenter51456");
             }
         }
         private void ClosePresenterWindow() {
@@ -221,7 +223,7 @@ namespace TextPresenter51456 {
                 rea.Source = pw;
                 pw.RaiseEvent(rea);
             } else {
-                MessageBox.Show("이미 송출 창이 닫혀 있습니다.\n이 메시지를 보고 있다면 개발자에게 알리십시오.");
+                MessageBox.Show("이미 송출 창이 닫혀 있습니다.\n이 메시지를 보고 있다면 개발자에게 알리십시오.", "TextPresenter51456");
                 pw = null;
             }
         }

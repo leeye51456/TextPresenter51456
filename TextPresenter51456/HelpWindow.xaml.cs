@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,11 +22,27 @@ namespace TextPresenter51456 {
 
         public HelpWindow(int tabNum) {
             InitializeComponent();
+
             TabControlBody.SelectedIndex = tabNum;
+        }
+
+        private void ButtonCheckVersion_Click(object sender, RoutedEventArgs e) {
+            try {
+                WebClient client = new WebClient();
+                string reply = client.DownloadString(@"https://raw.githubusercontent.com/leeye51456/TextPresenter51456/master/TextPresenter51456/VersionInfo.txt");
+                ButtonCheckVersion.Content = reply;
+            } catch (Exception ex) {
+                ButtonCheckVersion.Content = "최신 버전 확인 실패";
+            }
         }
 
         private void ButtonClose_Click(object sender, RoutedEventArgs e) {
             Close();
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
     }
 }

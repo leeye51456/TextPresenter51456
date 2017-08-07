@@ -8,21 +8,33 @@
         Title="도움말 - TextPresenter51456"
         Width="480"
         Height="360"
-        ResizeMode="CanMinimize">
+        ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterOwner">
     
     <DockPanel>
 
-        <WrapPanel
+        <DockPanel
             DockPanel.Dock="Bottom"
-            HorizontalAlignment="Right"
             Margin="10">
-            <Button
-                x:Name="ButtonClose"
-                Content="닫기"
-                Width="100"
-                Margin="10,0,0,0"
-                Click="ButtonClose_Click" />
-        </WrapPanel>
+            <WrapPanel
+                DockPanel.Dock="Right"
+                HorizontalAlignment="Right">
+                <Button
+                    x:Name="ButtonClose"
+                    Content="닫기"
+                    Width="100"
+                    Margin="10,0,0,0"
+                    Click="ButtonClose_Click" />
+            </WrapPanel>
+            <WrapPanel HorizontalAlignment="Left">
+                <Button
+                    x:Name="ButtonCheckVersion"
+                    Content="최신 버전 확인"
+                    Width="200"
+                    Margin="10,0,0,0"
+                    Click="ButtonCheckVersion_Click" />
+            </WrapPanel>
+        </DockPanel>
 
         <TabControl x:Name="TabControlBody">
 
@@ -37,7 +49,8 @@
                             <LineBreak />
                             파일 확장자는 상관이 없으나, <Bold>*.txt</Bold>가 아니면 열 때 조금 번거롭습니다.
                             <LineBreak />
-                            텍스트 인코딩은 <Bold>EUC-KR</Bold>이 기본입니다. 한국어 Windows에서 메모장으로 텍스트를 작성하여 저장할 때 기본값이 EUC-KR입니다.
+                            텍스트 인코딩은 <Bold>EUC-KR</Bold>이 기본입니다.
+                            한국어 Windows에서 메모장으로 텍스트를 작성하여 저장할 때 기본값이 EUC-KR입니다.
                         </TextBlock>
                         <TextBlock
                             LineHeight="21"
@@ -49,7 +62,8 @@
                             페이지가 분리되지 않는다면, 빈 것처럼 보이는 줄에 공백 문자가 있는지 확인하십시오.
                             한 줄 안에 공백 문자 등 어떤 문자라도 있으면 비어 있지 않은 줄로 간주합니다.
                             <LineBreak />
-                            파일 맨 앞과 맨 뒤의 모든 공백 문자는 무시합니다. 대신 마지막에 빈 페이지가 항상 추가됩니다.
+                            파일 맨 앞과 맨 뒤의 모든 공백 문자는 무시합니다.
+                            대신 마지막에 빈 페이지가 항상 추가됩니다.
                             <LineBreak />
                             빈 페이지를 만들려면, 다음과 같이 합니다.
                             <LineBreak />
@@ -83,7 +97,8 @@
                             <LineBreak />
                             기본 규칙을 제외한 문법을 피하려면, 해당 구문 앞에 <Bold>\</Bold>(폰트에 따라 백슬래시 또는 원화 기호 등으로 보일 수 있음)를 붙이십시오.
                             예를 들어, 페이지 맨 앞에 #을 넣으면 #이 들어가지 않고 해당 페이지가 노란색으로 표시되는데, 이때 #을 그대로 넣고 싶다면 # 대신 <Bold>\#</Bold>을 넣어야 합니다.
-                            예: <Italic>\# 노란색으로 표시되지 않는 페이지</Italic>
+                            <LineBreak />
+                            예: <Italic>\# 노란색으로 표시되지 않고 앞에 #이 붙는 페이지</Italic>
                         </TextBlock>
                     </StackPanel>
                 </ScrollViewer>
@@ -158,19 +173,35 @@
                             © 2017 leeye51456, All rights reserved.
                             <LineBreak />
                             <LineBreak />
-                            TextPresenter51456은 .Net Framework 4.5.2 이상의 환경에서 작동합니다.
-                        </TextBlock>
-                        <TextBlock
-                            LineHeight="21"
-                            Margin="0,0,0,12"
-                            TextWrapping="Wrap">
-                            <Hyperlink NavigateUri="https://github.com/leeye51456">
-                                https://github.com/leeye51456
+                            <Hyperlink
+                                NavigateUri="https://github.com/leeye51456"
+                                RequestNavigate="Hyperlink_RequestNavigate">
+                                GitHub: leeye51456
                             </Hyperlink>
                             <LineBreak />
-                            <Hyperlink NavigateUri="https://github.com/leeye51456/TextPresenter51456">
-                                https://github.com/leeye51456/TextPresenter51456
+                            <Hyperlink
+                                NavigateUri="https://github.com/leeye51456/TextPresenter51456/releases"
+                                RequestNavigate="Hyperlink_RequestNavigate">
+                                다운로드
                             </Hyperlink>
+                            /
+                            <Hyperlink
+                                NavigateUri="https://github.com/leeye51456/TextPresenter51456"
+                                RequestNavigate="Hyperlink_RequestNavigate">
+                                소스
+                            </Hyperlink>
+                            <LineBreak />
+                            <LineBreak />
+                            TextPresenter51456은
+                            <Hyperlink
+                                NavigateUri="https://www.microsoft.com/ko-KR/download/details.aspx?id=55170"
+                                RequestNavigate="Hyperlink_RequestNavigate"
+                                ToolTip=".NET Framework 다운로드로 이동">
+                                .NET Framework
+                            </Hyperlink>
+                            4.5.2 이상의 환경에서 작동합니다.
+                            <LineBreak />
+                            TextPresenter51456이 실행되는 환경에서 다시 설치할 필요는 없습니다.
                         </TextBlock>
                     </StackPanel>
                 </ScrollViewer>

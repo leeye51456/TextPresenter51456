@@ -271,9 +271,77 @@
                     </StackPanel>
                     
                     <!-- 기타 송출 도구 영역 -->
-                    <StackPanel>
-                        
-                        <!-- <Rectangle Width="224" Stroke="Black" Margin="5,5,0,5" /> -->
+                    <StackPanel
+                        Orientation="Horizontal"
+                        Margin="5,5,0,0">
+
+                        <GroupBox Header="자유 송출" Width="240" Padding="3">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25" />
+                                    <RowDefinition Height="25" />
+                                    <RowDefinition Height="1*" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Orientation="Horizontal"
+                                    Height="20"
+                                    Margin="0,3,0,2">
+                                    <TextBlock
+                                        Text="마지막 "
+                                        VerticalAlignment="Center" />
+                                    <TextBox
+                                        x:Name="TextBoxFreeLines"
+                                        Text="3"
+                                        Width="40"
+                                        IsEnabled="False"
+                                        Margin="2,0,2,0"
+                                        HorizontalContentAlignment="Right"
+                                        VerticalContentAlignment="Center" />
+                                    <TextBlock
+                                        Text="줄 송출"
+                                        VerticalAlignment="Center" />
+                                </StackPanel>
+
+                                <Button
+                                    x:Name="ButtonFreeCut"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Grid.RowSpan="2"
+                                    Click="ButtonFreeCut_Click">
+                                    <TextBlock TextBlock.TextAlignment="Center">
+                                        송출<LineBreak />(Ctrl+Enter)
+                                    </TextBlock>
+                                </Button>
+
+                                <CheckBox
+                                    x:Name="CheckBoxFreeLive"
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Content="즉시 업데이트"
+                                    IsEnabled="False"
+                                    Margin="0,3,0,2"
+                                    VerticalContentAlignment="Center" />
+                                
+                                <TextBox
+                                    x:Name="TextBoxFreeContent"
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Margin="0,5,0,0"
+                                    AcceptsReturn="True"
+                                    AutoWordSelection="True"
+                                    TextWrapping="Wrap"
+                                    VerticalScrollBarVisibility="Visible" />
+                            </Grid>
+                        </GroupBox>
+
                     </StackPanel>
                     
                 </DockPanel>

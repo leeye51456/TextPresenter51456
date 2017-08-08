@@ -31,6 +31,12 @@ namespace TextPresenter51456 {
         PageNumberManager pvwManager = new PageNumberManager(1, 1, false);
         PageNumberManager pgmManager = new PageNumberManager(0, 0, true);
 
+        Regex newLineUnifier = new Regex(@"(\r\n|\r)");
+        Regex pageBreaker = new Regex(@"\n{2,}");
+        Regex sharp = new Regex(@"^#+\s*");
+        Regex sharpEscaped = new Regex(@"^\\#(#*\s*)");
+        Regex trimmer = new Regex(@"(^\n+|\n+$)");
+
         SolidColorBrush DEFAULT_BORDER_COLOR = new SolidColorBrush(Color.FromRgb(0xe0, 0xe0, 0xe0));
         SolidColorBrush PVW_BORDER_COLOR = new SolidColorBrush(Color.FromRgb(0, 0xa0, 0));
         SolidColorBrush PGM_BORDER_COLOR = new SolidColorBrush(Color.FromRgb(0xc0, 0, 0));
@@ -58,16 +64,20 @@ namespace TextPresenter51456 {
         }
 
         private void UpdateBorders() {
-            // 항상 pvw -> pgm 순으로 업데이트하므로 UpdatePvw에서 테두리 처리
-            foreach (Button item in WrapPanelPageList.Children) {
-                item.BorderBrush = DEFAULT_BORDER_COLOR;
-            }
-            // 페이지리스트는 인덱스가 0부터라 -1
-            Button pvwBtn = WrapPanelPageList.Children[pvwManager.PageNumber - 1] as Button;
-            pvwBtn.BorderBrush = PVW_BORDER_COLOR;
-            if (pgmManager.PageNumber > 0) {
-                Button pgmBtn = WrapPanelPageList.Children[pgmManager.PageNumber - 1] as Button;
-                pgmBtn.BorderBrush = PGM_BORDER_COLOR;
+            try {
+                // 항상 pvw -> pgm 순으로 업데이트하므로 UpdatePvw에서 테두리 처리
+                foreach (Button item in WrapPanelPageList.Children) {
+                    item.BorderBrush = DEFAULT_BORDER_COLOR;
+                }
+                // 페이지리스트는 인덱스가 0부터라 -1
+                Button pvwBtn = WrapPanelPageList.Children[pvwManager.PageNumber - 1] as Button;
+                pvwBtn.BorderBrush = PVW_BORDER_COLOR;
+                if (pgmManager.PageNumber > 0) {
+                    Button pgmBtn = WrapPanelPageList.Children[pgmManager.PageNumber - 1] as Button;
+                    pgmBtn.BorderBrush = PGM_BORDER_COLOR;
+                }
+            } catch (Exception e) {
+                // 페이지리스트에 버튼 컨트롤이 없을 때
             }
         }
         private void ClearPgm() {
@@ -113,9 +123,6 @@ namespace TextPresenter51456 {
                 System.IO.StreamReader sr = new System.IO.StreamReader(filePath + fileName, Encoding.Default);
                 string fullText = sr.ReadToEnd();
                 sr.Close();
-                Regex newLineUnifier = new Regex(@"(\r\n|\r)");
-                Regex trimmer = new Regex(@"(^\n+|\n+$)");
-                Regex pageBreaker = new Regex(@"\n{2,}");
                 fullText = newLineUnifier.Replace(fullText, "\n"); // 줄바꿈 문자 통일
                 fullText = trimmer.Replace(fullText, ""); // 앞뒤 공백 자르기
                 textList = new List<string>(pageBreaker.Split(fullText)); // 페이지 나누기
@@ -133,8 +140,6 @@ namespace TextPresenter51456 {
             try {   // 읽어들인 파일 표시하기 + 루프 돌면서 서식 적용
                 int len = textList.Count;
                 Style pageListItemStyle = FindResource("PageListItem") as Style;
-                Regex sharp = new Regex(@"^#+\s*");
-                Regex sharpEscaped = new Regex(@"^\\#(#*\s*)");
                 SolidColorBrush yellowColorBrush = new SolidColorBrush(Color.FromRgb(255, 255, 0));
 
                 colorList = new List<int>(len);
@@ -142,6 +147,7 @@ namespace TextPresenter51456 {
 
                 WrapPanelPageList.Children.Clear();
 
+                // 페이지 리스트 만들기
                 for (int i = 1; i < len; i++) {
                     Button pageListItem = new Button();
                     pageListItem.Style = pageListItemStyle;
@@ -183,6 +189,26 @@ namespace TextPresenter51456 {
                 OpenTxtFile();
                 MenuItemRefresh.IsEnabled = true;
             }
+        }
+
+        private void UpdateFree() {
+            string text = newLineUnifier.Replace(TextBoxFreeContent.Text, "\n"); // 줄바꿈 문자 통일
+            text = trimmer.Replace(text, ""); // 앞뒤 공백 자르기
+
+            //SolidColorBrush fg = GetColorFromInt(colorList[pgmManager.PageNumber]);
+            PgmContent.Content = text;
+            //PgmContent.Foreground = fg;
+            if (pw != null) {   // 송출 창 열려 있을 때
+                pw.LabelPresenterText.Content = text;
+                //pw.LabelPresenterText.Foreground = fg;
+            }
+        }
+        private void FreeCut() {
+            SolidColorBrush fg = GetColorFromInt(0xffffff); // 일단 무조건 흰색
+            pgmManager.PageNumber = 0;
+            PgmPage.Content = "자유송출";
+            UpdateBorders();
+            UpdateFree();
         }
 
         /////////////////////////////// 파일 열기
@@ -272,21 +298,25 @@ namespace TextPresenter51456 {
                 }
             }
         }
-        private void WindowMainWindow_PreviewKeyDown(object sender, KeyEventArgs e) {   // 키 누를 때 입력 처리
-            if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.Escape) {   // Shift+ESC: 송출 창 버튼
+        private void WindowMainWindow_PreviewKeyDown(object sender, KeyEventArgs e) { // 키 누를 때 입력 처리
+            if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.Escape) { // Shift+ESC: 송출 창 버튼
                 OpenAndClosePresenterWindow();
                 return;
             }
-            if (MenuItemRefresh.IsEnabled == true && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.R) {
+            if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Enter) { // Ctrl+Enter: 자유 송출
+                FreeCut();
+                return;
+            }
+            if (MenuItemRefresh.IsEnabled == true && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.R) { // Ctrl+R: 리로드
                 OpenTxtFile();
                 return;
             }
-            if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) {   // 숫자패드
+            if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) { // 숫자패드
                 pageNum.Add(e.Key - Key.NumPad0);
                 UpdatePageIndicator();
                 return;
             }
-            if (e.Key >= Key.D0 && e.Key <= Key.D9) {   // 숫자
+            if (e.Key >= Key.D0 && e.Key <= Key.D9) { // 숫자
                 pageNum.Add(e.Key - Key.D0);
                 UpdatePageIndicator();
                 return;
@@ -296,11 +326,9 @@ namespace TextPresenter51456 {
                 CutAction();
                 break;
             case Key.Up:
-                // 페이지 리스트 스크롤 -130
                 ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
                 break;
             case Key.Down:
-                // 페이지 리스트 스크롤 +130
                 ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
                 break;
             case Key.Decimal:
@@ -347,6 +375,10 @@ namespace TextPresenter51456 {
 
         private void ButtonClear_Click(object sender, RoutedEventArgs e) {
             ClearPgm();
+        }
+
+        private void ButtonFreeCut_Click(object sender, RoutedEventArgs e) {
+            FreeCut();
         }
 
         /*

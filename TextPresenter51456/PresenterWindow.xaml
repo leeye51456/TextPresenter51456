@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:TextPresenter51456"
         mc:Ignorable="d"
         Title="송출 - TextPresenter51456"
+        Icon="TextPresenter51456.ico"
         ResizeMode="NoResize"
         Topmost="True"
         Cursor="None"

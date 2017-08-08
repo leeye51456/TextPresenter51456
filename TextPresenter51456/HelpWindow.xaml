@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:TextPresenter51456"
         mc:Ignorable="d"
         Title="도움말 - TextPresenter51456"
+        Icon="TextPresenter51456.ico"
         Width="480"
         Height="360"
         ResizeMode="CanMinimize"

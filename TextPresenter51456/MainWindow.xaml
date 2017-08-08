@@ -8,11 +8,12 @@
         mc:Ignorable="d"
         x:Name="WindowMainWindow"
         Title="TextPresenter51456 (Beta)"
+        Icon="TextPresenter51456.ico"
         MinWidth="600" MinHeight="450"
            Width="960"    Height="540"
         Closing="WindowMainWindow_Closing"
         MouseDown="WindowMainWindow_MouseDown"
-        Keyboard.PreviewKeyDown="WindowMainWindow_PreviewKeyDown" >
+        Keyboard.PreviewKeyDown="WindowMainWindow_PreviewKeyDown">
 
     <Window.Resources>
 

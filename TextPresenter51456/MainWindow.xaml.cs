@@ -322,8 +322,15 @@ namespace TextPresenter51456 {
                 return;
             }
             switch (e.Key) {
+            case Key.Escape:
+                GridBody.Focus();
+                GridBody.Focusable = false;
+                GridBody.Focusable = true;
+                break;
             case Key.Enter:
-                CutAction();
+                if (!TextBoxFreeContent.IsFocused) {
+                    CutAction();
+                }
                 break;
             case Key.Up:
                 ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
@@ -331,8 +338,11 @@ namespace TextPresenter51456 {
             case Key.Down:
                 ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
                 break;
-            case Key.Decimal:
-                ClearPgm();
+            case Key.OemPeriod: // 일반 .키
+            case Key.Decimal: // 키패드 .키
+                if (!TextBoxFreeContent.IsFocused || Keyboard.Modifiers == ModifierKeys.Control) {
+                    ClearPgm();
+                }
                 break;
             case Key.Left:
                 pvwManager.PageNumber -= 1;

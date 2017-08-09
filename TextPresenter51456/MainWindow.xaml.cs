@@ -50,6 +50,12 @@ namespace TextPresenter51456 {
             WindowMainWindow.Title = "TextPresenter51456 (Beta) - " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
+        private void KillFocus() {
+            GridBody.Focus();
+            GridBody.Focusable = false;
+            GridBody.Focusable = true;
+        }
+
         private void WindowMainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
             if (pw != null) {   // 송출 창 열려 있는 경우
                 switch (MessageBox.Show("송출 창이 열려 있습니다. 정말로 종료하시겠습니까?", "TextPresenter51456", MessageBoxButton.YesNo)) {
@@ -298,6 +304,7 @@ namespace TextPresenter51456 {
                 }
             }
         }
+
         private void WindowMainWindow_PreviewKeyDown(object sender, KeyEventArgs e) { // 키 누를 때 입력 처리
             if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.Escape) { // Shift+ESC: 송출 창 버튼
                 OpenAndClosePresenterWindow();
@@ -311,47 +318,53 @@ namespace TextPresenter51456 {
                 OpenTxtFile();
                 return;
             }
-            if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) { // 숫자패드
-                pageNum.Add(e.Key - Key.NumPad0);
-                UpdatePageIndicator();
-                return;
-            }
-            if (e.Key >= Key.D0 && e.Key <= Key.D9) { // 숫자
-                pageNum.Add(e.Key - Key.D0);
-                UpdatePageIndicator();
-                return;
-            }
-            switch (e.Key) {
-            case Key.Escape:
-                GridBody.Focus();
-                GridBody.Focusable = false;
-                GridBody.Focusable = true;
-                break;
-            case Key.Enter:
-                if (!TextBoxFreeContent.IsFocused) {
+
+            if (TextBoxFreeContent.IsFocused) { // 자유 송출 텍스트 상자 포커스
+                switch (e.Key) {
+                case Key.Escape:
+                    KillFocus();
+                    break;
+                case Key.OemPeriod: // 일반 .키
+                case Key.Decimal: // 키패드 .키
+                    if (Keyboard.Modifiers == ModifierKeys.Control) {
+                        ClearPgm();
+                    }
+                    break;
+                }
+            } else {
+                if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) { // 숫자패드
+                    pageNum.Add(e.Key - Key.NumPad0);
+                    UpdatePageIndicator();
+                    return;
+                }
+                if (e.Key >= Key.D0 && e.Key <= Key.D9) { // 숫자
+                    pageNum.Add(e.Key - Key.D0);
+                    UpdatePageIndicator();
+                    return;
+                }
+                switch (e.Key) {
+                case Key.Enter:
                     CutAction();
-                }
-                break;
-            case Key.Up:
-                ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
-                break;
-            case Key.Down:
-                ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
-                break;
-            case Key.OemPeriod: // 일반 .키
-            case Key.Decimal: // 키패드 .키
-                if (!TextBoxFreeContent.IsFocused || Keyboard.Modifiers == ModifierKeys.Control) {
+                    break;
+                case Key.Up:
+                    ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
+                    break;
+                case Key.Down:
+                    ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
+                    break;
+                case Key.OemPeriod: // 일반 .키
+                case Key.Decimal: // 키패드 .키
                     ClearPgm();
+                    break;
+                case Key.Left:
+                    pvwManager.PageNumber -= 1;
+                    UpdatePvw();
+                    break;
+                case Key.Right:
+                    pvwManager.PageNumber += 1;
+                    UpdatePvw();
+                    break;
                 }
-                break;
-            case Key.Left:
-                pvwManager.PageNumber -= 1;
-                UpdatePvw();
-                break;
-            case Key.Right:
-                pvwManager.PageNumber += 1;
-                UpdatePvw();
-                break;
             }
         }
 
@@ -374,9 +387,7 @@ namespace TextPresenter51456 {
         }
 
         private void WindowMainWindow_MouseDown(object sender, MouseButtonEventArgs e) {
-            GridBody.Focus();
-            GridBody.Focusable = false;
-            GridBody.Focusable = true;
+            KillFocus();
         }
 
         private void ButtonCut_Click(object sender, RoutedEventArgs e) {

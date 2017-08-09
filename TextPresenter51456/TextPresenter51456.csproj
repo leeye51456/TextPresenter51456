@@ -123,5 +123,8 @@
   <ItemGroup>
     <Resource Include="TextPresenter51456.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="VersionInfo.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

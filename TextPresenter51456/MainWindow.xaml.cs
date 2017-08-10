@@ -201,16 +201,16 @@ namespace TextPresenter51456 {
             string text = newLineUnifier.Replace(TextBoxFreeContent.Text, "\n"); // 줄바꿈 문자 통일
             text = trimmer.Replace(text, ""); // 앞뒤 공백 자르기
 
+            SolidColorBrush fg = GetColorFromInt(0xffffff); // 일단 무조건 흰색
             //SolidColorBrush fg = GetColorFromInt(colorList[pgmManager.PageNumber]);
             PgmContent.Content = text;
-            //PgmContent.Foreground = fg;
+            PgmContent.Foreground = fg;
             if (pw != null) {   // 송출 창 열려 있을 때
                 pw.LabelPresenterText.Content = text;
-                //pw.LabelPresenterText.Foreground = fg;
+                pw.LabelPresenterText.Foreground = fg;
             }
         }
         private void FreeCut() {
-            SolidColorBrush fg = GetColorFromInt(0xffffff); // 일단 무조건 흰색
             pgmManager.PageNumber = 0;
             PgmPage.Content = "자유송출";
             UpdateBorders();
@@ -345,24 +345,36 @@ namespace TextPresenter51456 {
                 switch (e.Key) {
                 case Key.Enter:
                     CutAction();
+                    KillFocus();
+                    e.Handled = true;
                     break;
                 case Key.Up:
                     ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
+                    KillFocus();
+                    e.Handled = true;
                     break;
                 case Key.Down:
                     ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
+                    KillFocus();
+                    e.Handled = true;
                     break;
                 case Key.OemPeriod: // 일반 .키
                 case Key.Decimal: // 키패드 .키
                     ClearPgm();
+                    KillFocus();
+                    e.Handled = true;
                     break;
                 case Key.Left:
                     pvwManager.PageNumber -= 1;
                     UpdatePvw();
+                    KillFocus();
+                    e.Handled = true;
                     break;
                 case Key.Right:
                     pvwManager.PageNumber += 1;
                     UpdatePvw();
+                    KillFocus();
+                    e.Handled = true;
                     break;
                 }
             }

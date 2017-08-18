@@ -12,7 +12,7 @@
         MinWidth="600" MinHeight="450"
            Width="960"    Height="540"
         Closing="WindowMainWindow_Closing"
-        MouseDown="WindowMainWindow_MouseDown"
+        PreviewMouseDown="WindowMainWindow_PreviewMouseDown"
         Keyboard.PreviewKeyDown="WindowMainWindow_PreviewKeyDown">
 
     <Window.Resources>
@@ -315,6 +315,7 @@
                                     Grid.Row="0"
                                     Grid.Column="1"
                                     Grid.RowSpan="2"
+                                    Focusable="False"
                                     Click="ButtonFreeCut_Click">
                                     <TextBlock TextBlock.TextAlignment="Center">
                                         송출<LineBreak />(Ctrl+Enter)
@@ -326,6 +327,7 @@
                                     Grid.Row="1"
                                     Grid.Column="0"
                                     Content="즉시 업데이트"
+                                    Focusable="False"
                                     IsEnabled="False"
                                     Margin="0,3,0,2"
                                     VerticalContentAlignment="Center" />

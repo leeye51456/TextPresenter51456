@@ -398,7 +398,7 @@ namespace TextPresenter51456 {
             }
         }
 
-        private void WindowMainWindow_MouseDown(object sender, MouseButtonEventArgs e) {
+        private void WindowMainWindow_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
             KillFocus();
         }
 

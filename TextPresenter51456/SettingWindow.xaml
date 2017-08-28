@@ -96,6 +96,39 @@
                                 </ComboBox>
                             </WrapPanel>
                         </StackPanel>
+                        <Label Content="원격 제어" FontWeight="Bold" />
+                        <StackPanel Margin="10,0,0,10">
+                            <WrapPanel Margin="0,0,0,5">
+                                <Label Content="IP:" />
+                                <TextBox
+                                    x:Name="TextBoxIp1"
+                                    Text="127"
+                                    Width="40"
+                                    HorizontalContentAlignment="Right"
+                                    VerticalAlignment="Center" />
+                                <Label Content="." />
+                                <TextBox
+                                    x:Name="TextBoxIp2"
+                                    Text="0"
+                                    Width="40"
+                                    HorizontalContentAlignment="Right"
+                                    VerticalAlignment="Center" />
+                                <Label Content="." />
+                                <TextBox
+                                    x:Name="TextBoxIp3"
+                                    Text="0"
+                                    Width="40"
+                                    HorizontalContentAlignment="Right"
+                                    VerticalAlignment="Center" />
+                                <Label Content="." />
+                                <TextBox
+                                    x:Name="TextBoxIp4"
+                                    Text="1"
+                                    Width="40"
+                                    HorizontalContentAlignment="Right"
+                                    VerticalAlignment="Center" />
+                            </WrapPanel>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -195,15 +228,15 @@
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
 
-                                        <RadioButton x:Name="RadioButtonTextPosition1" Grid.Row="0" Grid.Column="0" GroupName="TextPosition" />
-                                        <RadioButton x:Name="RadioButtonTextPosition2" Grid.Row="0" Grid.Column="1" GroupName="TextPosition" />
-                                        <RadioButton x:Name="RadioButtonTextPosition3" Grid.Row="0" Grid.Column="2" GroupName="TextPosition" />
-                                        <RadioButton x:Name="RadioButtonTextPosition4" Grid.Row="1" Grid.Column="0" GroupName="TextPosition" />
-                                        <RadioButton x:Name="RadioButtonTextPosition5" Grid.Row="1" Grid.Column="1" GroupName="TextPosition" IsChecked="True" />
-                                        <RadioButton x:Name="RadioButtonTextPosition6" Grid.Row="1" Grid.Column="2" GroupName="TextPosition" />
-                                        <RadioButton x:Name="RadioButtonTextPosition7" Grid.Row="2" Grid.Column="0" GroupName="TextPosition" />
-                                        <RadioButton x:Name="RadioButtonTextPosition8" Grid.Row="2" Grid.Column="1" GroupName="TextPosition" />
-                                        <RadioButton x:Name="RadioButtonTextPosition9" Grid.Row="2" Grid.Column="2" GroupName="TextPosition" />
+                                        <RadioButton x:Name="RadioButtonTextPosition1" Grid.Row="0" Grid.Column="0" GroupName="TextPosition" Content="1" />
+                                        <RadioButton x:Name="RadioButtonTextPosition2" Grid.Row="0" Grid.Column="1" GroupName="TextPosition" Content="2" />
+                                        <RadioButton x:Name="RadioButtonTextPosition3" Grid.Row="0" Grid.Column="2" GroupName="TextPosition" Content="3" />
+                                        <RadioButton x:Name="RadioButtonTextPosition4" Grid.Row="1" Grid.Column="0" GroupName="TextPosition" Content="4" />
+                                        <RadioButton x:Name="RadioButtonTextPosition5" Grid.Row="1" Grid.Column="1" GroupName="TextPosition" Content="5" IsChecked="True" />
+                                        <RadioButton x:Name="RadioButtonTextPosition6" Grid.Row="1" Grid.Column="2" GroupName="TextPosition" Content="6" />
+                                        <RadioButton x:Name="RadioButtonTextPosition7" Grid.Row="2" Grid.Column="0" GroupName="TextPosition" Content="7" />
+                                        <RadioButton x:Name="RadioButtonTextPosition8" Grid.Row="2" Grid.Column="1" GroupName="TextPosition" Content="8" />
+                                        <RadioButton x:Name="RadioButtonTextPosition9" Grid.Row="2" Grid.Column="2" GroupName="TextPosition" Content="9" />
                                     </Grid>
                                 </Border>
                             </WrapPanel>
@@ -228,10 +261,10 @@
                                     Content="변경"
                                     Width="100"
                                     Margin="5,0,0,0"
-                                    VerticalAlignment="Center"/>
+                                    VerticalAlignment="Center" />
                             </WrapPanel>
                             <WrapPanel Margin="0,0,0,5">
-                                <Label Content="글자 높이:" />
+                                <Label Content="크기:" />
                                 <Label Content="화면 높이의 " />
                                 <TextBox
                                     x:Name="TextBoxFontSize"

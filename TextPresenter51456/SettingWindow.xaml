@@ -11,6 +11,43 @@
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterOwner">
 
+    
+    <Window.Resources>
+        
+        <Style x:Key="ScreenBorder" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="Grid">
+                            <Border
+                                x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1" />
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                TextBlock.TextAlignment="Center"
+                                TextBlock.Foreground="{TemplateBinding TextBlock.Foreground}"
+                                RecognizesAccessKey="False" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter
+                                    Property="Background"
+                                    Value="#40808000"
+                                    TargetName="Border" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+
     <DockPanel>
         
         <WrapPanel
@@ -42,21 +79,22 @@
                                 x:Name="CheckBoxUsePvw"
                                 Content="PVW 사용"
                                 Margin="5" />
-                            <CheckBox
-                                x:Name="CheckBoxUseMouse"
-                                Content="마우스로 송출"
-                                Margin="5" />
-                            <CheckBox
-                                x:Name="CheckBoxUseKeyboard"
-                                Content="키보드로 송출"
-                                Margin="5" />
                         </StackPanel>
-                        <Label Content="자유 송출" FontWeight="Bold" />
+                        <Label Content="파일 처리 방식" FontWeight="Bold" />
                         <StackPanel Margin="10,0,0,10">
-                            <CheckBox
-                                x:Name="CheckBoxUpdateOnChange"
-                                Content="텍스트 변경 시 즉시 업데이트"
-                                Margin="5" />
+                            <WrapPanel Margin="0,0,0,5">
+                                <Label Content="파일 인코딩:" />
+                                <ComboBox
+                                    x:Name="ComboBoxTextEncoding"
+                                    Width="100"
+                                    SelectedIndex="0"
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center"
+                                    IsEditable="True">
+                                    <ComboBoxItem Content="EUC-KR" />
+                                    <ComboBoxItem Content="UTF-8" />
+                                </ComboBox>
+                            </WrapPanel>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
@@ -69,39 +107,72 @@
                         <Label Content="출력 대상 화면" FontWeight="Bold" />
                         <Canvas
                             x:Name="CanvasScreens"
-                            Height="90"
-                            Margin="10,0,0,0">
-                            <!-- 내용 -->
-                            <Rectangle
+                            Height="90">
+                            <!-- 내용 예시 시작 -->
+                            <Border
                                 Canvas.Left="5"
-                                Canvas.Top="5"
-                                Width="189.63"
-                                Height="80"
-                                Stroke="Black" />
-                            <Rectangle
-                                Canvas.Left="194.63"
                                 Canvas.Top="5"
                                 Width="142.22"
                                 Height="80"
-                                Stroke="Black" />
+                                BorderBrush="Black"
+                                BorderThickness="1">
+                                <TextBlock
+                                    Text="1"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center" />
+                            </Border>
+                            <Border
+                                Canvas.Left="147.22"
+                                Canvas.Top="5"
+                                Width="75.85"
+                                Height="56.89"
+                                BorderBrush="Black"
+                                BorderThickness="1">
+                                <TextBlock
+                                    Text="2"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center" />
+                            </Border>
+                            <!-- 내용 예시 끝 -->
                         </Canvas>
-                        <WrapPanel
-                            Margin="10,0,0,10">
-                            <Label Content="출력 대상:" />
-                            <ComboBox
-                                x:Name="ComboBoxPresenterScreen"
-                                Width="50"
-                                SelectedIndex="1"
-                                Margin="5,0,0,0"
-                                VerticalAlignment="Center">
-                                <ComboBoxItem Content="1" />
-                                <ComboBoxItem Content="2" />
-                            </ComboBox>
-                        </WrapPanel>
+                        <StackPanel Margin="10,0,0,10">
+                            <WrapPanel Margin="0,0,0,5">
+                                <Label Content="출력 대상:" />
+                                <ComboBox
+                                    x:Name="ComboBoxPresenterScreen"
+                                    Width="160"
+                                    SelectedIndex="1"
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center">
+                                    <ComboBoxItem Content="(1) 1920x1080 (0,0)" />
+                                    <ComboBoxItem Content="(2) 1024x768 (1920,0)" />
+                                </ComboBox>
+                            </WrapPanel>
+                            <WrapPanel Margin="0,0,0,5">
+                                <CheckBox
+                                    x:Name="CheckBox"
+                                    Content="해상도 시뮬레이션:"
+                                    Margin="5,5,5,5" />
+                                <TextBox
+                                    x:Name="TextBoxScreenWidth"
+                                    Text="1024"
+                                    Width="50"
+                                    HorizontalContentAlignment="Right"
+                                    VerticalAlignment="Center" />
+                                <Label Content="x" />
+                                <TextBox
+                                    x:Name="TextBoxScreenHeight"
+                                    Text="768"
+                                    Width="50"
+                                    HorizontalContentAlignment="Right"
+                                    VerticalAlignment="Center" />
+                                <Label Content="(출력 화면보다 크면 잘립니다.)" />
+                            </WrapPanel>
+                        </StackPanel>
 
                         <Label Content="텍스트" FontWeight="Bold" />
                         <StackPanel Margin="10,0,0,10">
-                            <WrapPanel Margin="5,0,0,5">
+                            <WrapPanel Margin="0,0,0,5">
                                 <Label Content="위치:" />
                                 <Border
                                     Margin="5,0,0,0"
@@ -136,7 +207,7 @@
                                     </Grid>
                                 </Border>
                             </WrapPanel>
-                            <WrapPanel Margin="5,0,0,5">
+                            <WrapPanel Margin="0,0,0,5">
                                 <Label Content="정렬:" />
                                 <ComboBox
                                     x:Name="ComboBoxTextAlign"
@@ -150,7 +221,7 @@
                                     <ComboBoxItem Content="오른쪽" />
                                 </ComboBox>
                             </WrapPanel>
-                            <WrapPanel Margin="5,0,0,5">
+                            <WrapPanel Margin="0,0,0,5">
                                 <Label Content="글꼴:" />
                                 <Button
                                     x:Name="ButtonChangeFont"
@@ -159,7 +230,7 @@
                                     Margin="5,0,0,0"
                                     VerticalAlignment="Center"/>
                             </WrapPanel>
-                            <WrapPanel Margin="5,0,0,5">
+                            <WrapPanel Margin="0,0,0,5">
                                 <Label Content="글자 높이:" />
                                 <Label Content="화면 높이의 " />
                                 <TextBox
@@ -171,7 +242,7 @@
                                     KeyDown="TextBoxDouble_KeyDown" />
                                 <Label Content="%" />
                             </WrapPanel>
-                            <WrapPanel Margin="5,0,0,5">
+                            <WrapPanel Margin="0,0,0,5">
                                 <Label Content="줄 간격:" />
                                 <TextBox
                                     x:Name="TextBoxLineHeight"

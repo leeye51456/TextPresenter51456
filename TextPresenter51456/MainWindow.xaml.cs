@@ -91,7 +91,7 @@ namespace TextPresenter51456 {
                     pgmBtn.BorderBrush = PGM_BORDER_COLOR;
                 }
             } catch (Exception e) {
-                // 페이지리스트에 버튼 컨트롤이 없을 때
+                // 페이지리스트에 버튼 컨트롤이 아닌 게 있을 때: 초기 상태에서
             }
         }
         private void ClearPgm() {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,6 +37,7 @@ namespace TextPresenter51456 {
         Regex sharp = new Regex(@"^#+\s*");
         Regex sharpEscaped = new Regex(@"^\\#(#*\s*)");
         Regex trimmer = new Regex(@"(^\n+|\n+$)");
+        Regex fileNameTrimmer = new Regex(@"^(.*\\)(.*?)$");
 
         SolidColorBrush DEFAULT_BORDER_COLOR = new SolidColorBrush(Color.FromRgb(0xe0, 0xe0, 0xe0));
         SolidColorBrush PVW_BORDER_COLOR = new SolidColorBrush(Color.FromRgb(0, 0xa0, 0));
@@ -44,7 +46,13 @@ namespace TextPresenter51456 {
         PresenterWindow pw;
         HelpWindow hw;
 
+        Thread threadRemote;
+        string processRemoteReturn;
+
+
         public MainWindow() {
+            SynSocketListener.mw = this;
+
             InitializeComponent();
 
             WindowMainWindow.Title = "TextPresenter51456 (Beta) - " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -265,17 +273,19 @@ namespace TextPresenter51456 {
         private void ButtonPresenterWindow_Unchecked(object sender, RoutedEventArgs e) {
             ClosePresenterWindow();
         }
-        private void OpenAndClosePresenterWindow() {
+        private bool OpenAndClosePresenterWindow() {
             if (pw == null) {
                 // 안 열려 있는 경우
                 // 아래 코드 실행되면서 Checked 이벤트 발생
                 ButtonPresenterWindow.IsChecked = true;
                 //OpenPresenterWindow();
+                return true;
             } else {
                 // 이미 열려 있는 경우
                 // 아래 코드 실행되면서 Unchecked 이벤트 발생
                 ButtonPresenterWindow.IsChecked = false;
                 //ClosePresenterWindow();
+                return false;
             }
         }
 
@@ -398,7 +408,7 @@ namespace TextPresenter51456 {
             }
         }
 
-        private void WindowMainWindow_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
+        private void WindowMainWindow_MouseDown(object sender, MouseButtonEventArgs e) {
             KillFocus();
         }
 
@@ -413,12 +423,10 @@ namespace TextPresenter51456 {
         private void ButtonFreeCut_Click(object sender, RoutedEventArgs e) {
             FreeCut();
         }
-
-        /*
-        private void OpenSettings_Click(object sender, RoutedEventArgs e) {
+        
+        private void MenuItemSettings_Click(object sender, RoutedEventArgs e) {
             SettingWindow sw = new SettingWindow(this, pw);
         }
-        */
 
         private void HelpWindow_Unloaded(object sender, RoutedEventArgs e) {
             hw = null;
@@ -448,6 +456,150 @@ namespace TextPresenter51456 {
                 } else if (sender == MenuItemInfo) {
                     hw.TabControlBody.SelectedIndex = 2;
                 }
+            }
+        }
+
+
+        private string packPageListToString() {
+            string result = "";
+            /*
+             *  int colorList[i]
+             *  string textList[i]
+             *  
+             *  int colorList[i + 1]
+             *  string textList[i + 1]
+             *  
+             *  ...
+             */
+            if (textList.Count < 1) {
+                return result;
+            }
+            result += colorList[1].ToString() + "\n" + textList[1];
+            for (int i = 2; i < textList.Count; i++) {
+                result += "\n\n" + colorList[i].ToString() + "\n" + textList[i];
+            }
+            return result;
+        }
+        private void ProcessRemote(string cmd, string param) {
+            processRemoteReturn = "";
+
+            if (cmd.Equals("pgm")) {
+                // PGM 변경
+                // SEND   pgm:page<EndOfCommand>
+                // RETURN -
+                if (int.TryParse(param, out int pageNum)) {
+                    // 정상적인 경우
+                    pgmManager.PageNumber = pageNum;
+                    pvwManager.PageNumber = pageNum + 1;
+                    UpdatePgm();
+                    UpdatePvw();
+                }
+
+                processRemoteReturn = "pgm:" + pgmManager.PageNumber + "<EndOfCommand>";
+
+            } else if (cmd.Equals("pvw")) {
+                // PVW 변경
+                // SEND   pvw:page<EndOfCommand>
+                // RETURN -
+                if (int.TryParse(param, out int pageNum)) {
+                    // 정상적인 경우
+                    pvwManager.PageNumber = pageNum;
+                    UpdatePvw();
+                }
+
+                processRemoteReturn = "pvw:" + pvwManager.PageNumber + "<EndOfCommand>";
+
+            } else if (cmd.Equals("cut")) {
+                // 컷
+                // SEND   cut:<EndOfCommand>
+                // RETURN -
+                CutAction();
+
+                processRemoteReturn = "cut:" + pgmManager.PageNumber + "<EndOfCommand>";
+
+            } else if (cmd.Equals("clear")) {
+                // 화면 지우기
+                // SEND   clear:<EndOfCommand>
+                // RETURN -
+                ClearPgm();
+
+                processRemoteReturn = "clear:<EndOfCommand>";
+
+            } else if (cmd.Equals("free:")) {
+                // 자유송출
+                // SEND   free:str<EndOfCommand>
+                // RETURN -
+                TextBoxFreeContent.Text = param;
+                FreeCut();
+
+                processRemoteReturn = "free:<EndOfCommand>";
+
+            } else if (cmd.Equals("update")) {
+                // 페이지 리스트 동기화
+                // SEND   update:<EndOfCommand>
+                // RETURN string pageList
+
+                processRemoteReturn = "update:" + packPageListToString() + "<EndOfCommand>";
+
+            } else if (cmd.Equals("open")) {
+                // 다른 파일 열기 또는 현재 파일 다시 불러오기
+                // SEND   open:path<EndOfCommand>
+                // RETURN string pageList
+                if (!param.Equals("")) {
+                    fileName = fileNameTrimmer.Replace(param, "$2");
+                    filePath = fileNameTrimmer.Replace(param, "$1");
+                }
+                OpenTxtFile();
+
+                processRemoteReturn = "open:" + packPageListToString() + "<EndOfCommand>";
+
+            } else if (cmd.Equals("ls")) {
+                // 파일 목록 요청
+                // SEND   ls:<EndOfCommand>
+                // RETURN string fileList
+                processRemoteReturn = "ls:" /*+ "FILE LIST SEPERATED BY LF" */+ "<EndOfCommand>";
+
+            } else if (cmd.Equals("presenter")) {
+                // 송출 창 토글
+                // SEND   presenter:<EndOfCommand>
+                // RETURN bool isOpen (창 열었으면 "true")
+                processRemoteReturn = "presenter:" + OpenAndClosePresenterWindow().ToString().ToLower() + "<EndOfCommand>";
+
+            } else if (cmd.Equals("terminate")) {
+                // 서버 종료
+                // SEND   terminate:<EndOfCommand>
+                // RETURN -
+                MenuItemRemote.IsChecked = false;
+                processRemoteReturn = "terminate:<EndOfCommand>";
+
+            } else {
+                // 정의되지 않은 명령
+                processRemoteReturn = cmd + ":<EndOfCommand>";
+            }
+        }
+
+        public string PreProcessRemote(string cmd, string param) {
+            // https://stackoverflow.com/questions/19009174/dispatcher-invoke-vs-begininvoke-confusion
+            if (Dispatcher.CheckAccess()) {
+                ProcessRemote(cmd, param);
+            } else {
+                Dispatcher.Invoke(
+                    new Action(() => ProcessRemote(cmd, param)),
+                    System.Windows.Threading.DispatcherPriority.Normal,
+                    null);
+            }
+            return processRemoteReturn;
+        }
+
+        private void MenuItemRemote_Click(object sender, RoutedEventArgs e) {
+            // https://msdn.microsoft.com/ko-kr/library/7a2f3ay4(v=vs.90).aspx
+            if (MenuItemRemote.IsChecked) {
+                //MenuItemRemote.IsEnabled = false;
+                threadRemote = new Thread(SynSocketListener.StartListening);
+                threadRemote.IsBackground = true;
+                threadRemote.Start();
+            } else {
+                SynSocketListener.TerminateListening();
             }
         }
     }

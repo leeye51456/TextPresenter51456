@@ -59,6 +59,7 @@ namespace TextPresenter51456 {
             }
         }
         private void SettingToControl() {
+            /*
             GetSettings();
             CheckBoxUsePvw.IsChecked = usePvw;
             CheckBoxUseMouse.IsChecked = useMouse;
@@ -97,6 +98,7 @@ namespace TextPresenter51456 {
             ComboBoxTextAlign.SelectedIndex = textAlign - 1;
             TextBoxFontSize.Text = fontSize.ToString();
             TextBoxLineHeight.Text = lineHeight.ToString();
+            */
         }
 
         public SettingWindow(Window w1, Window presenter) {
@@ -138,6 +140,7 @@ namespace TextPresenter51456 {
                 return 0;
         }
         private void ButtonApply_Click(object sender, RoutedEventArgs e) {
+            /*
             Setting.Set("usePvw", CheckBoxUsePvw.IsChecked.ToString());
             Setting.Set("useMouse", CheckBoxUseMouse.IsChecked.ToString());
             Setting.Set("useKeyboard", CheckBoxUseKeyboard.IsChecked.ToString());
@@ -149,6 +152,7 @@ namespace TextPresenter51456 {
             Setting.Set("fontSize", TextBoxFontSize.Text.ToString());
             Setting.Set("lineHeight", TextBoxLineHeight.Text.ToString());
             Setting.Save();
+            */
 
             if (pw != null) {
                 RoutedEventArgs rea = new RoutedEventArgs(LoadedEvent);

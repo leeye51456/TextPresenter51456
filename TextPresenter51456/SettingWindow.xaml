@@ -97,38 +97,6 @@
                             </WrapPanel>
                         </StackPanel>
                         <Label Content="원격 제어" FontWeight="Bold" />
-                        <StackPanel Margin="10,0,0,10">
-                            <WrapPanel Margin="0,0,0,5">
-                                <Label Content="IP:" />
-                                <TextBox
-                                    x:Name="TextBoxIp1"
-                                    Text="127"
-                                    Width="40"
-                                    HorizontalContentAlignment="Right"
-                                    VerticalAlignment="Center" />
-                                <Label Content="." />
-                                <TextBox
-                                    x:Name="TextBoxIp2"
-                                    Text="0"
-                                    Width="40"
-                                    HorizontalContentAlignment="Right"
-                                    VerticalAlignment="Center" />
-                                <Label Content="." />
-                                <TextBox
-                                    x:Name="TextBoxIp3"
-                                    Text="0"
-                                    Width="40"
-                                    HorizontalContentAlignment="Right"
-                                    VerticalAlignment="Center" />
-                                <Label Content="." />
-                                <TextBox
-                                    x:Name="TextBoxIp4"
-                                    Text="1"
-                                    Width="40"
-                                    HorizontalContentAlignment="Right"
-                                    VerticalAlignment="Center" />
-                            </WrapPanel>
-                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

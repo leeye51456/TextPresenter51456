@@ -46,6 +46,8 @@ namespace TextPresenter51456 {
             InitializeComponent();
 
             ApplySettings();
+
+            mw.Activate();
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e) {   // 키보드 입력이 들어오면 MainWindow에서 처리

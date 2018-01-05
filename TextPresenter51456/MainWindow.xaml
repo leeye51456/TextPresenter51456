@@ -12,7 +12,7 @@
         MinWidth="600" MinHeight="450"
            Width="960"    Height="540"
         Closing="WindowMainWindow_Closing"
-        PreviewMouseDown="WindowMainWindow_PreviewMouseDown"
+        MouseDown="WindowMainWindow_MouseDown"
         Keyboard.PreviewKeyDown="WindowMainWindow_PreviewKeyDown">
 
     <Window.Resources>
@@ -66,11 +66,11 @@
                                 Width="{TemplateBinding Width}"
                                 Height="{TemplateBinding Height}">
                                 <ContentPresenter
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        TextBlock.TextAlignment="Center"
-                                        TextBlock.Foreground="{TemplateBinding TextBlock.Foreground}"
-                                        RecognizesAccessKey="False" />
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    TextBlock.TextAlignment="Center"
+                                    TextBlock.Foreground="{TemplateBinding TextBlock.Foreground}"
+                                    RecognizesAccessKey="False" />
                             </Border>
                             <Label
                                 Content="{TemplateBinding Tag}"
@@ -145,18 +145,19 @@
                     Click="MenuItemExit_Click"
                     InputGestureText="Alt+F4" />
             </MenuItem>
-            <!--
-            <MenuItem Header="설정(_S)" Focusable="False" IsEnabled="False">
+            <MenuItem Header="설정(_S)" Focusable="False">
                 <MenuItem
-                    x:Name="OpenSettings"
+                    IsEnabled="False"
+                    x:Name="MenuItemSettings"
                     Header="설정(_S)..."
-                    Click="OpenSettings_Click" />
+                    Click="MenuItemSettings_Click" />
                 <Separator />
                 <MenuItem
-                    x:Name="MenuItemDeleteRecentPgm"
-                    Header="자유 송출 기록 삭제(_D)..." />
+                    x:Name="MenuItemRemote"
+                    Header="원격 제어 사용(_R)"
+                    IsCheckable="True"
+                    Click="MenuItemRemote_Click" />
             </MenuItem>
-            -->
             <MenuItem Header="도움말(_H)" Focusable="False">
                 <MenuItem
                     x:Name="MenuItemHelpEdit"

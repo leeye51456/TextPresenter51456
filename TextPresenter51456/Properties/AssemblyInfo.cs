@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("leeye51456")]
 [assembly: AssemblyProduct("TextPresenter51456 Beta")]
-[assembly: AssemblyCopyright("Copyright © leeye51456 2017-2018")]
+[assembly: AssemblyCopyright("Copyright © 2017-2018 leeye51456")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Windows;
 // 모든 값을 지정하거나 아래와 같이 '*'를 사용하여 빌드 번호 및 수정 번호가 자동으로
 // 지정되도록 할 수 있습니다.
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.2.3.8")]
-[assembly: AssemblyFileVersion("0.2.3.8")]
+[assembly: AssemblyVersion("0.2.4.9")]
+[assembly: AssemblyFileVersion("0.2.4.9")]

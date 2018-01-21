@@ -56,6 +56,8 @@ namespace TextPresenter51456 {
             InitializeComponent();
 
             WindowMainWindow.Title = "TextPresenter51456 (Beta) - " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            //this.DragDrop += new DragEventHandler(this.WindowMainWindow_DragDrop);
+            //this.DragEnter += new DragEventHandler(this.WindowMainWindow_DragEnter);
         }
 
         private void KillFocus() {
@@ -132,7 +134,10 @@ namespace TextPresenter51456 {
             PvwPage.Content = pvwManager.PageNumber;
         }
 
-        private void OpenTxtFile() {
+        private void OpenTxtFile(bool resetPvw) {
+            if (resetPvw) {
+                pvwManager.PageNumber = 1;
+            }
             try {   // 선택한 파일 읽기
                 System.IO.StreamReader sr = new System.IO.StreamReader(filePath + fileName, Encoding.Default);
                 string fullText = sr.ReadToEnd();
@@ -190,6 +195,24 @@ namespace TextPresenter51456 {
             }
         }
 
+        private bool SetFileNameAndPath(string src) {
+            // 1. txt 파일 -> 통과
+            // 2. non-txt 파일 & Yes -> 통과
+            // 3. non-txt 파일 & No -> 취소
+            if (!src.ToLower().EndsWith(".txt")
+                && MessageBox.Show(
+                    "txt 파일이 아닌 경우 제대로 열리지 않거나 의도하지 않은 대로 동작할 수 있습니다.\n그래도 여시겠습니까?",
+                    "경고",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning,
+                    MessageBoxResult.No) == MessageBoxResult.No) {
+                return false;
+            }
+            fileName = fileNameTrimmer.Replace(src, "$2");
+            filePath = fileNameTrimmer.Replace(src, "$1");
+            return true;
+        }
+
         private void SelectTextFile() {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             ofd.Multiselect = false;
@@ -197,10 +220,11 @@ namespace TextPresenter51456 {
             ofd.Filter = "텍스트 파일 (*.txt)|*.txt|모든 파일 (*.*)|*.*";
 
             if (ofd.ShowDialog() == true) {
-                fileName = ofd.SafeFileName;
-                filePath = ofd.FileName.Remove(ofd.FileName.Length - fileName.Length);
-                pvwManager.PageNumber = 1;
-                OpenTxtFile();
+                if (!SetFileNameAndPath(ofd.FileName)) {
+                    // 취소한 경우
+                    return;
+                }
+                OpenTxtFile(true);
                 MenuItemRefresh.IsEnabled = true;
             }
         }
@@ -225,6 +249,25 @@ namespace TextPresenter51456 {
             UpdateFree();
         }
 
+        /////////////////////////////// 파일 드래그
+        private void WindowMainWindow_PreviewDrop(object sender, DragEventArgs e) {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (!SetFileNameAndPath(files[0])) {
+                    return;
+                }
+                OpenTxtFile(true);
+            }
+        }
+
+        private void WindowMainWindow_PreviewDragEnter(object sender, DragEventArgs e) {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                e.Effects = DragDropEffects.Copy;
+            } else {
+                e.Effects = DragDropEffects.None;
+            }
+        }
+
         /////////////////////////////// 파일 열기
         private void OpenCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e) {
             SelectTextFile();
@@ -232,7 +275,7 @@ namespace TextPresenter51456 {
 
         /////////////////////////////// 파일 다시 불러오기
         private void MenuItemRefresh_Click(object sender, RoutedEventArgs e) {
-            OpenTxtFile();
+            OpenTxtFile(false);
         }
 
         //////////////////////////////// 종료
@@ -325,7 +368,7 @@ namespace TextPresenter51456 {
                 return;
             }
             if (MenuItemRefresh.IsEnabled == true && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.R) { // Ctrl+R: 리로드
-                OpenTxtFile();
+                OpenTxtFile(false);
                 return;
             }
 
@@ -545,11 +588,15 @@ namespace TextPresenter51456 {
                 // 다른 파일 열기 또는 현재 파일 다시 불러오기
                 // SEND   open:path<EndOfCommand>
                 // RETURN string pageList
-                if (!param.Equals("")) {
+                if (param.Equals("")) {
+                    // 현재 파일 다시 불러오기
+                    OpenTxtFile(false);
+                } else {
+                    // 다른 파일 열기
                     fileName = fileNameTrimmer.Replace(param, "$2");
                     filePath = fileNameTrimmer.Replace(param, "$1");
+                    OpenTxtFile(true);
                 }
-                OpenTxtFile();
 
                 processRemoteReturn = "open:" + packPageListToString() + "<EndOfCommand>";
 

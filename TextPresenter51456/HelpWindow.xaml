@@ -6,7 +6,6 @@
         xmlns:local="clr-namespace:TextPresenter51456"
         mc:Ignorable="d"
         Title="도움말 - TextPresenter51456"
-        Icon="TextPresenter51456.ico"
         Width="480"
         Height="360"
         ResizeMode="CanMinimize"
@@ -171,7 +170,7 @@
                             <LineBreak />
                             버전 <TextBlock x:Name="TextBlockVersion" />
                             <LineBreak />
-                            © 2017 leeye51456, All rights reserved.
+                            © 2017-2018 leeye51456, All rights reserved.
                             <LineBreak />
                             <LineBreak />
                             <Hyperlink

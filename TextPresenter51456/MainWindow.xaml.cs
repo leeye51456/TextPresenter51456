@@ -52,12 +52,11 @@ namespace TextPresenter51456 {
 
         public MainWindow() {
             SynSocketListener.mw = this;
+            Setting.Load();
 
             InitializeComponent();
 
             WindowMainWindow.Title = "TextPresenter51456 (Beta) - " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            //this.DragDrop += new DragEventHandler(this.WindowMainWindow_DragDrop);
-            //this.DragEnter += new DragEventHandler(this.WindowMainWindow_DragEnter);
         }
 
         private void KillFocus() {

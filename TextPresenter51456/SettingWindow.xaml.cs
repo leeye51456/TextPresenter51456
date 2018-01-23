@@ -19,53 +19,37 @@ namespace TextPresenter51456 {
     public partial class SettingWindow : Window {
         Window mw, pw;
 
-        bool usePvw, useMouse, useKeyboard, updateOnChange;
-        int presenterScreen, textPosition, textAlign;
+        int presenterScreen, textPosition, textAlign, textVerticalAlign;
         double fontSize, lineHeight;
-        string fontFamily;
 
         private void GetSettings() {
-            if (!bool.TryParse(Setting.Get("usePvw"), out usePvw)) {
-                usePvw = true;
+            if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
+                presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
             }
-            if (!bool.TryParse(Setting.Get("useMouse"), out useMouse)) {
-                useMouse = true;
-            }
-            if (!bool.TryParse(Setting.Get("useKeyboard"), out useKeyboard)) {
-                useKeyboard = true;
-            }
-            if (!bool.TryParse(Setting.Get("updateOnChange"), out updateOnChange)) {
-                updateOnChange = true;
-            }
-            if (!int.TryParse(Setting.Get("presenterScreen"), out presenterScreen)) {
-                presenterScreen = 2;
-            }
-            if (!int.TryParse(Setting.Get("textPosition"), out textPosition)) {
+            if (!int.TryParse(Setting.GetAttribute("textPosition"), out textPosition)) {
                 textPosition = 5;
             }
-            if (!int.TryParse(Setting.Get("textAlign"), out textAlign)) {
+            if (!int.TryParse(Setting.GetAttribute("textAlign"), out textAlign)) {
                 textAlign = 2;
             }
-            if (!double.TryParse(Setting.Get("fontSize"), out fontSize)) {
-                fontSize = 2;
+            if (!int.TryParse(Setting.GetAttribute("textVerticalAlign"), out textVerticalAlign)) {
+                textVerticalAlign = 2;
             }
-            if (!double.TryParse(Setting.Get("lineHeight"), out lineHeight)) {
-                lineHeight = 2;
+            if (!double.TryParse(Setting.GetAttribute("fontSize"), out fontSize)) {
+                fontSize = 8.75;
             }
-            if (Setting.Get("fontFamily") != null) {
-                fontFamily = Setting.Get("fontFamily");
-            } else {
-                fontFamily = "Malgun Gothic";
+            if (!double.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight)) {
+                lineHeight = 140;
             }
         }
         private void SettingToControl() {
-            /*
             GetSettings();
-            CheckBoxUsePvw.IsChecked = usePvw;
-            CheckBoxUseMouse.IsChecked = useMouse;
-            CheckBoxUseKeyboard.IsChecked = useKeyboard;
-            CheckBoxUpdateOnChange.IsChecked = updateOnChange;
-            ComboBoxPresenterScreen.Text = presenterScreen.ToString();
+            if (presenterScreen <= ComboBoxPresenterScreen.Items.Count) {
+                ComboBoxPresenterScreen.SelectedIndex = presenterScreen - 1;
+            } else {
+                ComboBoxPresenterScreen.SelectedIndex = System.Windows.Forms.Screen.AllScreens.Length - 1;
+            }
+            /*
             switch (textPosition) {
             case 1:
                 RadioButtonTextPosition1.IsChecked = true;
@@ -96,18 +80,18 @@ namespace TextPresenter51456 {
                 break;
             }
             ComboBoxTextAlign.SelectedIndex = textAlign - 1;
+            */
             TextBoxFontSize.Text = fontSize.ToString();
             TextBoxLineHeight.Text = lineHeight.ToString();
-            */
         }
 
-        public SettingWindow(Window w1, Window presenter) {
-            mw = w1;
+        public SettingWindow(Window mw, Window presenter) {
+            this.mw = mw;
             pw = presenter;
 
-            SettingToControl();
-
             InitializeComponent();
+
+            SettingToControl();
         }
 
         private void TextBoxDouble_KeyDown(object sender, KeyEventArgs e) {
@@ -140,19 +124,12 @@ namespace TextPresenter51456 {
                 return 0;
         }
         private void ButtonApply_Click(object sender, RoutedEventArgs e) {
-            /*
-            Setting.Set("usePvw", CheckBoxUsePvw.IsChecked.ToString());
-            Setting.Set("useMouse", CheckBoxUseMouse.IsChecked.ToString());
-            Setting.Set("useKeyboard", CheckBoxUseKeyboard.IsChecked.ToString());
-            Setting.Set("updateOnChange", CheckBoxUpdateOnChange.IsChecked.ToString());
-            Setting.Set("presenterScreen", ComboBoxPresenterScreen.Text.ToString());
-            Setting.Set("textPosition", GetCheckedTextPosition().ToString());
-            Setting.Set("textAlign", ComboBoxTextAlign.Text.ToString());
-            Setting.Set("fontFamily", fontFamily);
-            Setting.Set("fontSize", TextBoxFontSize.Text.ToString());
-            Setting.Set("lineHeight", TextBoxLineHeight.Text.ToString());
+            Setting.SetAttribute("presenterScreen", (ComboBoxPresenterScreen.SelectedIndex + 1).ToString());
+            Setting.SetAttribute("textPosition", GetCheckedTextPosition().ToString());
+            Setting.SetAttribute("textAlign", ComboBoxTextAlign.Text.ToString());
+            Setting.SetAttribute("fontSize", TextBoxFontSize.Text.ToString());
+            Setting.SetAttribute("lineHeight", TextBoxLineHeight.Text.ToString());
             Setting.Save();
-            */
 
             if (pw != null) {
                 RoutedEventArgs rea = new RoutedEventArgs(LoadedEvent);

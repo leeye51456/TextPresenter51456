@@ -28,6 +28,7 @@ namespace TextPresenter51456 {
         */
 
         public PresenterWindow(Window w1) {
+            int presenterScreen;
             mw = w1;
 
             System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
@@ -35,9 +36,16 @@ namespace TextPresenter51456 {
                 MessageBox.Show("화면 표시 장치가 하나입니다. 이 경우 별도의 설정이 없으면 화면을 모두 덮는 창이 나타나며, Shift+ESC로 닫을 수 있습니다.", "TextPresenter51456");
             }
 
+            if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
+                presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
+            }
+            if (presenterScreen > sc.Length) {
+                presenterScreen = sc.Length;
+            }
+
             // 설정대로 좌표와 크기를 지정해서 열어야 함
-            // 설정 기본값은 2번째 모니터 좌상단, 풀스크린
-            System.Drawing.Rectangle r = sc[sc.Length - 1].Bounds;
+            // 설정 기본값은 마지막 모니터 좌상단, 풀스크린
+            System.Drawing.Rectangle r = sc[presenterScreen - 1].Bounds;
             Left = r.Left;
             Top = r.Top;
             Width = r.Width;
@@ -69,47 +77,85 @@ namespace TextPresenter51456 {
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             */
-            
-            /*
-            if (!int.TryParse(Setting.Get("presenterScreen"), out presenterScreen)) {
-                presenterScreen = 2;
+
+            int presenterScreen, textPosition, textAlign, textVerticalAlign;
+            double fontSize, lineHeight;
+
+            if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
+                presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
             }
-            if (!int.TryParse(Setting.Get("textPosition"), out textPosition)) {
+            if (!int.TryParse(Setting.GetAttribute("textPosition"), out textPosition)) {
                 textPosition = 5;
             }
-            if (!int.TryParse(Setting.Get("textAlign"), out textAlign)) {
+            if (!int.TryParse(Setting.GetAttribute("textAlign"), out textAlign)) {
                 textAlign = 2;
             }
-            if (!double.TryParse(Setting.Get("fontSize"), out fontSize)) {
-                fontSize = 2;
+            if (!int.TryParse(Setting.GetAttribute("textVerticalAlign"), out textVerticalAlign)) {
+                textVerticalAlign = 2;
             }
-            if (!double.TryParse(Setting.Get("lineHeight"), out lineHeight)) {
-                lineHeight = 2;
+            if (!double.TryParse(Setting.GetAttribute("fontSize"), out fontSize)) {
+                fontSize = 8.75;
             }
-            */
+            if (!double.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight)) {
+                lineHeight = 140;
+            }
+            fontSize /= 100;
+            lineHeight /= 100;
+
 
             // FontFamily
             try {
                 LabelPresenterText.FontFamily = new FontFamily("NanumBarunGothic");
             } catch (Exception e) {
+                Console.WriteLine(e.Message);
                 LabelPresenterText.FontFamily = new FontFamily("Malgun Gothic");
             }
 
             // FontSize
-            LabelPresenterText.FontSize = RelativeToAbsolute.MakeAbsolute(0.0875, Height);
+            //LabelPresenterText.FontSize = RelativeToAbsolute.MakeAbsolute(0.0875, Height);
+            LabelPresenterText.FontSize = RelativeToAbsolute.MakeAbsolute(fontSize, Height);
 
             // TextBlock.LineHeight
-            LabelPresenterText.SetValue(TextBlock.LineHeightProperty, RelativeToAbsolute.MakeAbsolute(0.0875 * 1.4, Height));
+            //LabelPresenterText.SetValue(TextBlock.LineHeightProperty, RelativeToAbsolute.MakeAbsolute(0.0875 * 1.4, Height));
+            LabelPresenterText.SetValue(TextBlock.LineHeightProperty, RelativeToAbsolute.MakeAbsolute(fontSize * lineHeight, Height));
 
             // TextBlock.TextAlignment TextBlock.TextAlignment="Center"
-            LabelPresenterText.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Center);
+            switch (textAlign) {
+                case 1: // Left
+                    LabelPresenterText.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Left);
+                    break;
+                case 3: // Right
+                    LabelPresenterText.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Right);
+                    break;
+                default: // 2 또는 invalid value -> Center
+                    LabelPresenterText.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Center);
+                    break;
+            }
 
             // Foreground
             LabelPresenterText.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
 
             // Alignment
-            LabelPresenterText.HorizontalAlignment = HorizontalAlignment.Center;
-            LabelPresenterText.VerticalAlignment = VerticalAlignment.Center;
+            if ((textPosition - 1) / 3 == 0) {
+                // 1, 2, 3 -> Top
+                LabelPresenterText.VerticalAlignment = VerticalAlignment.Top;
+            } else if ((textPosition - 1) / 3 == 2) {
+                // 7, 8, 9 -> Bottom
+                LabelPresenterText.VerticalAlignment = VerticalAlignment.Bottom;
+            } else {
+                // 4, 5, 6, invalid value -> Center
+                LabelPresenterText.VerticalAlignment = VerticalAlignment.Center;
+            }
+            if (textPosition % 3 == 1) {
+                // 1, 4, 7 -> Left
+                LabelPresenterText.HorizontalAlignment = HorizontalAlignment.Left;
+            } else if (textPosition % 3 == 0) {
+                // 3, 6, 9 -> Right
+                LabelPresenterText.HorizontalAlignment = HorizontalAlignment.Right;
+            } else {
+                // 2, 5, 8, invalid value -> Center
+                LabelPresenterText.HorizontalAlignment = HorizontalAlignment.Center;
+            }
         }
         private void Window_LoadedEvent(object sender, RoutedEventArgs e) {
             ApplySettings();

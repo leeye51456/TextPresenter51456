@@ -22,14 +22,15 @@ namespace TextPresenter51456 {
         Window mw;
 
         /*
-        bool usePvw, useMouse, useKeyboard, updateOnChange;
         int presenterScreen, textPosition, textAlign;
         double fontSize, lineHeight;
         */
 
-        public PresenterWindow(Window w1) {
+        public PresenterWindow(Window mw) {
             int presenterScreen;
-            mw = w1;
+            this.mw = mw;
+
+            Setting.Load();
 
             System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
             if (sc.Length < 2) {
@@ -54,7 +55,7 @@ namespace TextPresenter51456 {
             InitializeComponent();
 
             ApplySettings();
-
+            
             mw.Activate();
         }
 
@@ -78,20 +79,23 @@ namespace TextPresenter51456 {
             VerticalAlignment="Center"
             */
 
-            int presenterScreen, textPosition, textAlign, textVerticalAlign;
-            double fontSize, lineHeight;
+            int presenterScreen, textPosition, textAlign;
+            double marginBasic, marginOverflow, fontSize, lineHeight;
 
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
                 presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
+            }
+            if (!double.TryParse(Setting.GetAttribute("marginBasic"), out marginBasic)) {
+                marginBasic = 5;
+            }
+            if (!double.TryParse(Setting.GetAttribute("marginOverflow"), out marginOverflow)) {
+                marginOverflow = 1;
             }
             if (!int.TryParse(Setting.GetAttribute("textPosition"), out textPosition)) {
                 textPosition = 5;
             }
             if (!int.TryParse(Setting.GetAttribute("textAlign"), out textAlign)) {
                 textAlign = 2;
-            }
-            if (!int.TryParse(Setting.GetAttribute("textVerticalAlign"), out textVerticalAlign)) {
-                textVerticalAlign = 2;
             }
             if (!double.TryParse(Setting.GetAttribute("fontSize"), out fontSize)) {
                 fontSize = 8.75;
@@ -112,11 +116,9 @@ namespace TextPresenter51456 {
             }
 
             // FontSize
-            //LabelPresenterText.FontSize = RelativeToAbsolute.MakeAbsolute(0.0875, Height);
             LabelPresenterText.FontSize = RelativeToAbsolute.MakeAbsolute(fontSize, Height);
 
             // TextBlock.LineHeight
-            //LabelPresenterText.SetValue(TextBlock.LineHeightProperty, RelativeToAbsolute.MakeAbsolute(0.0875 * 1.4, Height));
             LabelPresenterText.SetValue(TextBlock.LineHeightProperty, RelativeToAbsolute.MakeAbsolute(fontSize * lineHeight, Height));
 
             // TextBlock.TextAlignment TextBlock.TextAlignment="Center"
@@ -139,22 +141,40 @@ namespace TextPresenter51456 {
             if ((textPosition - 1) / 3 == 0) {
                 // 1, 2, 3 -> Top
                 LabelPresenterText.VerticalAlignment = VerticalAlignment.Top;
+                GridRow1.Height = new GridLength(marginBasic, GridUnitType.Star);
+                GridRow2.Height = new GridLength(100 - marginBasic - marginOverflow, GridUnitType.Star);
+                GridRow3.Height = new GridLength(marginOverflow, GridUnitType.Star);
             } else if ((textPosition - 1) / 3 == 2) {
                 // 7, 8, 9 -> Bottom
                 LabelPresenterText.VerticalAlignment = VerticalAlignment.Bottom;
+                GridRow1.Height = new GridLength(marginOverflow, GridUnitType.Star);
+                GridRow2.Height = new GridLength(100 - marginBasic - marginOverflow, GridUnitType.Star);
+                GridRow3.Height = new GridLength(marginBasic, GridUnitType.Star);
             } else {
                 // 4, 5, 6, invalid value -> Center
                 LabelPresenterText.VerticalAlignment = VerticalAlignment.Center;
+                GridRow1.Height = new GridLength(marginOverflow, GridUnitType.Star);
+                GridRow2.Height = new GridLength(100 - 2 * marginOverflow, GridUnitType.Star);
+                GridRow3.Height = new GridLength(marginOverflow, GridUnitType.Star);
             }
             if (textPosition % 3 == 1) {
                 // 1, 4, 7 -> Left
                 LabelPresenterText.HorizontalAlignment = HorizontalAlignment.Left;
+                GridCol1.Width = new GridLength(marginBasic, GridUnitType.Star);
+                GridCol2.Width = new GridLength(100 - marginBasic - marginOverflow, GridUnitType.Star);
+                GridCol3.Width = new GridLength(marginOverflow, GridUnitType.Star);
             } else if (textPosition % 3 == 0) {
                 // 3, 6, 9 -> Right
                 LabelPresenterText.HorizontalAlignment = HorizontalAlignment.Right;
+                GridCol1.Width = new GridLength(marginOverflow, GridUnitType.Star);
+                GridCol2.Width = new GridLength(100 - marginBasic - marginOverflow, GridUnitType.Star);
+                GridCol3.Width = new GridLength(marginBasic, GridUnitType.Star);
             } else {
                 // 2, 5, 8, invalid value -> Center
                 LabelPresenterText.HorizontalAlignment = HorizontalAlignment.Center;
+                GridCol1.Width = new GridLength(marginOverflow, GridUnitType.Star);
+                GridCol2.Width = new GridLength(100 - 2 * marginOverflow, GridUnitType.Star);
+                GridCol3.Width = new GridLength(marginOverflow, GridUnitType.Star);
             }
         }
         private void Window_LoadedEvent(object sender, RoutedEventArgs e) {

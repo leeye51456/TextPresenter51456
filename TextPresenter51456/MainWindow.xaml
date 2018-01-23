@@ -153,6 +153,10 @@
                     x:Name="MenuItemSettings"
                     Header="설정(_S)..."
                     Click="MenuItemSettings_Click" />
+                <MenuItem
+                    x:Name="MenuItemReloadSettings"
+                    Header="설정 다시 불러오기(_L)..."
+                    Click="MenuItemReloadSettings_Click" />
                 <Separator />
                 <MenuItem
                     x:Name="MenuItemRemote"

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace TextPresenter51456 {
     class Setting {
         private static Dictionary<string, string> settings = new Dictionary<string, string>();
+        public static UTF8Encoding utf8 = new UTF8Encoding(false);
 
         public static void SetAttribute(string key, string value) {
             if (settings.ContainsKey(key)) {
@@ -30,9 +31,10 @@ namespace TextPresenter51456 {
         public static void InitializeToDefault() {
             settings.Clear();
             SetAttribute("presenterScreen", System.Windows.Forms.Screen.AllScreens.Length.ToString()); // 마지막 화면
+            SetAttribute("marginBasic", "5"); // 기본 여백
+            SetAttribute("marginOverflow", "1"); // 넘치는 부분 여백
             SetAttribute("textPosition", "5");
             SetAttribute("textAlign", "2");
-            SetAttribute("textVerticalAlign", "2");
             SetAttribute("fontSize", "8.75");
             SetAttribute("lineHeight", "140");
         }
@@ -55,12 +57,12 @@ namespace TextPresenter51456 {
             InitializeToDefault();
 
             try {
-                StreamReader sr = new StreamReader(fileName, Encoding.UTF8);
+                StreamReader sr = new StreamReader(fileName, utf8);
                 fullText = sr.ReadToEnd();
                 sr.Close();
             } catch (Exception exr) {
                 Console.WriteLine(exr.Message);
-                return Save();
+                return Save(fileName);
             }
 
             fullText = newLineUnifier.Replace(fullText, "\n"); // 줄바꿈 문자 통일
@@ -70,7 +72,7 @@ namespace TextPresenter51456 {
                 InterpretString(item);
             }
 
-            return true;
+            return Save(fileName);
         }
 
         public static bool Save(string fileName = "TextPresenter51456.settings") {
@@ -79,7 +81,7 @@ namespace TextPresenter51456 {
             }
 
             try {
-                StreamWriter sw = new StreamWriter(fileName, false, Encoding.UTF8);
+                StreamWriter sw = new StreamWriter(fileName, false, utf8);
                 try {
                     foreach (KeyValuePair<string, string> item in settings) {
                         sw.WriteLine("{0}:{1}", item.Key, item.Value);

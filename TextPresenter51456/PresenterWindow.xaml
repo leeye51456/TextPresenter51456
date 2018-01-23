@@ -16,14 +16,14 @@
     
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="98*" />
-            <RowDefinition Height="1*" />
+            <RowDefinition x:Name="GridRow1" Height="1*" />
+            <RowDefinition x:Name="GridRow2" Height="98*" />
+            <RowDefinition x:Name="GridRow3" Height="1*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="98*" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition x:Name="GridCol1" Width="1*" />
+            <ColumnDefinition x:Name="GridCol2" Width="98*" />
+            <ColumnDefinition x:Name="GridCol3" Width="1*" />
         </Grid.ColumnDefinitions>
 
         <!-- 텍스트 정렬 시 Margin을 조작한다 -->

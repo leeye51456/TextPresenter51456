@@ -91,7 +91,7 @@ namespace TextPresenter51456 {
                     Button pgmBtn = WrapPanelPageList.Children[pgmManager.PageNumber - 1] as Button;
                     pgmBtn.BorderBrush = PGM_BORDER_COLOR;
                 }
-            } catch (Exception e) {
+            } catch (Exception ex) {
                 // 페이지리스트에 버튼 컨트롤이 아닌 게 있을 때: 초기 상태에서
             }
         }
@@ -469,6 +469,14 @@ namespace TextPresenter51456 {
         private void MenuItemSettings_Click(object sender, RoutedEventArgs e) {
             SettingWindow sw = new SettingWindow(this, pw);
         }
+        private void MenuItemReloadSettings_Click(object sender, RoutedEventArgs e) {
+            Setting.Load();
+            if (pw != null) {
+                RoutedEventArgs rea = new RoutedEventArgs(LoadedEvent);
+                rea.Source = pw;
+                pw.RaiseEvent(rea);
+            }
+        }
 
         private void HelpWindow_Unloaded(object sender, RoutedEventArgs e) {
             hw = null;
@@ -648,5 +656,6 @@ namespace TextPresenter51456 {
                 SynSocketListener.TerminateListening();
             }
         }
+
     }
 }

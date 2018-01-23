@@ -19,12 +19,18 @@ namespace TextPresenter51456 {
     public partial class SettingWindow : Window {
         Window mw, pw;
 
-        int presenterScreen, textPosition, textAlign, textVerticalAlign;
-        double fontSize, lineHeight;
+        int presenterScreen, textPosition, textAlign;
+        decimal marginBasic, marginOverflow, fontSize, lineHeight;
 
         private void GetSettings() {
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
                 presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
+            }
+            if (!decimal.TryParse(Setting.GetAttribute("marginBasic"), out marginBasic)) {
+                marginBasic = 5;
+            }
+            if (!decimal.TryParse(Setting.GetAttribute("marginOverflow"), out marginOverflow)) {
+                marginOverflow = 1;
             }
             if (!int.TryParse(Setting.GetAttribute("textPosition"), out textPosition)) {
                 textPosition = 5;
@@ -32,13 +38,10 @@ namespace TextPresenter51456 {
             if (!int.TryParse(Setting.GetAttribute("textAlign"), out textAlign)) {
                 textAlign = 2;
             }
-            if (!int.TryParse(Setting.GetAttribute("textVerticalAlign"), out textVerticalAlign)) {
-                textVerticalAlign = 2;
+            if (!decimal.TryParse(Setting.GetAttribute("fontSize"), out fontSize)) {
+                fontSize = 8.75m;
             }
-            if (!double.TryParse(Setting.GetAttribute("fontSize"), out fontSize)) {
-                fontSize = 8.75;
-            }
-            if (!double.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight)) {
+            if (!decimal.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight)) {
                 lineHeight = 140;
             }
         }
@@ -125,6 +128,8 @@ namespace TextPresenter51456 {
         }
         private void ButtonApply_Click(object sender, RoutedEventArgs e) {
             Setting.SetAttribute("presenterScreen", (ComboBoxPresenterScreen.SelectedIndex + 1).ToString());
+            Setting.SetAttribute("marginBasic", "5"); ////////////////
+            Setting.SetAttribute("marginOverflow", "1"); ///////////////
             Setting.SetAttribute("textPosition", GetCheckedTextPosition().ToString());
             Setting.SetAttribute("textAlign", ComboBoxTextAlign.Text.ToString());
             Setting.SetAttribute("fontSize", TextBoxFontSize.Text.ToString());

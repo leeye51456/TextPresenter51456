@@ -255,6 +255,28 @@
                                     KeyDown="TextBoxDouble_KeyDown" />
                                 <Label Content="%" />
                             </WrapPanel>
+                            <WrapPanel Margin="0,0,0,5">
+                                <Label Content="기본 여백:" />
+                                <TextBox
+                                    x:Name="TextBoxMarginBasic"
+                                    Text="5"
+                                    Width="50"
+                                    HorizontalContentAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    KeyDown="TextBoxDouble_KeyDown" />
+                                <Label Content="%" />
+                            </WrapPanel>
+                            <WrapPanel Margin="0,0,0,5">
+                                <Label Content="넘치는 부분 여백:" />
+                                <TextBox
+                                    x:Name="TextBoxMarginOverflow"
+                                    Text="1"
+                                    Width="50"
+                                    HorizontalContentAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    KeyDown="TextBoxDouble_KeyDown" />
+                                <Label Content="%" />
+                            </WrapPanel>
                         </StackPanel>
 
                     </StackPanel>

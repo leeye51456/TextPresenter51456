@@ -200,6 +200,7 @@ namespace TextPresenter51456 {
             // 3. non-txt 파일 & No -> 취소
             if (!src.ToLower().EndsWith(".txt")
                 && MessageBox.Show(
+                    WindowMainWindow,
                     "txt 파일이 아닌 경우 제대로 열리지 않거나 의도하지 않은 대로 동작할 수 있습니다.\n그래도 여시겠습니까?",
                     "경고",
                     MessageBoxButton.YesNo,

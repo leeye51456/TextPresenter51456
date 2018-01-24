@@ -61,8 +61,10 @@ namespace TextPresenter51456 {
 
         private void KillFocus() {
             GridBody.Focus();
-            GridBody.Focusable = false;
-            GridBody.Focusable = true;
+        }
+
+        private void GridBody_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
+            KillFocus();
         }
 
         private void WindowMainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -511,7 +513,7 @@ namespace TextPresenter51456 {
         }
 
 
-        private string packPageListToString() {
+        private string PackPageListToString() {
             string result = "";
             /*
              *  int colorList[i]
@@ -590,7 +592,7 @@ namespace TextPresenter51456 {
                 // SEND   update:<EndOfCommand>
                 // RETURN string pageList
 
-                processRemoteReturn = "update:" + packPageListToString() + "<EndOfCommand>";
+                processRemoteReturn = "update:" + PackPageListToString() + "<EndOfCommand>";
 
             } else if (cmd.Equals("open")) {
                 // 다른 파일 열기 또는 현재 파일 다시 불러오기
@@ -606,7 +608,7 @@ namespace TextPresenter51456 {
                     OpenTxtFile(true);
                 }
 
-                processRemoteReturn = "open:" + packPageListToString() + "<EndOfCommand>";
+                processRemoteReturn = "open:" + PackPageListToString() + "<EndOfCommand>";
 
             } else if (cmd.Equals("ls")) {
                 // 파일 목록 요청
@@ -657,6 +659,5 @@ namespace TextPresenter51456 {
                 SynSocketListener.TerminateListening();
             }
         }
-
     }
 }

@@ -185,7 +185,8 @@
         <Grid
             x:Name="GridBody"
             Focusable="True"
-            FocusVisualStyle="{x:Null}">
+            FocusVisualStyle="{x:Null}"
+            PreviewMouseDown="GridBody_PreviewMouseDown">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="10000*" MaxWidth="1440" />

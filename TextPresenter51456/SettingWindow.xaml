@@ -71,7 +71,9 @@
         <TabControl>
             
             <TabItem Header="기본">
-                <ScrollViewer Padding="10">
+                <ScrollViewer
+                    Padding="10"
+                    FocusVisualStyle="{x:Null}">
                     <StackPanel>
                         <Label Content="기본 조작 방식" FontWeight="Bold" />
                         <StackPanel Margin="10,0,0,10">
@@ -102,7 +104,9 @@
             </TabItem>
             
             <TabItem Header="송출 창">
-                <ScrollViewer Padding="10">
+                <ScrollViewer
+                    Padding="10"
+                    FocusVisualStyle="{x:Null}">
                     <StackPanel>
                         
                         <Label Content="출력 대상 화면" FontWeight="Bold" />

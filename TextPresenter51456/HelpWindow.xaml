@@ -39,7 +39,8 @@
         <TabControl x:Name="TabControlBody">
 
             <TabItem Header="텍스트 파일 편집">
-                <ScrollViewer>
+                <ScrollViewer
+                    FocusVisualStyle="{x:Null}">
                     <StackPanel Margin="10">
                         <TextBlock
                             LineHeight="21"
@@ -105,7 +106,8 @@
             </TabItem>
 
             <TabItem Header="송출">
-                <ScrollViewer>
+                <ScrollViewer
+                    FocusVisualStyle="{x:Null}">
                     <StackPanel Margin="10">
                         <TextBlock
                             LineHeight="21"
@@ -160,7 +162,8 @@
             </TabItem>
 
             <TabItem Header="정보">
-                <ScrollViewer>
+                <ScrollViewer
+                    FocusVisualStyle="{x:Null}">
                     <StackPanel Margin="10">
                         <TextBlock
                             LineHeight="21"

@@ -68,7 +68,7 @@ namespace TextPresenter51456 {
             mw.RaiseEvent(e);
         }
 
-        private void ApplySettings() {
+        public void ApplySettings() {
             /* 여기서 다룰 항목
             FontFamily="NanumBarunGothicOTF"
             FontSize="94.5px"
@@ -177,8 +177,6 @@ namespace TextPresenter51456 {
                 GridCol3.Width = new GridLength(marginOverflow, GridUnitType.Star);
             }
         }
-        private void Window_LoadedEvent(object sender, RoutedEventArgs e) {
-            ApplySettings();
-        }
+
     }
 }

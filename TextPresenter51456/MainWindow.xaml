@@ -149,7 +149,6 @@
             </MenuItem>
             <MenuItem Header="설정(_S)" Focusable="False">
                 <MenuItem
-                    IsEnabled="False"
                     x:Name="MenuItemSettings"
                     Header="설정(_S)..."
                     Click="MenuItemSettings_Click" />

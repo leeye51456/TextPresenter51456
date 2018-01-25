@@ -20,7 +20,13 @@ namespace TextPresenter51456 {
     /// </summary>
     public partial class HelpWindow : Window {
 
-        public HelpWindow(int tabNum) {
+        MainWindow mw;
+        PresenterWindow pw;
+
+        public HelpWindow(int tabNum, MainWindow mw, PresenterWindow pw) {
+            this.mw = mw;
+            this.pw = pw;
+
             InitializeComponent();
 
             TabControlBody.SelectedIndex = tabNum;
@@ -45,6 +51,13 @@ namespace TextPresenter51456 {
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
+        }
+
+        private void Window_Unloaded(object sender, RoutedEventArgs e) {
+            mw.IsEnabled = true;
+            if (pw != null) {
+                pw.IsEnabled = true;
+            }
         }
     }
 }

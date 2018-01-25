@@ -9,7 +9,8 @@
         Width="640"
         Height="480"
         ResizeMode="CanMinimize"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Unloaded="Window_Unloaded">
 
     
     <Window.Resources>
@@ -49,246 +50,237 @@
 
 
     <DockPanel>
-        
+
         <WrapPanel
             DockPanel.Dock="Bottom"
             HorizontalAlignment="Right"
             Margin="10">
             <Button
-                x:Name="ButtonApply"
-                Content="적용 후 닫기"
+                x:Name="ButtonOk"
+                Content="확인"
                 Width="100"
                 Margin="10,0,0,0"
-                Click="ButtonApply_Click" />
+                Click="ButtonOk_Click" />
             <Button
                 x:Name="ButtonCancel"
                 Content="취소"
                 Width="100"
                 Margin="10,0,0,0"
                 Click="ButtonCancel_Click" />
+            <Button
+                x:Name="ButtonApply"
+                Content="적용(_A)"
+                Width="100"
+                Margin="10,0,0,0"
+                Click="ButtonApply_Click" />
         </WrapPanel>
-        
-        <TabControl>
-            
-            <TabItem Header="기본">
-                <ScrollViewer
-                    Padding="10"
-                    FocusVisualStyle="{x:Null}">
-                    <StackPanel>
-                        <Label Content="기본 조작 방식" FontWeight="Bold" />
-                        <StackPanel Margin="10,0,0,10">
+
+        <ScrollViewer
+            Padding="10"
+            FocusVisualStyle="{x:Null}">
+            <StackPanel>
+                <Label
+                    Content="파일 처리 방식(파일을 다시 불러올 때부터 적용)"
+                    FontWeight="Bold" />
+                <StackPanel Margin="10,0,0,10">
+                    <WrapPanel Margin="0,0,0,5">
+                        <Label Content="파일 인코딩:" />
+                        <ComboBox
+                            IsEnabled="False"
+                            x:Name="ComboBoxTextEncoding"
+                            Width="100"
+                            SelectedIndex="0"
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center">
+                            <ComboBoxItem Content="EUC-KR" />
+                            <ComboBoxItem Content="UTF-8" />
+                        </ComboBox>
+                    </WrapPanel>
+                </StackPanel>
+
+                <Label
+                    Content="출력 대상 화면(송출 창을 다시 켤 때부터 적용)"
+                    FontWeight="Bold" />
+                    <Canvas
+                        x:Name="CanvasScreens"
+                        Height="90">
+                        <!-- 내용 예시 시작 -->
+                        <Border
+                            Canvas.Left="5"
+                            Canvas.Top="5"
+                            Width="142.22"
+                            Height="80"
+                            BorderBrush="Black"
+                            BorderThickness="1">
+                            <TextBlock
+                                Text="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center" />
+                        </Border>
+                        <Border
+                            Canvas.Left="147.22"
+                            Canvas.Top="5"
+                            Width="75.85"
+                            Height="56.89"
+                            BorderBrush="Black"
+                            BorderThickness="1">
+                            <TextBlock
+                                Text="2"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center" />
+                        </Border>
+                        <!-- 내용 예시 끝 -->
+                    </Canvas>
+                    <StackPanel Margin="10,0,0,10">
+                        <WrapPanel Margin="0,0,0,5">
+                            <Label Content="출력 대상:" />
+                            <ComboBox
+                                x:Name="ComboBoxPresenterScreen"
+                                Width="160"
+                                Margin="5,0,0,0"
+                                VerticalAlignment="Center">
+                                <!-- 내용 예시 시작 -->
+                                <ComboBoxItem Content="(1) 1920x1080 (0,0)" />
+                                <ComboBoxItem Content="(2) 1024x768 (1920,0)" />
+                                <!-- 내용 예시 끝 -->
+                            </ComboBox>
+                        </WrapPanel>
+                        <WrapPanel Margin="0,0,0,5">
                             <CheckBox
-                                x:Name="CheckBoxUsePvw"
-                                Content="PVW 사용"
-                                Margin="5" />
-                        </StackPanel>
-                        <Label Content="파일 처리 방식" FontWeight="Bold" />
-                        <StackPanel Margin="10,0,0,10">
-                            <WrapPanel Margin="0,0,0,5">
-                                <Label Content="파일 인코딩:" />
-                                <ComboBox
-                                    x:Name="ComboBoxTextEncoding"
-                                    Width="100"
-                                    SelectedIndex="0"
-                                    Margin="5,0,0,0"
-                                    VerticalAlignment="Center"
-                                    IsEditable="True">
-                                    <ComboBoxItem Content="EUC-KR" />
-                                    <ComboBoxItem Content="UTF-8" />
-                                </ComboBox>
-                            </WrapPanel>
-                        </StackPanel>
-                        <Label Content="원격 제어" FontWeight="Bold" />
+                                IsEnabled="False"
+                                x:Name="CheckBox"
+                                Content="해상도 시뮬레이션:"
+                                Margin="5,5,5,5" />
+                            <TextBox
+                                IsEnabled="False"
+                                x:Name="TextBoxScreenWidth"
+                                Text="1024"
+                                Width="50"
+                                HorizontalContentAlignment="Right"
+                                VerticalAlignment="Center" />
+                            <Label Content="×" />
+                            <TextBox
+                                IsEnabled="False"
+                                x:Name="TextBoxScreenHeight"
+                                Text="768"
+                                Width="50"
+                                HorizontalContentAlignment="Right"
+                                VerticalAlignment="Center" />
+                            <Label Content="(출력 화면보다 크면 잘립니다.)" />
+                        </WrapPanel>
                     </StackPanel>
-                </ScrollViewer>
-            </TabItem>
-            
-            <TabItem Header="송출 창">
-                <ScrollViewer
-                    Padding="10"
-                    FocusVisualStyle="{x:Null}">
-                    <StackPanel>
-                        
-                        <Label Content="출력 대상 화면" FontWeight="Bold" />
-                        <Canvas
-                            x:Name="CanvasScreens"
-                            Height="90">
-                            <!-- 내용 예시 시작 -->
+
+                    <Label Content="텍스트" FontWeight="Bold" />
+                    <StackPanel Margin="10,0,0,10">
+                        <WrapPanel Margin="0,0,0,5">
+                            <Label Content="위치:" />
                             <Border
-                                Canvas.Left="5"
-                                Canvas.Top="5"
-                                Width="142.22"
-                                Height="80"
+                                Margin="5,0,0,0"
                                 BorderBrush="Black"
-                                BorderThickness="1">
-                                <TextBlock
-                                    Text="1"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center" />
+                                BorderThickness="1"
+                                Width="55"
+                                Height="55"
+                                HorizontalAlignment="Left">
+                                <Grid
+                                    Width="45"
+                                    Height="45">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <RadioButton x:Name="RadioButtonTextPosition1" Grid.Row="0" Grid.Column="0" GroupName="TextPosition" Content="1" />
+                                    <RadioButton x:Name="RadioButtonTextPosition2" Grid.Row="0" Grid.Column="1" GroupName="TextPosition" Content="2" />
+                                    <RadioButton x:Name="RadioButtonTextPosition3" Grid.Row="0" Grid.Column="2" GroupName="TextPosition" Content="3" />
+                                    <RadioButton x:Name="RadioButtonTextPosition4" Grid.Row="1" Grid.Column="0" GroupName="TextPosition" Content="4" />
+                                    <RadioButton x:Name="RadioButtonTextPosition5" Grid.Row="1" Grid.Column="1" GroupName="TextPosition" Content="5" IsChecked="True" />
+                                    <RadioButton x:Name="RadioButtonTextPosition6" Grid.Row="1" Grid.Column="2" GroupName="TextPosition" Content="6" />
+                                    <RadioButton x:Name="RadioButtonTextPosition7" Grid.Row="2" Grid.Column="0" GroupName="TextPosition" Content="7" />
+                                    <RadioButton x:Name="RadioButtonTextPosition8" Grid.Row="2" Grid.Column="1" GroupName="TextPosition" Content="8" />
+                                    <RadioButton x:Name="RadioButtonTextPosition9" Grid.Row="2" Grid.Column="2" GroupName="TextPosition" Content="9" />
+                                </Grid>
                             </Border>
-                            <Border
-                                Canvas.Left="147.22"
-                                Canvas.Top="5"
-                                Width="75.85"
-                                Height="56.89"
-                                BorderBrush="Black"
-                                BorderThickness="1">
-                                <TextBlock
-                                    Text="2"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center" />
-                            </Border>
-                            <!-- 내용 예시 끝 -->
-                        </Canvas>
-                        <StackPanel Margin="10,0,0,10">
-                            <WrapPanel Margin="0,0,0,5">
-                                <Label Content="출력 대상:" />
-                                <ComboBox
-                                    x:Name="ComboBoxPresenterScreen"
-                                    Width="160"
-                                    SelectedIndex="1"
-                                    Margin="5,0,0,0"
-                                    VerticalAlignment="Center">
-                                    <ComboBoxItem Content="(1) 1920x1080 (0,0)" />
-                                    <ComboBoxItem Content="(2) 1024x768 (1920,0)" />
-                                </ComboBox>
-                            </WrapPanel>
-                            <WrapPanel Margin="0,0,0,5">
-                                <CheckBox
-                                    x:Name="CheckBox"
-                                    Content="해상도 시뮬레이션:"
-                                    Margin="5,5,5,5" />
-                                <TextBox
-                                    x:Name="TextBoxScreenWidth"
-                                    Text="1024"
-                                    Width="50"
-                                    HorizontalContentAlignment="Right"
-                                    VerticalAlignment="Center" />
-                                <Label Content="x" />
-                                <TextBox
-                                    x:Name="TextBoxScreenHeight"
-                                    Text="768"
-                                    Width="50"
-                                    HorizontalContentAlignment="Right"
-                                    VerticalAlignment="Center" />
-                                <Label Content="(출력 화면보다 크면 잘립니다.)" />
-                            </WrapPanel>
-                        </StackPanel>
-
-                        <Label Content="텍스트" FontWeight="Bold" />
-                        <StackPanel Margin="10,0,0,10">
-                            <WrapPanel Margin="0,0,0,5">
-                                <Label Content="위치:" />
-                                <Border
-                                    Margin="5,0,0,0"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    Width="55"
-                                    Height="55"
-                                    HorizontalAlignment="Left">
-                                    <Grid
-                                        Width="45"
-                                        Height="45">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-
-                                        <RadioButton x:Name="RadioButtonTextPosition1" Grid.Row="0" Grid.Column="0" GroupName="TextPosition" Content="1" />
-                                        <RadioButton x:Name="RadioButtonTextPosition2" Grid.Row="0" Grid.Column="1" GroupName="TextPosition" Content="2" />
-                                        <RadioButton x:Name="RadioButtonTextPosition3" Grid.Row="0" Grid.Column="2" GroupName="TextPosition" Content="3" />
-                                        <RadioButton x:Name="RadioButtonTextPosition4" Grid.Row="1" Grid.Column="0" GroupName="TextPosition" Content="4" />
-                                        <RadioButton x:Name="RadioButtonTextPosition5" Grid.Row="1" Grid.Column="1" GroupName="TextPosition" Content="5" IsChecked="True" />
-                                        <RadioButton x:Name="RadioButtonTextPosition6" Grid.Row="1" Grid.Column="2" GroupName="TextPosition" Content="6" />
-                                        <RadioButton x:Name="RadioButtonTextPosition7" Grid.Row="2" Grid.Column="0" GroupName="TextPosition" Content="7" />
-                                        <RadioButton x:Name="RadioButtonTextPosition8" Grid.Row="2" Grid.Column="1" GroupName="TextPosition" Content="8" />
-                                        <RadioButton x:Name="RadioButtonTextPosition9" Grid.Row="2" Grid.Column="2" GroupName="TextPosition" Content="9" />
-                                    </Grid>
-                                </Border>
-                            </WrapPanel>
-                            <WrapPanel Margin="0,0,0,5">
-                                <Label Content="정렬:" />
-                                <ComboBox
-                                    x:Name="ComboBoxTextAlign"
-                                    Width="100"
-                                    SelectedIndex="1"
-                                    Margin="5,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center">
-                                    <ComboBoxItem Content="왼쪽" />
-                                    <ComboBoxItem Content="가운데" />
-                                    <ComboBoxItem Content="오른쪽" />
-                                </ComboBox>
-                            </WrapPanel>
-                            <WrapPanel Margin="0,0,0,5">
-                                <Label Content="글꼴:" />
-                                <Button
-                                    x:Name="ButtonChangeFont"
-                                    Content="변경"
-                                    Width="100"
-                                    Margin="5,0,0,0"
-                                    VerticalAlignment="Center" />
-                            </WrapPanel>
-                            <WrapPanel Margin="0,0,0,5">
-                                <Label Content="크기:" />
-                                <Label Content="화면 높이의 " />
-                                <TextBox
-                                    x:Name="TextBoxFontSize"
-                                    Text="8.75"
-                                    Width="50"
-                                    HorizontalContentAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    KeyDown="TextBoxDouble_KeyDown" />
-                                <Label Content="%" />
-                            </WrapPanel>
-                            <WrapPanel Margin="0,0,0,5">
-                                <Label Content="줄 간격:" />
-                                <TextBox
-                                    x:Name="TextBoxLineHeight"
-                                    Text="140"
-                                    Width="50"
-                                    Margin="5,0,0,0"
-                                    HorizontalContentAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    KeyDown="TextBoxDouble_KeyDown" />
-                                <Label Content="%" />
-                            </WrapPanel>
-                            <WrapPanel Margin="0,0,0,5">
-                                <Label Content="기본 여백:" />
-                                <TextBox
-                                    x:Name="TextBoxMarginBasic"
-                                    Text="5"
-                                    Width="50"
-                                    HorizontalContentAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    KeyDown="TextBoxDouble_KeyDown" />
-                                <Label Content="%" />
-                            </WrapPanel>
-                            <WrapPanel Margin="0,0,0,5">
-                                <Label Content="넘치는 부분 여백:" />
-                                <TextBox
-                                    x:Name="TextBoxMarginOverflow"
-                                    Text="1"
-                                    Width="50"
-                                    HorizontalContentAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    KeyDown="TextBoxDouble_KeyDown" />
-                                <Label Content="%" />
-                            </WrapPanel>
-                        </StackPanel>
-
+                        </WrapPanel>
+                        <WrapPanel Margin="0,0,0,5">
+                            <Label Content="정렬:" />
+                            <ComboBox
+                                x:Name="ComboBoxTextAlign"
+                                Width="100"
+                                SelectedIndex="1"
+                                Margin="5,0,0,0"
+                                VerticalAlignment="Center">
+                                <ComboBoxItem Content="왼쪽" />
+                                <ComboBoxItem Content="가운데" />
+                                <ComboBoxItem Content="오른쪽" />
+                            </ComboBox>
+                        </WrapPanel>
+                        <WrapPanel Margin="0,0,0,5">
+                            <Label Content="글꼴:" />
+                            <Button
+                                x:Name="ButtonChangeFont"
+                                IsEnabled="False"
+                                Content="변경"
+                                Width="100"
+                                Margin="5,0,0,0"
+                                VerticalAlignment="Center" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,0,0,5">
+                            <Label Content="크기:" />
+                            <Label Content="화면 높이의 " />
+                            <TextBox
+                                x:Name="TextBoxFontSize"
+                                Text="8.75"
+                                Width="50"
+                                HorizontalContentAlignment="Right"
+                                VerticalAlignment="Center"
+                                KeyDown="TextBoxDouble_KeyDown" />
+                            <Label Content="%" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,0,0,5">
+                            <Label Content="줄 간격:" />
+                            <TextBox
+                                x:Name="TextBoxLineHeight"
+                                Text="140"
+                                Width="50"
+                                Margin="5,0,0,0"
+                                HorizontalContentAlignment="Right"
+                                VerticalAlignment="Center"
+                                KeyDown="TextBoxDouble_KeyDown" />
+                            <Label Content="%" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,0,0,5">
+                            <Label Content="기본 여백:" />
+                            <TextBox
+                                x:Name="TextBoxMarginBasic"
+                                Text="5"
+                                Width="50"
+                                HorizontalContentAlignment="Right"
+                                VerticalAlignment="Center"
+                                KeyDown="TextBoxDouble_KeyDown" />
+                            <Label Content="%" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,0,0,5">
+                            <Label Content="넘치는 부분 여백:" />
+                            <TextBox
+                                x:Name="TextBoxMarginOverflow"
+                                Text="1"
+                                Width="50"
+                                HorizontalContentAlignment="Right"
+                                VerticalAlignment="Center"
+                                KeyDown="TextBoxDouble_KeyDown" />
+                            <Label Content="%" />
+                        </WrapPanel>
                     </StackPanel>
-                </ScrollViewer>
-            </TabItem>
-            
-        </TabControl>
-        
+
+                </StackPanel>
+            </ScrollViewer>
+
     </DockPanel>
 
 </Window>

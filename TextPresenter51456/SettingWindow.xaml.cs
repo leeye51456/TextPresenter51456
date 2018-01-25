@@ -17,7 +17,8 @@ namespace TextPresenter51456 {
     /// SettingWindow.xaml에 대한 상호 작용 논리
     /// </summary>
     public partial class SettingWindow : Window {
-        Window mw, pw;
+        MainWindow mw;
+        PresenterWindow pw;
 
         int presenterScreen, textPosition, textAlign;
         decimal marginBasic, marginOverflow, fontSize, lineHeight;
@@ -26,33 +27,51 @@ namespace TextPresenter51456 {
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
                 presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
             }
-            if (!decimal.TryParse(Setting.GetAttribute("marginBasic"), out marginBasic)) {
+            if (!decimal.TryParse(Setting.GetAttribute("marginBasic"), out marginBasic) || marginBasic < 0) {
                 marginBasic = 5;
             }
-            if (!decimal.TryParse(Setting.GetAttribute("marginOverflow"), out marginOverflow)) {
+            if (!decimal.TryParse(Setting.GetAttribute("marginOverflow"), out marginOverflow) || marginOverflow < 0) {
                 marginOverflow = 1;
             }
-            if (!int.TryParse(Setting.GetAttribute("textPosition"), out textPosition)) {
+            if (!int.TryParse(Setting.GetAttribute("textPosition"), out textPosition) || textPosition < 1 || textPosition > 9) {
                 textPosition = 5;
             }
-            if (!int.TryParse(Setting.GetAttribute("textAlign"), out textAlign)) {
+            if (!int.TryParse(Setting.GetAttribute("textAlign"), out textAlign) || textAlign < 1 || textAlign > 3) {
                 textAlign = 2;
             }
-            if (!decimal.TryParse(Setting.GetAttribute("fontSize"), out fontSize)) {
+            if (!decimal.TryParse(Setting.GetAttribute("fontSize"), out fontSize) || fontSize <= 0) {
                 fontSize = 8.75m;
             }
-            if (!decimal.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight)) {
+            if (!decimal.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight) || lineHeight < 0) {
                 lineHeight = 140;
             }
         }
+
         private void SettingToControl() {
+            System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
+            int numOfScreen = sc.Length;
+
             GetSettings();
-            if (presenterScreen <= ComboBoxPresenterScreen.Items.Count) {
+
+            // 임시조치 시작: 화면 배치 미리보기 미구현
+            CanvasScreens.Visibility = Visibility.Hidden;
+            CanvasScreens.Height = 0;
+            // 임시조치 끝
+
+            ComboBoxPresenterScreen.Items.Clear();
+            for (int i = 0; i < numOfScreen; i++) {
+                System.Drawing.Rectangle r = sc[i].Bounds;
+                ComboBoxItem cbi = new ComboBoxItem();
+                // (2) 1024x768 (1920,0)
+                cbi.Content = "(" + (i + 1).ToString() + ") " + r.Width.ToString() + "×" + r.Height.ToString() + " (" + r.X.ToString() + "," + r.Y.ToString() + ")";
+                ComboBoxPresenterScreen.Items.Add(cbi);
+            }
+            if (presenterScreen <= numOfScreen) {
                 ComboBoxPresenterScreen.SelectedIndex = presenterScreen - 1;
             } else {
-                ComboBoxPresenterScreen.SelectedIndex = System.Windows.Forms.Screen.AllScreens.Length - 1;
+                ComboBoxPresenterScreen.SelectedIndex = numOfScreen - 1;
             }
-            /*
+
             switch (textPosition) {
             case 1:
                 RadioButtonTextPosition1.IsChecked = true;
@@ -82,15 +101,17 @@ namespace TextPresenter51456 {
                 RadioButtonTextPosition9.IsChecked = true;
                 break;
             }
+
             ComboBoxTextAlign.SelectedIndex = textAlign - 1;
-            */
             TextBoxFontSize.Text = fontSize.ToString();
             TextBoxLineHeight.Text = lineHeight.ToString();
+            TextBoxMarginBasic.Text = marginBasic.ToString();
+            TextBoxMarginOverflow.Text = marginOverflow.ToString();
         }
 
-        public SettingWindow(Window mw, Window presenter) {
+        public SettingWindow(MainWindow mw, PresenterWindow pw) {
             this.mw = mw;
-            pw = presenter;
+            this.pw = pw;
 
             InitializeComponent();
 
@@ -127,26 +148,62 @@ namespace TextPresenter51456 {
                 return 0;
         }
         private void ButtonApply_Click(object sender, RoutedEventArgs e) {
+            decimal tempd;
+            if (!decimal.TryParse(TextBoxFontSize.Text, out tempd) || tempd <= 0) {
+                MessageBox.Show("'텍스트 크기'의 형식이 잘못되었습니다.\n양수만 입력 가능합니다.",
+                    "TextPresenter51456",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+            if (!decimal.TryParse(TextBoxLineHeight.Text, out tempd) || tempd <= 0) {
+                MessageBox.Show("'줄 간격'의 형식이 잘못되었습니다.\n양수만 입력 가능합니다.",
+                    "TextPresenter51456",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+            if (!decimal.TryParse(TextBoxMarginBasic.Text, out tempd) || tempd < 0) {
+                MessageBox.Show("'기본 여백'의 형식이 잘못되었습니다.\n0 또는 양수만 입력 가능합니다.",
+                    "TextPresenter51456",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+            if (!decimal.TryParse(TextBoxMarginOverflow.Text, out tempd) || tempd < 0) {
+                MessageBox.Show("'넘치는 부분 여백'의 형식이 잘못되었습니다.\n0 또는 양수만 입력 가능합니다.",
+                    "TextPresenter51456",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
             Setting.SetAttribute("presenterScreen", (ComboBoxPresenterScreen.SelectedIndex + 1).ToString());
-            Setting.SetAttribute("marginBasic", "5"); ////////////////
-            Setting.SetAttribute("marginOverflow", "1"); ///////////////
+            Setting.SetAttribute("marginBasic", TextBoxMarginBasic.Text);
+            Setting.SetAttribute("marginOverflow", TextBoxMarginOverflow.Text);
             Setting.SetAttribute("textPosition", GetCheckedTextPosition().ToString());
-            Setting.SetAttribute("textAlign", ComboBoxTextAlign.Text.ToString());
+            Setting.SetAttribute("textAlign", (ComboBoxTextAlign.SelectedIndex + 1).ToString());
             Setting.SetAttribute("fontSize", TextBoxFontSize.Text.ToString());
             Setting.SetAttribute("lineHeight", TextBoxLineHeight.Text.ToString());
             Setting.Save();
 
-            if (pw != null) {
-                RoutedEventArgs rea = new RoutedEventArgs(LoadedEvent);
-                rea.Source = pw;
-                pw.RaiseEvent(rea);
-            }
-
+            pw.ApplySettings();
+        }
+        private void ButtonOk_Click(object sender, RoutedEventArgs e) {
+            ButtonApply_Click(sender, e);
             Close();
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e) {
             Close();
         }
+
+        private void Window_Unloaded(object sender, RoutedEventArgs e) {
+            mw.IsEnabled = true;
+            if (pw != null) {
+                pw.IsEnabled = true;
+            }
+        }
+
     }
 }

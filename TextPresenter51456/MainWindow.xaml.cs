@@ -44,6 +44,7 @@ namespace TextPresenter51456 {
         SolidColorBrush PGM_BORDER_COLOR = new SolidColorBrush(Color.FromRgb(0xc0, 0, 0));
 
         PresenterWindow pw;
+        SettingWindow sw;
         HelpWindow hw;
 
         Thread threadRemote;
@@ -470,46 +471,37 @@ namespace TextPresenter51456 {
         }
         
         private void MenuItemSettings_Click(object sender, RoutedEventArgs e) {
-            SettingWindow sw = new SettingWindow(this, pw);
+            sw = new SettingWindow(this, pw);
+            sw.Owner = this;
+            sw.Show();
+            if (pw != null) {
+                pw.IsEnabled = false;
+            }
+            this.IsEnabled = false;
         }
         private void MenuItemReloadSettings_Click(object sender, RoutedEventArgs e) {
             Setting.Load();
-            if (pw != null) {
-                RoutedEventArgs rea = new RoutedEventArgs(LoadedEvent);
-                rea.Source = pw;
-                pw.RaiseEvent(rea);
-            }
+            pw.ApplySettings();
         }
 
-        private void HelpWindow_Unloaded(object sender, RoutedEventArgs e) {
-            hw = null;
-        }
         private void MenuItemHelp_Click(object sender, RoutedEventArgs e) {
-            if (hw == null) {
-                if (sender == MenuItemHelpEdit) {
-                    hw = new HelpWindow(0);
-                    hw.Owner = this;
-                    hw.Show();
-                } else if (sender == MenuItemHelpPresentation) {
-                    hw = new HelpWindow(1);
-                    hw.Owner = this;
-                    hw.Show();
-                } else if (sender == MenuItemInfo) {
-                    hw = new HelpWindow(2);
-                    hw.Owner = this;
-                    hw.Show();
-                }
-                hw.Unloaded += HelpWindow_Unloaded;
-            } else {
-                hw.Activate();
-                if (sender == MenuItemHelpEdit) {
-                    hw.TabControlBody.SelectedIndex = 0;
-                } else if (sender == MenuItemHelpPresentation) {
-                    hw.TabControlBody.SelectedIndex = 1;
-                } else if (sender == MenuItemInfo) {
-                    hw.TabControlBody.SelectedIndex = 2;
-                }
+            if (sender == MenuItemHelpEdit) {
+                hw = new HelpWindow(0, this, pw);
+                hw.Owner = this;
+                hw.Show();
+            } else if (sender == MenuItemHelpPresentation) {
+                hw = new HelpWindow(1, this, pw);
+                hw.Owner = this;
+                hw.Show();
+            } else if (sender == MenuItemInfo) {
+                hw = new HelpWindow(2, this, pw);
+                hw.Owner = this;
+                hw.Show();
             }
+            if (pw != null) {
+                pw.IsEnabled = false;
+            }
+            this.IsEnabled = false;
         }
 
 
@@ -659,5 +651,6 @@ namespace TextPresenter51456 {
                 SynSocketListener.TerminateListening();
             }
         }
+
     }
 }

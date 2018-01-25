@@ -9,7 +9,8 @@
         Width="480"
         Height="360"
         ResizeMode="CanMinimize"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Unloaded="Window_Unloaded">
     
     <DockPanel>
 

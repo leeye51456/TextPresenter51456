@@ -147,35 +147,35 @@ namespace TextPresenter51456 {
             else
                 return 0;
         }
-        private void ButtonApply_Click(object sender, RoutedEventArgs e) {
+        private bool Apply() {
             decimal tempd;
             if (!decimal.TryParse(TextBoxFontSize.Text, out tempd) || tempd <= 0) {
                 MessageBox.Show("'텍스트 크기'의 형식이 잘못되었습니다.\n양수만 입력 가능합니다.",
                     "TextPresenter51456",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                return;
+                return false;
             }
             if (!decimal.TryParse(TextBoxLineHeight.Text, out tempd) || tempd <= 0) {
                 MessageBox.Show("'줄 간격'의 형식이 잘못되었습니다.\n양수만 입력 가능합니다.",
                     "TextPresenter51456",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                return;
+                return false;
             }
             if (!decimal.TryParse(TextBoxMarginBasic.Text, out tempd) || tempd < 0) {
                 MessageBox.Show("'기본 여백'의 형식이 잘못되었습니다.\n0 또는 양수만 입력 가능합니다.",
                     "TextPresenter51456",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                return;
+                return false;
             }
             if (!decimal.TryParse(TextBoxMarginOverflow.Text, out tempd) || tempd < 0) {
                 MessageBox.Show("'넘치는 부분 여백'의 형식이 잘못되었습니다.\n0 또는 양수만 입력 가능합니다.",
                     "TextPresenter51456",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                return;
+                return false;
             }
 
             Setting.SetAttribute("presenterScreen", (ComboBoxPresenterScreen.SelectedIndex + 1).ToString());
@@ -188,9 +188,16 @@ namespace TextPresenter51456 {
             Setting.Save();
 
             pw.ApplySettings();
+
+            return true;
+        }
+        private void ButtonApply_Click(object sender, RoutedEventArgs e) {
+            Apply();
         }
         private void ButtonOk_Click(object sender, RoutedEventArgs e) {
-            ButtonApply_Click(sender, e);
+            if (!Apply()) {
+                return;
+            }
             Close();
         }
 

@@ -37,6 +37,9 @@ namespace TextPresenter51456 {
             SetAttribute("textAlign", "2");
             SetAttribute("fontSize", "8.75");
             SetAttribute("lineHeight", "140");
+            SetAttribute("resolutionSimulation", "false");
+            SetAttribute("resolutionSimulationWidth", "1024");
+            SetAttribute("resolutionSimulationHeight", "768");
         }
 
         private static void InterpretString(string str) {

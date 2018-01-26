@@ -20,8 +20,9 @@ namespace TextPresenter51456 {
         MainWindow mw;
         PresenterWindow pw;
 
-        int presenterScreen, textPosition, textAlign;
+        int presenterScreen, textPosition, textAlign, resolutionSimulationWidth, resolutionSimulationHeight;
         decimal marginBasic, marginOverflow, fontSize, lineHeight;
+        bool resolutionSimulation;
 
         private void GetSettings() {
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
@@ -44,6 +45,15 @@ namespace TextPresenter51456 {
             }
             if (!decimal.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight) || lineHeight < 0) {
                 lineHeight = 140;
+            }
+            if (!bool.TryParse(Setting.GetAttribute("resolutionSimulation"), out resolutionSimulation)) {
+                resolutionSimulation = false;
+            }
+            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationWidth"), out resolutionSimulationWidth) || resolutionSimulationWidth <= 0) {
+                resolutionSimulationWidth = 1024;
+            }
+            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationHeight"), out resolutionSimulationHeight) || resolutionSimulationHeight <= 0) {
+                resolutionSimulationHeight = 768;
             }
         }
 
@@ -102,6 +112,9 @@ namespace TextPresenter51456 {
                 break;
             }
 
+            CheckBoxResolutionSimulation.IsChecked = resolutionSimulation;
+            TextBoxScreenWidth.Text = resolutionSimulationWidth.ToString();
+            TextBoxScreenHeight.Text = resolutionSimulationHeight.ToString();
             ComboBoxTextAlign.SelectedIndex = textAlign - 1;
             TextBoxFontSize.Text = fontSize.ToString();
             TextBoxLineHeight.Text = lineHeight.ToString();
@@ -147,38 +160,43 @@ namespace TextPresenter51456 {
             else
                 return 0;
         }
+        private void ShowWrongFormatMessage(string name, string format) {
+            MessageBox.Show("'" + name + "'의 형식이 잘못되었습니다.\n" + format + "만 입력 가능합니다.",
+                "TextPresenter51456",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
         private bool Apply() {
             decimal tempd;
+            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationWidth"), out resolutionSimulationWidth) || resolutionSimulationWidth <= 0) {
+                ShowWrongFormatMessage("해상도 시뮬레이션 가로 길이", "양의 정수");
+                return false;
+            }
+            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationHeight"), out resolutionSimulationHeight) || resolutionSimulationHeight <= 0) {
+                ShowWrongFormatMessage("해상도 시뮬레이션 세로 길이", "양의 정수");
+                return false;
+            }
             if (!decimal.TryParse(TextBoxFontSize.Text, out tempd) || tempd <= 0) {
-                MessageBox.Show("'텍스트 크기'의 형식이 잘못되었습니다.\n양수만 입력 가능합니다.",
-                    "TextPresenter51456",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                ShowWrongFormatMessage("텍스트 크기", "양수");
                 return false;
             }
             if (!decimal.TryParse(TextBoxLineHeight.Text, out tempd) || tempd <= 0) {
-                MessageBox.Show("'줄 간격'의 형식이 잘못되었습니다.\n양수만 입력 가능합니다.",
-                    "TextPresenter51456",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                ShowWrongFormatMessage("줄 간격", "양수");
                 return false;
             }
             if (!decimal.TryParse(TextBoxMarginBasic.Text, out tempd) || tempd < 0) {
-                MessageBox.Show("'기본 여백'의 형식이 잘못되었습니다.\n0 또는 양수만 입력 가능합니다.",
-                    "TextPresenter51456",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                ShowWrongFormatMessage("기본 여백", "0 또는 양수");
                 return false;
             }
             if (!decimal.TryParse(TextBoxMarginOverflow.Text, out tempd) || tempd < 0) {
-                MessageBox.Show("'넘치는 부분 여백'의 형식이 잘못되었습니다.\n0 또는 양수만 입력 가능합니다.",
-                    "TextPresenter51456",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                ShowWrongFormatMessage("넘치는 부분 여백", "0 또는 양수");
                 return false;
             }
 
             Setting.SetAttribute("presenterScreen", (ComboBoxPresenterScreen.SelectedIndex + 1).ToString());
+            Setting.SetAttribute("resolutionSimulation", CheckBoxResolutionSimulation.IsChecked.ToString());
+            Setting.SetAttribute("resolutionSimulationWidth", TextBoxScreenWidth.Text);
+            Setting.SetAttribute("resolutionSimulationHeight", TextBoxScreenHeight.Text);
             Setting.SetAttribute("marginBasic", TextBoxMarginBasic.Text);
             Setting.SetAttribute("marginOverflow", TextBoxMarginOverflow.Text);
             Setting.SetAttribute("textPosition", GetCheckedTextPosition().ToString());
@@ -187,7 +205,9 @@ namespace TextPresenter51456 {
             Setting.SetAttribute("lineHeight", TextBoxLineHeight.Text.ToString());
             Setting.Save();
 
-            pw.ApplySettings();
+            if (pw != null) {
+                pw.ApplySettings();
+            }
 
             return true;
         }

@@ -13,40 +13,64 @@
         WindowStyle="None"
         Background="Black"
         PreviewKeyDown="Window_PreviewKeyDown">
-    
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="GridRow1" Height="1*" />
-            <RowDefinition x:Name="GridRow2" Height="98*" />
-            <RowDefinition x:Name="GridRow3" Height="1*" />
+            <RowDefinition x:Name="GridExRow1" Height="0" />
+            <RowDefinition x:Name="GridExRow2" Height="1*" />
+            <RowDefinition x:Name="GridExRow3" Height="0" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="GridCol1" Width="1*" />
-            <ColumnDefinition x:Name="GridCol2" Width="98*" />
-            <ColumnDefinition x:Name="GridCol3" Width="1*" />
+            <ColumnDefinition x:Name="GridExCol1" Width="0" />
+            <ColumnDefinition x:Name="GridExCol2" Width="1*" />
+            <ColumnDefinition x:Name="GridExCol3" Width="0" />
         </Grid.ColumnDefinitions>
 
-        <!-- 텍스트 정렬 시 Margin을 조작한다 -->
-        <Label
-            x:Name="LabelPresenterText"
-            Content=""
-            TextOptions.TextRenderingMode="Aliased"
+        <Rectangle Grid.Row="0" Grid.Column="0" Fill="Gray" />
+        <Rectangle Grid.Row="0" Grid.Column="1" Fill="Gray" />
+        <Rectangle Grid.Row="0" Grid.Column="2" Fill="Gray" />
+        <Rectangle Grid.Row="1" Grid.Column="0" Fill="Gray" />
+        <Rectangle Grid.Row="1" Grid.Column="3" Fill="Gray" />
+        <Rectangle Grid.Row="2" Grid.Column="0" Fill="Gray" />
+        <Rectangle Grid.Row="2" Grid.Column="1" Fill="Gray" />
+        <Rectangle Grid.Row="2" Grid.Column="2" Fill="Gray" />
+
+        <Grid
             Grid.Row="1"
-            Grid.Column="1" />
-        <!--
-        <Label
-            x:Name="LabelPresenterText"
-            TextOptions.TextRenderingMode="Aliased"
-            FontFamily="NanumBarunGothicOTF"
-            FontSize="94.5px"
-            TextBlock.LineHeight="132.3px"
-            TextBlock.TextAlignment="Center"
-            Foreground="White"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Grid.Row="1"
-            Grid.Column="1" />
-        -->
+            Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="GridRow1" Height="1*" />
+                <RowDefinition x:Name="GridRow2" Height="98*" />
+                <RowDefinition x:Name="GridRow3" Height="1*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="GridCol1" Width="1*" />
+                <ColumnDefinition x:Name="GridCol2" Width="98*" />
+                <ColumnDefinition x:Name="GridCol3" Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 텍스트 정렬 시 Margin을 조작한다 -->
+            <Label
+                x:Name="LabelPresenterText"
+                Content=""
+                TextOptions.TextRenderingMode="Aliased"
+                Grid.Row="1"
+                Grid.Column="1" />
+            <!--
+            <Label
+                x:Name="LabelPresenterText"
+                TextOptions.TextRenderingMode="Aliased"
+                FontFamily="NanumBarunGothicOTF"
+                FontSize="94.5px"
+                TextBlock.LineHeight="132.3px"
+                TextBlock.TextAlignment="Center"
+                Foreground="White"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Grid.Row="1"
+                Grid.Column="1" />
+            -->
+        </Grid>
     </Grid>
-    
+
 </Window>

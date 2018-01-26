@@ -147,12 +147,10 @@
                         </WrapPanel>
                         <WrapPanel Margin="0,0,0,5">
                             <CheckBox
-                                IsEnabled="False"
-                                x:Name="CheckBox"
+                                x:Name="CheckBoxResolutionSimulation"
                                 Content="해상도 시뮬레이션:"
                                 Margin="5,5,5,5" />
                             <TextBox
-                                IsEnabled="False"
                                 x:Name="TextBoxScreenWidth"
                                 Text="1024"
                                 Width="50"
@@ -160,7 +158,6 @@
                                 VerticalAlignment="Center" />
                             <Label Content="×" />
                             <TextBox
-                                IsEnabled="False"
                                 x:Name="TextBoxScreenHeight"
                                 Text="768"
                                 Width="50"

@@ -79,30 +79,60 @@ namespace TextPresenter51456 {
             VerticalAlignment="Center"
             */
 
-            int presenterScreen, textPosition, textAlign;
+            int presenterScreen, textPosition, textAlign, resolutionSimulationWidth, resolutionSimulationHeight;
             double marginBasic, marginOverflow, fontSize, lineHeight;
+            bool resolutionSimulation;
 
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
                 presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
             }
-            if (!double.TryParse(Setting.GetAttribute("marginBasic"), out marginBasic)) {
+            if (!double.TryParse(Setting.GetAttribute("marginBasic"), out marginBasic) || marginBasic < 0) {
                 marginBasic = 5;
             }
-            if (!double.TryParse(Setting.GetAttribute("marginOverflow"), out marginOverflow)) {
+            if (!double.TryParse(Setting.GetAttribute("marginOverflow"), out marginOverflow) || marginOverflow < 0) {
                 marginOverflow = 1;
             }
-            if (!int.TryParse(Setting.GetAttribute("textPosition"), out textPosition)) {
+            if (!int.TryParse(Setting.GetAttribute("textPosition"), out textPosition) || textPosition < 1 || textPosition > 9) {
                 textPosition = 5;
             }
-            if (!int.TryParse(Setting.GetAttribute("textAlign"), out textAlign)) {
+            if (!int.TryParse(Setting.GetAttribute("textAlign"), out textAlign) || textAlign < 1 || textAlign > 3) {
                 textAlign = 2;
             }
-            if (!double.TryParse(Setting.GetAttribute("fontSize"), out fontSize)) {
+            if (!double.TryParse(Setting.GetAttribute("fontSize"), out fontSize) || fontSize <= 0) {
                 fontSize = 8.75;
             }
-            if (!double.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight)) {
+            if (!double.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight) || lineHeight < 0) {
                 lineHeight = 140;
             }
+            if (!bool.TryParse(Setting.GetAttribute("resolutionSimulation"), out resolutionSimulation)) {
+                resolutionSimulation = false;
+            }
+            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationWidth"), out resolutionSimulationWidth) || resolutionSimulationWidth <= 0) {
+                resolutionSimulationWidth = 1024;
+            }
+            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationHeight"), out resolutionSimulationHeight) || resolutionSimulationHeight <= 0) {
+                resolutionSimulationHeight = 768;
+            }
+
+            // 해상도 시뮬레이션
+            if (resolutionSimulation) {
+                GridExCol1.Width = new GridLength(1, GridUnitType.Star);
+                GridExCol2.Width = new GridLength(resolutionSimulationWidth, GridUnitType.Pixel);
+                GridExCol3.Width = new GridLength(1, GridUnitType.Star);
+                GridExRow1.Height = new GridLength(1, GridUnitType.Star);
+                GridExRow2.Height = new GridLength(resolutionSimulationHeight, GridUnitType.Pixel);
+                GridExRow3.Height = new GridLength(1, GridUnitType.Star);
+                fontSize = fontSize * resolutionSimulationHeight / Height;
+            } else {
+                GridExCol1.Width = new GridLength(0, GridUnitType.Pixel);
+                GridExCol2.Width = new GridLength(1, GridUnitType.Star);
+                GridExCol3.Width = new GridLength(0, GridUnitType.Pixel);
+                GridExRow1.Height = new GridLength(0, GridUnitType.Pixel);
+                GridExRow2.Height = new GridLength(1, GridUnitType.Star);
+                GridExRow3.Height = new GridLength(0, GridUnitType.Pixel);
+            }
+
+            // 단위 보정
             fontSize /= 100;
             lineHeight /= 100;
 

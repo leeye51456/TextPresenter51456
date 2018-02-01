@@ -71,12 +71,14 @@ namespace TextPresenter51456 {
         private void WindowMainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
             if (pw != null) {   // 송출 창 열려 있는 경우
                 switch (MessageBox.Show("송출 창이 열려 있습니다. 정말로 종료하시겠습니까?", "TextPresenter51456", MessageBoxButton.YesNo)) {
-                case MessageBoxResult.Yes:
-                    pw.Close();
-                    break;
-                default:
-                    e.Cancel = true;
-                    break;
+                    case MessageBoxResult.Yes:
+                        if (pw != null) { // 종료 질문 띄우고 예 누르기 전에 송출 창 먼저 닫는 경우 대비해서 한 번 더 검사
+                            pw.Close();
+                        }
+                        break;
+                    default:
+                        e.Cancel = true;
+                        break;
                 }
             }
         }

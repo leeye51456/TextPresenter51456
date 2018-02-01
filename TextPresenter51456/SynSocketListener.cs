@@ -12,7 +12,6 @@ namespace TextPresenter51456 {
         public static MainWindow mw;
 
 
-        private static string HostIpAddress { get; set; } = "172.30.1.8"; // test ip
         private static int Port { get; set; } = 51456; // test port
 
         private static Socket handler;

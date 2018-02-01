@@ -20,13 +20,27 @@ namespace TextPresenter51456 {
         MainWindow mw;
         PresenterWindow pw;
 
-        int presenterScreen, textPosition, textAlign, resolutionSimulationWidth, resolutionSimulationHeight;
+        int presenterScreen, textEncoding, textPosition, textAlign, resolutionSimulationWidth, resolutionSimulationHeight;
         decimal marginBasic, marginOverflow, fontSize, lineHeight;
         bool resolutionSimulation;
+
 
         private void GetSettings() {
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
                 presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
+            }
+            if (!int.TryParse(Setting.GetAttribute("textEncoding"), out textEncoding)) {
+                textEncoding = 0;
+            }
+            switch (textEncoding) {
+                case 0: // default
+                case 1200: // UTF-16 LE
+                case 1201: // UTF-16 BE
+                case 65001: // UTF-8
+                    break;
+                default:
+                    textEncoding = 0;
+                    break;
             }
             if (!decimal.TryParse(Setting.GetAttribute("marginBasic"), out marginBasic) || marginBasic < 0) {
                 marginBasic = 5;
@@ -80,6 +94,22 @@ namespace TextPresenter51456 {
                 ComboBoxPresenterScreen.SelectedIndex = presenterScreen - 1;
             } else {
                 ComboBoxPresenterScreen.SelectedIndex = numOfScreen - 1;
+            }
+
+            // textEncoding = ComboBoxTextEncoding.SelectedIndex;
+            switch (textEncoding) {
+                case 1200: // UTF-16 LE
+                    ComboBoxTextEncoding.SelectedIndex = 2;
+                    break;
+                case 1201: // UTF-16 BE
+                    ComboBoxTextEncoding.SelectedIndex = 3;
+                    break;
+                case 65001: // UTF-8
+                    ComboBoxTextEncoding.SelectedIndex = 1;
+                    break;
+                default:
+                    ComboBoxTextEncoding.SelectedIndex = 0;
+                    break;
             }
 
             switch (textPosition) {
@@ -193,12 +223,28 @@ namespace TextPresenter51456 {
                 return false;
             }
 
+            switch (ComboBoxTextEncoding.SelectedIndex) {
+                case 1: // UTF-8
+                    textEncoding = 65001;
+                    break;
+                case 2: // UTF-16 LE
+                    textEncoding = 1200;
+                    break;
+                case 3: // UTF-16 BE
+                    textEncoding = 1201;
+                    break;
+                default:
+                    textEncoding = 0;
+                    break;
+            }
+
             Setting.SetAttribute("presenterScreen", (ComboBoxPresenterScreen.SelectedIndex + 1).ToString());
             Setting.SetAttribute("resolutionSimulation", CheckBoxResolutionSimulation.IsChecked.ToString());
             Setting.SetAttribute("resolutionSimulationWidth", TextBoxScreenWidth.Text);
             Setting.SetAttribute("resolutionSimulationHeight", TextBoxScreenHeight.Text);
             Setting.SetAttribute("marginBasic", TextBoxMarginBasic.Text);
             Setting.SetAttribute("marginOverflow", TextBoxMarginOverflow.Text);
+            Setting.SetAttribute("textEncoding", textEncoding.ToString());
             Setting.SetAttribute("textPosition", GetCheckedTextPosition().ToString());
             Setting.SetAttribute("textAlign", (ComboBoxTextAlign.SelectedIndex + 1).ToString());
             Setting.SetAttribute("fontSize", TextBoxFontSize.Text.ToString());

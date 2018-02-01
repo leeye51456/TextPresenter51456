@@ -139,11 +139,18 @@ namespace TextPresenter51456 {
         }
 
         private void OpenTxtFile(bool resetPvw) {
+            Encoding encoding;
             if (resetPvw) {
                 pvwManager.PageNumber = 1;
             }
+            if (!int.TryParse(Setting.GetAttribute("textEncoding"), out int textEncoding) || textEncoding == 0) {
+                textEncoding = 0;
+                encoding = Encoding.Default;
+            } else {
+                encoding = Encoding.GetEncoding(textEncoding);
+            }
             try {   // 선택한 파일 읽기
-                System.IO.StreamReader sr = new System.IO.StreamReader(filePath + fileName, Encoding.Default);
+                System.IO.StreamReader sr = new System.IO.StreamReader(filePath + fileName, encoding);
                 string fullText = sr.ReadToEnd();
                 sr.Close();
                 fullText = newLineUnifier.Replace(fullText, "\n"); // 줄바꿈 문자 통일

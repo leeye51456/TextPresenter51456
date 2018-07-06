@@ -490,7 +490,9 @@ namespace TextPresenter51456 {
         }
         private void MenuItemReloadSettings_Click(object sender, RoutedEventArgs e) {
             Setting.Load();
-            pw.ApplySettings();
+            if (pw != null) {
+                pw.ApplySettings();
+            }
         }
 
         private void MenuItemHelp_Click(object sender, RoutedEventArgs e) {

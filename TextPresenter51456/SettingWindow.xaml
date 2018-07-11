@@ -117,6 +117,7 @@
                     x:Name="CanvasScreens"
                     Height="90">
                     <!-- 내용 예시 시작 -->
+                    <!--
                     <Border
                         Canvas.Left="5"
                         Canvas.Top="5"
@@ -141,6 +142,7 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center" />
                     </Border>
+                    -->
                     <!-- 내용 예시 끝 -->
                 </Canvas>
                 <StackPanel Margin="10,0,0,10">
@@ -152,8 +154,10 @@
                             Margin="5,0,0,0"
                             VerticalAlignment="Center">
                             <!-- 내용 예시 시작 -->
+                            <!--
                             <ComboBoxItem Content="(1) 1920x1080 (0,0)" />
                             <ComboBoxItem Content="(2) 1024x768 (1920,0)" />
+                            -->
                             <!-- 내용 예시 끝 -->
                         </ComboBox>
                         <Label Content="(송출 창을 다시 켤 때부터 적용)" />

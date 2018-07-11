@@ -24,6 +24,8 @@ namespace TextPresenter51456 {
         decimal marginBasic, marginOverflow, fontSize, lineHeight;
         bool resolutionSimulation;
 
+        Thickness borderThickness = new Thickness(1.0);
+
 
         private void GetSettings() {
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
@@ -74,21 +76,59 @@ namespace TextPresenter51456 {
         private void SettingToControl() {
             System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
             int numOfScreen = sc.Length;
+            int fullWidth = 0, fullHeight = 0;
+            double threshold = 7.3375; // 587 / 80 = 7.3375
+            double multiplyFactor = 1.0;
 
             GetSettings();
 
-            // 임시조치 시작: 화면 배치 미리보기 미구현
-            CanvasScreens.Visibility = Visibility.Hidden;
-            CanvasScreens.Height = 0;
-            // 임시조치 끝
-
-            ComboBoxPresenterScreen.Items.Clear();
+            // for drawing screen map
             for (int i = 0; i < numOfScreen; i++) {
                 System.Drawing.Rectangle r = sc[i].Bounds;
-                ComboBoxItem cbi = new ComboBoxItem();
-                // (2) 1024x768 (1920,0)
-                cbi.Content = "(" + (i + 1).ToString() + ") " + r.Width.ToString() + "×" + r.Height.ToString() + " (" + r.X.ToString() + "," + r.Y.ToString() + ")";
+                int ithWidth = r.X + r.Width;
+                int ithHeight = r.Y + r.Height;
+                if (fullWidth < ithWidth) {
+                    fullWidth = ithWidth;
+                }
+                if (fullHeight < ithHeight) {
+                    fullHeight = ithHeight;
+                }
+            }
+            if ((double)fullWidth / fullHeight <= threshold) {
+                multiplyFactor = 80.0 / fullHeight;
+            } else {
+                multiplyFactor = 587.0 / fullWidth;
+            }
+
+            // construct screen combo box and draw screen map
+            ComboBoxPresenterScreen.Items.Clear();
+            CanvasScreens.Children.Clear();
+            for (int i = 0; i < numOfScreen; i++) {
+                System.Drawing.Rectangle r = sc[i].Bounds;
+
+                ComboBoxItem cbi = new ComboBoxItem {
+                    // (2) 1024x768 (1920,0)
+                    Content = "(" + (i + 1).ToString() + ") " + r.Width.ToString() + "×" + r.Height.ToString() + " (" + r.X.ToString() + "," + r.Y.ToString() + ")"
+                };
                 ComboBoxPresenterScreen.Items.Add(cbi);
+
+                TextBlock tb = new TextBlock {
+                    Text = (i + 1).ToString(),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    FontSize = 16.0,
+                    FontWeight = FontWeight.FromOpenTypeWeight(700)
+                };
+                Border b = new Border {
+                    Width = r.Width * multiplyFactor,
+                    Height = r.Height * multiplyFactor,
+                    BorderBrush = Brushes.Black,
+                    BorderThickness = borderThickness,
+                    Child = tb
+                };
+                Canvas.SetLeft(b, 5 + r.X * multiplyFactor);
+                Canvas.SetTop(b, 5 + r.Y * multiplyFactor);
+                CanvasScreens.Children.Add(b);
             }
             if (presenterScreen <= numOfScreen) {
                 ComboBoxPresenterScreen.SelectedIndex = presenterScreen - 1;

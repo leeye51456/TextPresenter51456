@@ -119,7 +119,7 @@ namespace TextPresenter51456 {
             if (textList == null || pgmManager.PageNumber == 0) {
                 return;
             }
-            SolidColorBrush fg = GetColorFromInt(colorList[pgmManager.PageNumber]);
+            SolidColorBrush fg = GetColorFromInt(colorList[pgmManager.PageNumber]); // 수정 필요
             PgmContent.Content = textList[pgmManager.PageNumber];
             PgmContent.Foreground = fg;
             PgmPage.Content = pgmManager.PageNumber;
@@ -170,7 +170,7 @@ namespace TextPresenter51456 {
             try {   // 읽어들인 파일 표시하기 + 루프 돌면서 서식 적용
                 int len = textList.Count;
                 Style pageListItemStyle = FindResource("PageListItem") as Style;
-                SolidColorBrush yellowColorBrush = new SolidColorBrush(Color.FromRgb(255, 255, 0));
+                SolidColorBrush yellowColorBrush = Brushes.Yellow; //new SolidColorBrush(Color.FromRgb(255, 255, 0));
 
                 colorList = new List<int>(len);
                 colorList.Add(0xffffff);
@@ -245,7 +245,7 @@ namespace TextPresenter51456 {
             string text = newLineUnifier.Replace(TextBoxFreeContent.Text, "\n"); // 줄바꿈 문자 통일
             text = trimmer.Replace(text, ""); // 앞뒤 공백 자르기
 
-            SolidColorBrush fg = GetColorFromInt(0xffffff); // 일단 무조건 흰색
+            SolidColorBrush fg = Brushes.White; // GetColorFromInt(0xffffff); // 일단 무조건 흰색
             //SolidColorBrush fg = GetColorFromInt(colorList[pgmManager.PageNumber]);
             PgmContent.Content = text;
             PgmContent.Foreground = fg;

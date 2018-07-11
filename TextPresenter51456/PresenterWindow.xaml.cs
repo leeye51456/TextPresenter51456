@@ -165,7 +165,7 @@ namespace TextPresenter51456 {
             }
 
             // Foreground
-            LabelPresenterText.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            LabelPresenterText.Foreground = Brushes.White; //new SolidColorBrush(Color.FromRgb(255, 255, 255));
 
             // Alignment
             if ((textPosition - 1) / 3 == 0) {

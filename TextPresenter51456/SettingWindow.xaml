@@ -238,11 +238,12 @@
                         <Label Content="글꼴:" />
                         <Button
                             x:Name="ButtonChangeFont"
-                            IsEnabled="False"
-                            Content="변경"
-                            Width="100"
+                            MaxWidth="500"
                             Margin="5,0,0,0"
-                            VerticalAlignment="Center" />
+                            Padding="10,4"
+                            VerticalAlignment="Center"
+                            FontSize="28"
+                            Click="ButtonChangeFont_Click" />
                     </WrapPanel>
                     <WrapPanel Margin="0,0,0,5">
                         <Label Content="크기:" />

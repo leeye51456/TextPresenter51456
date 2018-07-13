@@ -22,7 +22,8 @@ namespace TextPresenter51456 {
 
         int presenterScreen, textEncoding, textPosition, textAlign, resolutionSimulationWidth, resolutionSimulationHeight;
         decimal marginBasic, marginOverflow, fontSize, lineHeight;
-        bool resolutionSimulation;
+        bool resolutionSimulation, fontWeightBold = false, fontStyleItalic = false;
+        string fontFamily;
 
         Thickness borderThickness = new Thickness(1.0);
 
@@ -56,6 +57,15 @@ namespace TextPresenter51456 {
             if (!int.TryParse(Setting.GetAttribute("textAlign"), out textAlign) || textAlign < 1 || textAlign > 3) {
                 textAlign = 2;
             }
+            if ((fontFamily = Setting.GetAttribute("fontFamily")) == null) {
+                fontFamily = "Malgun Gothic";
+            }
+            if (Setting.GetAttribute("fontWeight").Equals("bold")) {
+                fontWeightBold = true;
+            }
+            if (Setting.GetAttribute("fontStyle").Equals("italic")) {
+                fontStyleItalic = true;
+            }
             if (!decimal.TryParse(Setting.GetAttribute("fontSize"), out fontSize) || fontSize <= 0) {
                 fontSize = 8.75m;
             }
@@ -77,7 +87,7 @@ namespace TextPresenter51456 {
             System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
             int numOfScreen = sc.Length;
             int fullWidth = 0, fullHeight = 0;
-            double threshold = 7.3375; // 587 / 80 = 7.3375
+            double threshold = 6.25; // 500 / 80 = 6.25
             double multiplyFactor = 1.0;
 
             GetSettings();
@@ -97,7 +107,7 @@ namespace TextPresenter51456 {
             if ((double)fullWidth / fullHeight <= threshold) {
                 multiplyFactor = 80.0 / fullHeight;
             } else {
-                multiplyFactor = 587.0 / fullWidth;
+                multiplyFactor = 500.0 / fullWidth;
             }
 
             // construct screen combo box and draw screen map
@@ -186,6 +196,28 @@ namespace TextPresenter51456 {
             TextBoxScreenWidth.Text = resolutionSimulationWidth.ToString();
             TextBoxScreenHeight.Text = resolutionSimulationHeight.ToString();
             ComboBoxTextAlign.SelectedIndex = textAlign - 1;
+
+            { // 이 부분 중복 있음
+                string fontInfo;
+                TextBlock tb = new TextBlock();
+
+                fontInfo = fontFamily;
+                if (fontWeightBold && fontStyleItalic) {
+                    fontInfo += " (굵게, 기울임)";
+                } else if (fontWeightBold) {
+                    fontInfo += " (굵게)";
+                } else if (fontStyleItalic) {
+                    fontInfo += " (기울임)";
+                } else {
+                    fontInfo += " (보통)";
+                }
+                tb.Text = fontInfo;
+                ButtonChangeFont.Content = tb;
+                ButtonChangeFont.FontFamily = new FontFamily(fontFamily);
+                ButtonChangeFont.FontWeight = fontWeightBold ? FontWeights.Bold : FontWeights.Regular;
+                ButtonChangeFont.FontStyle = fontStyleItalic ? FontStyles.Italic : FontStyles.Normal;
+            }
+
             TextBoxFontSize.Text = fontSize.ToString();
             TextBoxLineHeight.Text = lineHeight.ToString();
             TextBoxMarginBasic.Text = marginBasic.ToString();
@@ -205,6 +237,42 @@ namespace TextPresenter51456 {
             if (!(e.Key == Key.Back || (e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Decimal)) {
                 // 숫자, 백스페이스, 점만 처리
                 e.Handled = true;
+            }
+        }
+
+        private void ButtonChangeFont_Click(object sender, RoutedEventArgs e) {
+            System.Drawing.FontConverter cvt = new System.Drawing.FontConverter();
+            System.Drawing.FontStyle fs = (fontWeightBold ? System.Drawing.FontStyle.Bold : 0) | (fontStyleItalic ? System.Drawing.FontStyle.Italic : 0);
+            System.Drawing.Font font = new System.Drawing.Font(fontFamily, 16, fs);
+            System.Windows.Forms.FontDialog fontDialog = new System.Windows.Forms.FontDialog {
+                AllowVerticalFonts = false,
+                Font = font,
+                ShowApply = false,
+                ShowEffects = false
+            };
+            if (fontDialog.ShowDialog() != System.Windows.Forms.DialogResult.Cancel) {
+                string fontInfo;
+                TextBlock tb = new TextBlock();
+
+                fontFamily = fontDialog.Font.Name;
+                fontWeightBold = fontDialog.Font.Bold;
+                fontStyleItalic = fontDialog.Font.Italic;
+
+                fontInfo = fontFamily;
+                if (fontWeightBold && fontStyleItalic) {
+                    fontInfo += " (굵게, 기울임)";
+                } else if (fontWeightBold) {
+                    fontInfo += " (굵게)";
+                } else if (fontStyleItalic) {
+                    fontInfo += " (기울임)";
+                } else {
+                    fontInfo += " (보통)";
+                }
+                tb.Text = fontInfo;
+                ButtonChangeFont.Content = tb;
+                ButtonChangeFont.FontFamily = new FontFamily(fontFamily);
+                ButtonChangeFont.FontWeight = fontWeightBold ? FontWeights.Bold : FontWeights.Regular;
+                ButtonChangeFont.FontStyle = fontStyleItalic ? FontStyles.Italic : FontStyles.Normal;
             }
         }
 
@@ -287,6 +355,9 @@ namespace TextPresenter51456 {
             Setting.SetAttribute("textEncoding", textEncoding.ToString());
             Setting.SetAttribute("textPosition", GetCheckedTextPosition().ToString());
             Setting.SetAttribute("textAlign", (ComboBoxTextAlign.SelectedIndex + 1).ToString());
+            Setting.SetAttribute("fontFamily", fontFamily);
+            Setting.SetAttribute("fontWeight", fontWeightBold ? "bold" : "regular");
+            Setting.SetAttribute("fontStyle", fontStyleItalic ? "italic" : "normal");
             Setting.SetAttribute("fontSize", TextBoxFontSize.Text.ToString());
             Setting.SetAttribute("lineHeight", TextBoxLineHeight.Text.ToString());
             Setting.Save();

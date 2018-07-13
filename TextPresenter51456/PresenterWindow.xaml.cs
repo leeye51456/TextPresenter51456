@@ -84,7 +84,8 @@ namespace TextPresenter51456 {
 
             int presenterScreen, textPosition, textAlign, resolutionSimulationWidth, resolutionSimulationHeight;
             double marginBasic, marginOverflow, fontSize, lineHeight;
-            bool resolutionSimulation;
+            bool resolutionSimulation, fontWeightBold = false, fontStyleItalic = false;
+            string fontFamily;
 
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
                 presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
@@ -100,6 +101,15 @@ namespace TextPresenter51456 {
             }
             if (!int.TryParse(Setting.GetAttribute("textAlign"), out textAlign) || textAlign < 1 || textAlign > 3) {
                 textAlign = 2;
+            }
+            if ((fontFamily = Setting.GetAttribute("fontFamily")) == null) {
+                fontFamily = "Malgun Gothic";
+            }
+            if (Setting.GetAttribute("fontWeight").Equals("bold")) {
+                fontWeightBold = true;
+            }
+            if (Setting.GetAttribute("fontStyle").Equals("italic")) {
+                fontStyleItalic = true;
             }
             if (!double.TryParse(Setting.GetAttribute("fontSize"), out fontSize) || fontSize <= 0) {
                 fontSize = 8.75;
@@ -142,11 +152,13 @@ namespace TextPresenter51456 {
 
             // FontFamily
             try {
-                LabelPresenterText.FontFamily = new FontFamily("NanumBarunGothic");
+                LabelPresenterText.FontFamily = new FontFamily(fontFamily);
             } catch (Exception e) {
                 Console.WriteLine(e.Message);
                 LabelPresenterText.FontFamily = new FontFamily("Malgun Gothic");
             }
+            LabelPresenterText.FontWeight = fontWeightBold ? FontWeights.Bold : FontWeights.Regular;
+            LabelPresenterText.FontStyle = fontStyleItalic ? FontStyles.Italic : FontStyles.Normal;
 
             // FontSize
             LabelPresenterText.FontSize = RelativeToAbsolute.MakeAbsolute(fontSize, Height);

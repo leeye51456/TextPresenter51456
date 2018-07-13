@@ -30,12 +30,16 @@ namespace TextPresenter51456 {
 
         public static void InitializeToDefault() {
             settings.Clear();
+            // default values
             SetAttribute("presenterScreen", System.Windows.Forms.Screen.AllScreens.Length.ToString()); // 마지막 화면
             SetAttribute("marginBasic", "5"); // 기본 여백
             SetAttribute("marginOverflow", "1"); // 넘치는 부분 여백
             SetAttribute("textEncoding", "0");
             SetAttribute("textPosition", "5");
             SetAttribute("textAlign", "2");
+            SetAttribute("fontFamily", "NanumBarunGothic");
+            SetAttribute("fontWeight", "regular");
+            SetAttribute("fontStyle", "normal");
             SetAttribute("fontSize", "8.75");
             SetAttribute("lineHeight", "140");
             SetAttribute("resolutionSimulation", "false");

@@ -316,6 +316,7 @@ namespace TextPresenter51456 {
             if (pw != null) {
                 pw.IsEnabled = true;
             }
+            mw.Focus();
         }
 
     }

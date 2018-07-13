@@ -19,18 +19,19 @@ namespace TextPresenter51456 {
     public partial class PresenterWindow : Window {
         // Shift+ESC 눌러서 닫기
 
-        Window mw;
+        MainWindow mw;
 
         /*
         int presenterScreen, textPosition, textAlign;
         double fontSize, lineHeight;
         */
 
-        public PresenterWindow(Window mw) {
+        public PresenterWindow(MainWindow mw) {
             int presenterScreen;
             this.mw = mw;
 
             Setting.Load();
+            ContentRendered += PresenterWindow_ContentRendered;
 
             System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
             if (sc.Length < 2) {
@@ -55,7 +56,9 @@ namespace TextPresenter51456 {
             InitializeComponent();
 
             ApplySettings();
-            
+        }
+
+        private void PresenterWindow_ContentRendered(object sender, EventArgs e) {
             mw.Activate();
         }
 

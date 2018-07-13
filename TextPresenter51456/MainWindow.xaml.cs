@@ -172,15 +172,18 @@ namespace TextPresenter51456 {
                 Style pageListItemStyle = FindResource("PageListItem") as Style;
                 SolidColorBrush yellowColorBrush = Brushes.Yellow; //new SolidColorBrush(Color.FromRgb(255, 255, 0));
 
-                colorList = new List<int>(len);
-                colorList.Add(0xffffff);
+                colorList = new List<int>(len) {
+                    0xffffff
+                };
 
                 WrapPanelPageList.Children.Clear();
 
                 // 페이지 리스트 만들기
                 for (int i = 1; i < len; i++) {
-                    Button pageListItem = new Button();
-                    pageListItem.Style = pageListItemStyle;
+                    Button pageListItem = new Button {
+                        Style = pageListItemStyle,
+                        Tag = i
+                    };
                     if (sharp.IsMatch(textList[i])) { // # 있으면 자르기
                         textList[i] = sharp.Replace(textList[i], "");
                         colorList.Add(0xffff00);
@@ -192,7 +195,6 @@ namespace TextPresenter51456 {
                         textList[i] = sharpEscaped.Replace(textList[i], "#$1");
                     }
                     pageListItem.Content = textList[i];
-                    pageListItem.Tag = i;
 
                     WrapPanelPageList.Children.Add(pageListItem);
                 }
@@ -226,10 +228,11 @@ namespace TextPresenter51456 {
         }
 
         private void SelectTextFile() {
-            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-            ofd.Multiselect = false;
-            ofd.DefaultExt = ".txt";
-            ofd.Filter = "텍스트 파일 (*.txt)|*.txt|모든 파일 (*.*)|*.*";
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog {
+                Multiselect = false,
+                DefaultExt = ".txt",
+                Filter = "텍스트 파일 (*.txt)|*.txt|모든 파일 (*.*)|*.*"
+            };
 
             if (ofd.ShowDialog() == true) {
                 if (!SetFileNameAndPath(ofd.FileName)) {
@@ -314,8 +317,9 @@ namespace TextPresenter51456 {
             if (pw != null) {
                 // 이미 열려 있는 경우
                 pw.Close();
-                RoutedEventArgs rea = new RoutedEventArgs(UnloadedEvent);
-                rea.Source = pw;
+                RoutedEventArgs rea = new RoutedEventArgs(UnloadedEvent) {
+                    Source = pw
+                };
                 pw.RaiseEvent(rea);
             } else {
                 MessageBox.Show("이미 송출 창이 닫혀 있습니다.\n이 메시지를 보고 있다면 개발자에게 알리십시오.", "TextPresenter51456");
@@ -478,15 +482,16 @@ namespace TextPresenter51456 {
         private void ButtonFreeCut_Click(object sender, RoutedEventArgs e) {
             FreeCut();
         }
-        
+
         private void MenuItemSettings_Click(object sender, RoutedEventArgs e) {
-            sw = new SettingWindow(this, pw);
-            sw.Owner = this;
+            sw = new SettingWindow(this, pw) {
+                Owner = this
+            };
             sw.Show();
             if (pw != null) {
                 pw.IsEnabled = false;
             }
-            this.IsEnabled = false;
+            IsEnabled = false;
         }
         private void MenuItemReloadSettings_Click(object sender, RoutedEventArgs e) {
             Setting.Load();
@@ -497,22 +502,25 @@ namespace TextPresenter51456 {
 
         private void MenuItemHelp_Click(object sender, RoutedEventArgs e) {
             if (sender == MenuItemHelpEdit) {
-                hw = new HelpWindow(0, this, pw);
-                hw.Owner = this;
+                hw = new HelpWindow(0, this, pw) {
+                    Owner = this
+                };
                 hw.Show();
             } else if (sender == MenuItemHelpPresentation) {
-                hw = new HelpWindow(1, this, pw);
-                hw.Owner = this;
+                hw = new HelpWindow(1, this, pw) {
+                    Owner = this
+                };
                 hw.Show();
             } else if (sender == MenuItemInfo) {
-                hw = new HelpWindow(2, this, pw);
-                hw.Owner = this;
+                hw = new HelpWindow(2, this, pw) {
+                    Owner = this
+                };
                 hw.Show();
             }
             if (pw != null) {
                 pw.IsEnabled = false;
             }
-            this.IsEnabled = false;
+            IsEnabled = false;
         }
 
 
@@ -655,8 +663,9 @@ namespace TextPresenter51456 {
             // https://msdn.microsoft.com/ko-kr/library/7a2f3ay4(v=vs.90).aspx
             if (MenuItemRemote.IsChecked) {
                 //MenuItemRemote.IsEnabled = false;
-                threadRemote = new Thread(SynSocketListener.StartListening);
-                threadRemote.IsBackground = true;
+                threadRemote = new Thread(SynSocketListener.StartListening) {
+                    IsBackground = true
+                };
                 threadRemote.Start();
             } else {
                 SynSocketListener.TerminateListening();

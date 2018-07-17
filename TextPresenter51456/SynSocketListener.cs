@@ -94,7 +94,7 @@ namespace TextPresenter51456 {
 
 
         public static void TerminateListening() {
-            // 자기 자신에게 종료 메시지 보내기
+            // send terminate message to itself
             try {
                 IPEndPoint remoteEP = new IPEndPoint(IPAddress.Loopback, 51456);
 

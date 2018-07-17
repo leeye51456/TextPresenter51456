@@ -68,7 +68,7 @@ namespace TextPresenter51456 {
         public PageNumberManager(int initialPageNumber, int lastPageNumber, bool allowZero) {
             enabled = true;
             if (initialPageNumber > lastPageNumber) {
-                // 꼬인 경우
+                // initial is bigger than last -> ignore PageNumber parameters (don't know which one is correct)
                 this.allowZero = allowZero;
                 pageNumber = 1;
                 this.lastPageNumber = 1;
@@ -77,11 +77,12 @@ namespace TextPresenter51456 {
                 pageNumber = initialPageNumber;
                 this.lastPageNumber = lastPageNumber;
             } else if (initialPageNumber == 0) {
+                // initial is 0 -> ignore allowZero (force true)
                 this.allowZero = true;
                 pageNumber = initialPageNumber;
                 this.lastPageNumber = lastPageNumber;
             } else {
-                // 잘못된 경우
+                // other case (wrong case) -> ignore PageNumber parameters (don't know which one is correct)
                 this.allowZero = allowZero;
                 pageNumber = 1;
                 this.lastPageNumber = 1;

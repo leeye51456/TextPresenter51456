@@ -13,10 +13,10 @@ namespace TextPresenter51456 {
 
         public static void SetAttribute(string key, string value) {
             if (settings.ContainsKey(key)) {
-                // 기존 -> 변경
+                // existing key -> modify
                 settings[key] = value;
             } else {
-                // 신규 -> 추가
+                // new key -> add
                 settings.Add(key, value);
             }
         }
@@ -31,9 +31,9 @@ namespace TextPresenter51456 {
         public static void InitializeToDefault() {
             settings.Clear();
             // default values
-            SetAttribute("presenterScreen", System.Windows.Forms.Screen.AllScreens.Length.ToString()); // 마지막 화면
-            SetAttribute("marginBasic", "5"); // 기본 여백
-            SetAttribute("marginOverflow", "1"); // 넘치는 부분 여백
+            SetAttribute("presenterScreen", System.Windows.Forms.Screen.AllScreens.Length.ToString()); // last screen
+            SetAttribute("marginBasic", "5"); // normal margin
+            SetAttribute("marginOverflow", "1"); // margin at text overflow
             SetAttribute("textEncoding", "0");
             SetAttribute("textPosition", "5");
             SetAttribute("textAlign", "2");
@@ -73,7 +73,7 @@ namespace TextPresenter51456 {
                 return Save(fileName);
             }
 
-            fullText = newLineUnifier.Replace(fullText, "\n"); // 줄바꿈 문자 통일
+            fullText = newLineUnifier.Replace(fullText, "\n"); // unify newline characters
             fullText = fullText.Trim();
             string[] lines = fullText.Split('\n');
             foreach (string item in lines) {

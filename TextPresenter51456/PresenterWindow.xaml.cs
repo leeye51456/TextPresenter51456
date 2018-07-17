@@ -17,14 +17,8 @@ namespace TextPresenter51456 {
     /// PresenterWindow.xaml에 대한 상호 작용 논리
     /// </summary>
     public partial class PresenterWindow : Window {
-        // Shift+ESC 눌러서 닫기
 
         MainWindow mw;
-
-        /*
-        int presenterScreen, textPosition, textAlign;
-        double fontSize, lineHeight;
-        */
 
         public PresenterWindow(MainWindow mw) {
             int presenterScreen;
@@ -34,10 +28,12 @@ namespace TextPresenter51456 {
             ContentRendered += PresenterWindow_ContentRendered;
 
             System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
+            // single monitor warning
             if (sc.Length < 2) {
                 MessageBox.Show("화면 표시 장치가 하나입니다. 이 경우 별도의 설정이 없으면 화면을 모두 덮는 창이 나타나며, Shift+ESC로 닫을 수 있습니다.", "TextPresenter51456");
             }
 
+            // load and apply presenterScreen property
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
                 presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
             }
@@ -45,8 +41,8 @@ namespace TextPresenter51456 {
                 presenterScreen = sc.Length;
             }
 
-            // 설정대로 좌표와 크기를 지정해서 열어야 함
-            // 설정 기본값은 마지막 모니터 좌상단, 풀스크린
+            // specify the position and the size of PresenterWindow
+            // default: top-left of last monitor on fullscreen
             System.Drawing.Rectangle r = sc[presenterScreen - 1].Bounds;
             Left = r.Left;
             Top = r.Top;
@@ -58,13 +54,15 @@ namespace TextPresenter51456 {
             ApplySettings();
         }
 
+        // PresenterWindow don't need to be focused
         private void PresenterWindow_ContentRendered(object sender, EventArgs e) {
             mw.Activate();
         }
 
-        private void Window_PreviewKeyDown(object sender, KeyEventArgs e) {   // 키보드 입력이 들어오면 MainWindow에서 처리
+        // keyboard input -> not Alt+Space and Alt+F4 -> Let MainWindow handle this event
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e) {
             if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt && (e.SystemKey == Key.Space || e.SystemKey == Key.F4)) {
-                // Alt+Space, Alt+F4 방지
+                // Disable Alt+Space, Alt+F4
                 e.Handled = true;
                 return;
             }
@@ -72,14 +70,14 @@ namespace TextPresenter51456 {
         }
 
         public void ApplySettings() {
-            /* 여기서 다룰 항목
-            FontFamily="NanumBarunGothicOTF"
-            FontSize="94.5px"
-            TextBlock.LineHeight="132.3px"
-            TextBlock.TextAlignment="Center"
-            Foreground="White"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
+            /*  여기서 다룰 항목
+                FontFamily
+                FontSize
+                TextBlock.LineHeight
+                TextBlock.TextAlignment
+                Foreground
+                HorizontalAlignment
+                VerticalAlignment
             */
 
             int presenterScreen, textPosition, textAlign, resolutionSimulationWidth, resolutionSimulationHeight;
@@ -87,6 +85,7 @@ namespace TextPresenter51456 {
             bool resolutionSimulation, fontWeightBold = false, fontStyleItalic = false;
             string fontFamily;
 
+            // load and apply properties
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
                 presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
             }
@@ -127,7 +126,7 @@ namespace TextPresenter51456 {
                 resolutionSimulationHeight = 768;
             }
 
-            // 해상도 시뮬레이션
+            // Resolution simulation
             if (resolutionSimulation) {
                 GridExCol1.Width = new GridLength(1, GridUnitType.Star);
                 GridExCol2.Width = new GridLength(resolutionSimulationWidth, GridUnitType.Pixel);
@@ -145,7 +144,7 @@ namespace TextPresenter51456 {
                 GridExRow3.Height = new GridLength(0, GridUnitType.Pixel);
             }
 
-            // 단위 보정
+            // unit correction
             fontSize /= 100;
             lineHeight /= 100;
 
@@ -166,7 +165,7 @@ namespace TextPresenter51456 {
             // TextBlock.LineHeight
             LabelPresenterText.SetValue(TextBlock.LineHeightProperty, RelativeToAbsolute.MakeAbsolute(fontSize * lineHeight, Height));
 
-            // TextBlock.TextAlignment TextBlock.TextAlignment="Center"
+            // TextBlock.TextAlignment
             switch (textAlign) {
                 case 1: // Left
                     LabelPresenterText.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Left);
@@ -174,13 +173,13 @@ namespace TextPresenter51456 {
                 case 3: // Right
                     LabelPresenterText.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Right);
                     break;
-                default: // 2 또는 invalid value -> Center
+                default: // 2 or invalid value -> Center
                     LabelPresenterText.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Center);
                     break;
             }
 
             // Foreground
-            LabelPresenterText.Foreground = Brushes.White; //new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            LabelPresenterText.Foreground = Brushes.White;
 
             // Alignment
             if ((textPosition - 1) / 3 == 0) {

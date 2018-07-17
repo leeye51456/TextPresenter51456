@@ -69,10 +69,12 @@ namespace TextPresenter51456 {
         }
 
         private void WindowMainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-            if (pw != null) {   // 송출 창 열려 있는 경우
+            // PresenterWindow is open
+            if (pw != null) {
                 switch (MessageBox.Show("송출 창이 열려 있습니다. 정말로 종료하시겠습니까?", "TextPresenter51456", MessageBoxButton.YesNo)) {
                     case MessageBoxResult.Yes:
-                        if (pw != null) { // 종료 질문 띄우고 예 누르기 전에 송출 창 먼저 닫는 경우 대비해서 한 번 더 검사
+                        // check one more time: the case is possible of closing PresenterWindow before click "Yes"
+                        if (pw != null) {
                             pw.Close();
                         }
                         break;
@@ -85,11 +87,11 @@ namespace TextPresenter51456 {
 
         private void UpdateBorders() {
             try {
-                // 항상 pvw -> pgm 순으로 업데이트하므로 UpdatePvw에서 테두리 처리
+                // for update order is pvw -> pgm, border color should be updated during UpdatePvw
                 foreach (Button item in WrapPanelPageList.Children) {
                     item.BorderBrush = DEFAULT_BORDER_COLOR;
                 }
-                // 페이지리스트는 인덱스가 0부터라 -1
+                // for page list is 0-based index, number should be -1
                 Button pvwBtn = WrapPanelPageList.Children[pvwManager.PageNumber - 1] as Button;
                 pvwBtn.BorderBrush = PVW_BORDER_COLOR;
                 if (pgmManager.PageNumber > 0) {
@@ -97,7 +99,7 @@ namespace TextPresenter51456 {
                     pgmBtn.BorderBrush = PGM_BORDER_COLOR;
                 }
             } catch (Exception ex) {
-                // 페이지리스트에 버튼 컨트롤이 아닌 게 있을 때: 초기 상태에서
+                // when there exists what is not the Button control (ex: initial state)
             }
         }
         private void ClearPgm() {
@@ -105,7 +107,8 @@ namespace TextPresenter51456 {
             UpdateBorders();
             PgmContent.Content = "";
             PgmPage.Content = "-";
-            if (pw != null) {   // 송출 창 열려 있을 때
+            // PresenterWindow is open
+            if (pw != null) {
                 pw.LabelPresenterText.Content = "";
             }
         }
@@ -123,7 +126,8 @@ namespace TextPresenter51456 {
             PgmContent.Content = textList[pgmManager.PageNumber];
             PgmContent.Foreground = fg;
             PgmPage.Content = pgmManager.PageNumber;
-            if (pw != null) {   // 송출 창 열려 있을 때
+            // PresenterWindow is open
+            if (pw != null) {
                 pw.LabelPresenterText.Content = textList[pgmManager.PageNumber];
                 pw.LabelPresenterText.Foreground = fg;
             }
@@ -149,49 +153,52 @@ namespace TextPresenter51456 {
             } else {
                 encoding = Encoding.GetEncoding(textEncoding);
             }
-            try {   // 선택한 파일 읽기
+            // read the selected file
+            try {
                 System.IO.StreamReader sr = new System.IO.StreamReader(filePath + fileName, encoding);
                 string fullText = sr.ReadToEnd();
                 sr.Close();
-                fullText = newLineUnifier.Replace(fullText, "\n"); // 줄바꿈 문자 통일
-                fullText = trimmer.Replace(fullText, ""); // 앞뒤 공백 자르기
-                textList = new List<string>(pageBreaker.Split(fullText)); // 페이지 나누기
-                textList.Insert(0, ""); // 편의상 인덱스 0 비워놓기
-                textList.Add(""); // 마지막에 빈 페이지 추가
+                fullText = newLineUnifier.Replace(fullText, "\n"); // unify newline characters
+                fullText = trimmer.Replace(fullText, ""); // trimming newlines
+                textList = new List<string>(pageBreaker.Split(fullText)); // split pages
+                textList.Insert(0, ""); // leave index 0 empty for convenience
+                textList.Add(""); // add an empty page at the end
                 pgmManager.LastPageNumber = pvwManager.LastPageNumber = textList.Count - 1;
                 WindowMainWindow.Title = "TextPresenter51456 - " + fileName + " (" + filePath + ")";
             } catch (Exception e) {
-                string errMsg = "파일 읽기 실패";
+                string errMsg = "Fail to read the file";
                 errMsg += "\nMessage: " + e.Message;
                 errMsg += "\nSource" + e.Source;
                 MessageBox.Show(errMsg, "TextPresenter51456");
                 return;
             }
-            try {   // 읽어들인 파일 표시하기 + 루프 돌면서 서식 적용
+            // show the file read as the page list
+            try {
                 int len = textList.Count;
                 Style pageListItemStyle = FindResource("PageListItem") as Style;
-                SolidColorBrush yellowColorBrush = Brushes.Yellow; //new SolidColorBrush(Color.FromRgb(255, 255, 0));
+                SolidColorBrush yellowColorBrush = Brushes.Yellow; //////////////////////////
 
+                /////////////////////////
                 colorList = new List<int>(len) {
                     0xffffff
                 };
 
                 WrapPanelPageList.Children.Clear();
 
-                // 페이지 리스트 만들기
+                // construct page list
                 for (int i = 1; i < len; i++) {
                     Button pageListItem = new Button {
                         Style = pageListItemStyle,
                         Tag = i
                     };
-                    if (sharp.IsMatch(textList[i])) { // # 있으면 자르기
+                    if (sharp.IsMatch(textList[i])) { // remove beginning #s and make these pages "header pages"
                         textList[i] = sharp.Replace(textList[i], "");
-                        colorList.Add(0xffff00);
-                        pageListItem.Foreground = yellowColorBrush;
+                        colorList.Add(0xffff00); /////////////////////
+                        pageListItem.Foreground = yellowColorBrush; //////////////////////
                     } else {
-                        colorList.Add(0xffffff);
+                        colorList.Add(0xffffff); //////////////////
                     }
-                    if (sharpEscaped.IsMatch(textList[i])) { // 이스케이프된 # (\#)
+                    if (sharpEscaped.IsMatch(textList[i])) { // escaped # (\#)
                         textList[i] = sharpEscaped.Replace(textList[i], "#$1");
                     }
                     pageListItem.Content = textList[i];
@@ -201,7 +208,7 @@ namespace TextPresenter51456 {
                 LabelPageIndicator.Content = "/" + (len - 1).ToString();
                 UpdatePvw();
             } catch (Exception e) {
-                string errMsg = "파일 표시 실패";
+                string errMsg = "Failed to display the file";
                 errMsg += "\nMessage: " + e.Message;
                 errMsg += "\nSource" + e.Source;
                 MessageBox.Show(errMsg, "TextPresenter51456");
@@ -209,9 +216,9 @@ namespace TextPresenter51456 {
         }
 
         private bool SetFileNameAndPath(string src) {
-            // 1. txt 파일 -> 통과
-            // 2. non-txt 파일 & Yes -> 통과
-            // 3. non-txt 파일 & No -> 취소
+            // 1. txt file -> pass
+            // 2. non-txt file & Yes -> pass
+            // 3. non-txt file & No -> cancel
             if (!src.ToLower().EndsWith(".txt")
                 && MessageBox.Show(
                     WindowMainWindow,
@@ -235,8 +242,8 @@ namespace TextPresenter51456 {
             };
 
             if (ofd.ShowDialog() == true) {
+                // if canceled
                 if (!SetFileNameAndPath(ofd.FileName)) {
-                    // 취소한 경우
                     return;
                 }
                 OpenTxtFile(true);
@@ -245,14 +252,14 @@ namespace TextPresenter51456 {
         }
 
         private void UpdateFree() {
-            string text = newLineUnifier.Replace(TextBoxFreeContent.Text, "\n"); // 줄바꿈 문자 통일
-            text = trimmer.Replace(text, ""); // 앞뒤 공백 자르기
+            string text = newLineUnifier.Replace(TextBoxFreeContent.Text, "\n"); // unify newline characters
+            text = trimmer.Replace(text, ""); // trimming newlines
 
-            SolidColorBrush fg = Brushes.White; // GetColorFromInt(0xffffff); // 일단 무조건 흰색
-            //SolidColorBrush fg = GetColorFromInt(colorList[pgmManager.PageNumber]);
+            SolidColorBrush fg = Brushes.White;
             PgmContent.Content = text;
             PgmContent.Foreground = fg;
-            if (pw != null) {   // 송출 창 열려 있을 때
+            // PresenterWindow is open
+            if (pw != null) {
                 pw.LabelPresenterText.Content = text;
                 pw.LabelPresenterText.Foreground = fg;
             }
@@ -264,7 +271,7 @@ namespace TextPresenter51456 {
             UpdateFree();
         }
 
-        /////////////////////////////// 파일 드래그
+        // files are dragged into MainWindow
         private void WindowMainWindow_PreviewDrop(object sender, DragEventArgs e) {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -283,30 +290,31 @@ namespace TextPresenter51456 {
             }
         }
 
-        /////////////////////////////// 파일 열기
+        // open file command (open file menu)
         private void OpenCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e) {
             SelectTextFile();
         }
 
-        /////////////////////////////// 파일 다시 불러오기
+        // refresh the page list (reopen menu)
         private void MenuItemRefresh_Click(object sender, RoutedEventArgs e) {
             OpenTxtFile(false);
         }
 
-        //////////////////////////////// 종료
+        // exit menu
         private void MenuItemExit_Click(object sender, RoutedEventArgs e) {
             Close();
         }
 
+        // when PresenterWindow is unloaded, make pw null to check easily whether PresenterWindow is open
         private void OnPwUnloaded(object sender, RoutedEventArgs e) {
             pw = null;
         }
         private void OpenPresenterWindow() {
             if (pw == null) {
-                // 안 열려 있는 경우
+                // PresenterWindow is not open
                 pw = new PresenterWindow(this);
                 pw.Show();
-                // 이벤트 핸들러 관리: https://msdn.microsoft.com/ko-kr/library/ms742806(v=vs.110).aspx
+                // event handler management (ko): https://msdn.microsoft.com/ko-kr/library/ms742806(v=vs.110).aspx
                 pw.AddHandler(UnloadedEvent, new RoutedEventHandler(OnPwUnloaded));
                 UpdatePgm();
             } else {
@@ -315,7 +323,7 @@ namespace TextPresenter51456 {
         }
         private void ClosePresenterWindow() {
             if (pw != null) {
-                // 이미 열려 있는 경우
+                // PresenterWindow is already open
                 pw.Close();
                 RoutedEventArgs rea = new RoutedEventArgs(UnloadedEvent) {
                     Source = pw
@@ -334,16 +342,12 @@ namespace TextPresenter51456 {
         }
         private bool OpenAndClosePresenterWindow() {
             if (pw == null) {
-                // 안 열려 있는 경우
-                // 아래 코드 실행되면서 Checked 이벤트 발생
-                ButtonPresenterWindow.IsChecked = true;
-                //OpenPresenterWindow();
+                // PresenterWindow is not open
+                ButtonPresenterWindow.IsChecked = true; // Checked event will be occured
                 return true;
             } else {
-                // 이미 열려 있는 경우
-                // 아래 코드 실행되면서 Unchecked 이벤트 발생
-                ButtonPresenterWindow.IsChecked = false;
-                //ClosePresenterWindow();
+                // PresenterWindow is already open
+                ButtonPresenterWindow.IsChecked = false; // Unhecked event will be occured
                 return false;
             }
         }
@@ -361,7 +365,7 @@ namespace TextPresenter51456 {
                     UpdatePgm();
                     UpdatePvw();
                 } else if (p > 0) {
-                    // pageNum에 내용 있음
+                    // any number in pageNum
                     UpdatePageIndicator();
                     pvwManager.PageNumber = p;
                     UpdatePvw();
@@ -374,39 +378,39 @@ namespace TextPresenter51456 {
             }
         }
 
-        private void WindowMainWindow_PreviewKeyDown(object sender, KeyEventArgs e) { // 키 누를 때 입력 처리
-            if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.Escape) { // Shift+ESC: 송출 창 버튼
+        private void WindowMainWindow_PreviewKeyDown(object sender, KeyEventArgs e) { // process input when keydown
+            if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.Escape) { // Shift+ESC: presenter window button
                 OpenAndClosePresenterWindow();
                 return;
             }
-            if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Enter) { // Ctrl+Enter: 자유 송출
+            if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Enter) { // Ctrl+Enter: free text presentation
                 FreeCut();
                 return;
             }
-            if (MenuItemRefresh.IsEnabled == true && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.R) { // Ctrl+R: 리로드
+            if (MenuItemRefresh.IsEnabled == true && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.R) { // Ctrl+R: reload the current file
                 OpenTxtFile(false);
                 return;
             }
 
-            if (TextBoxFreeContent.IsFocused) { // 자유 송출 텍스트 상자 포커스
+            if (TextBoxFreeContent.IsFocused) { // the free text presentation box is focused
                 switch (e.Key) {
                 case Key.Escape:
                     KillFocus();
                     break;
-                case Key.OemPeriod: // 일반 .키
-                case Key.Decimal: // 키패드 .키
+                case Key.OemPeriod: // normal .(>) key
+                case Key.Decimal: // keypad .(Del) key
                     if (Keyboard.Modifiers == ModifierKeys.Control) {
                         ClearPgm();
                     }
                     break;
                 }
             } else {
-                if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) { // 숫자패드
+                if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) { // numpad
                     pageNum.Add(e.Key - Key.NumPad0);
                     UpdatePageIndicator();
                     return;
                 }
-                if (e.Key >= Key.D0 && e.Key <= Key.D9) { // 숫자
+                if (e.Key >= Key.D0 && e.Key <= Key.D9) { // number keys above Q-P
                     pageNum.Add(e.Key - Key.D0);
                     UpdatePageIndicator();
                     return;
@@ -427,8 +431,8 @@ namespace TextPresenter51456 {
                     KillFocus();
                     e.Handled = true;
                     break;
-                case Key.OemPeriod: // 일반 .키
-                case Key.Decimal: // 키패드 .키
+                case Key.OemPeriod: // normal  .(>) key
+                case Key.Decimal: // keypad .(Del) key
                     ClearPgm();
                     KillFocus();
                     e.Handled = true;
@@ -450,7 +454,8 @@ namespace TextPresenter51456 {
         }
 
         private void ScrollViewerPageList_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e) {
-            if (fileName == null) {   // 아직 파일을 안 불러온 경우
+            // file is not loaded yet
+            if (fileName == null) {
                 SelectTextFile();
             }
         }
@@ -548,11 +553,11 @@ namespace TextPresenter51456 {
             processRemoteReturn = "";
 
             if (cmd.Equals("pgm")) {
-                // PGM 변경
+                // change PGM
                 // SEND   pgm:page<EndOfCommand>
                 // RETURN -
                 if (int.TryParse(param, out int pageNum)) {
-                    // 정상적인 경우
+                    // if valid
                     pgmManager.PageNumber = pageNum;
                     pvwManager.PageNumber = pageNum + 1;
                     UpdatePgm();
@@ -562,11 +567,11 @@ namespace TextPresenter51456 {
                 processRemoteReturn = "pgm:" + pgmManager.PageNumber + "<EndOfCommand>";
 
             } else if (cmd.Equals("pvw")) {
-                // PVW 변경
+                // change PVW
                 // SEND   pvw:page<EndOfCommand>
                 // RETURN -
                 if (int.TryParse(param, out int pageNum)) {
-                    // 정상적인 경우
+                    // if valid
                     pvwManager.PageNumber = pageNum;
                     UpdatePvw();
                 }
@@ -574,7 +579,7 @@ namespace TextPresenter51456 {
                 processRemoteReturn = "pvw:" + pvwManager.PageNumber + "<EndOfCommand>";
 
             } else if (cmd.Equals("cut")) {
-                // 컷
+                // cut
                 // SEND   cut:<EndOfCommand>
                 // RETURN -
                 CutAction();
@@ -582,7 +587,7 @@ namespace TextPresenter51456 {
                 processRemoteReturn = "cut:" + pgmManager.PageNumber + "<EndOfCommand>";
 
             } else if (cmd.Equals("clear")) {
-                // 화면 지우기
+                // clear presenter window screen
                 // SEND   clear:<EndOfCommand>
                 // RETURN -
                 ClearPgm();
@@ -590,7 +595,7 @@ namespace TextPresenter51456 {
                 processRemoteReturn = "clear:<EndOfCommand>";
 
             } else if (cmd.Equals("free:")) {
-                // 자유송출
+                // free text presentation
                 // SEND   free:str<EndOfCommand>
                 // RETURN -
                 TextBoxFreeContent.Text = param;
@@ -599,21 +604,21 @@ namespace TextPresenter51456 {
                 processRemoteReturn = "free:<EndOfCommand>";
 
             } else if (cmd.Equals("update")) {
-                // 페이지 리스트 동기화
+                // page list synchronization
                 // SEND   update:<EndOfCommand>
                 // RETURN string pageList
 
                 processRemoteReturn = "update:" + PackPageListToString() + "<EndOfCommand>";
 
             } else if (cmd.Equals("open")) {
-                // 다른 파일 열기 또는 현재 파일 다시 불러오기
+                // open the other file or reload current file
                 // SEND   open:path<EndOfCommand>
                 // RETURN string pageList
                 if (param.Equals("")) {
-                    // 현재 파일 다시 불러오기
+                    // reload current file
                     OpenTxtFile(false);
                 } else {
-                    // 다른 파일 열기
+                    // open the other file
                     fileName = fileNameTrimmer.Replace(param, "$2");
                     filePath = fileNameTrimmer.Replace(param, "$1");
                     OpenTxtFile(true);
@@ -622,26 +627,26 @@ namespace TextPresenter51456 {
                 processRemoteReturn = "open:" + PackPageListToString() + "<EndOfCommand>";
 
             } else if (cmd.Equals("ls")) {
-                // 파일 목록 요청
+                // request the file list
                 // SEND   ls:<EndOfCommand>
                 // RETURN string fileList
                 processRemoteReturn = "ls:" /*+ "FILE LIST SEPERATED BY LF" */+ "<EndOfCommand>";
 
             } else if (cmd.Equals("presenter")) {
-                // 송출 창 토글
+                // toggle the presenter window
                 // SEND   presenter:<EndOfCommand>
                 // RETURN bool isOpen (창 열었으면 "true")
                 processRemoteReturn = "presenter:" + OpenAndClosePresenterWindow().ToString().ToLower() + "<EndOfCommand>";
 
             } else if (cmd.Equals("terminate")) {
-                // 서버 종료
+                // terminate server
                 // SEND   terminate:<EndOfCommand>
                 // RETURN -
                 MenuItemRemote.IsChecked = false;
                 processRemoteReturn = "terminate:<EndOfCommand>";
 
             } else {
-                // 정의되지 않은 명령
+                // undefined command
                 processRemoteReturn = cmd + ":<EndOfCommand>";
             }
         }

@@ -28,6 +28,7 @@ namespace TextPresenter51456 {
         Thickness borderThickness = new Thickness(1.0);
 
 
+        // Load current settings from Setting class
         private void GetSettings() {
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
                 presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
@@ -83,6 +84,28 @@ namespace TextPresenter51456 {
             }
         }
 
+        private void UpdateButtonChangeFont() {
+            string fontInfo;
+            TextBlock tb = new TextBlock();
+
+            fontInfo = fontFamily;
+            if (fontWeightBold && fontStyleItalic) {
+                fontInfo += " (굵게, 기울임)";
+            } else if (fontWeightBold) {
+                fontInfo += " (굵게)";
+            } else if (fontStyleItalic) {
+                fontInfo += " (기울임)";
+            } else {
+                fontInfo += " (보통)";
+            }
+            tb.Text = fontInfo;
+            ButtonChangeFont.Content = tb;
+            ButtonChangeFont.FontFamily = new FontFamily(fontFamily);
+            ButtonChangeFont.FontWeight = fontWeightBold ? FontWeights.Bold : FontWeights.Regular;
+            ButtonChangeFont.FontStyle = fontStyleItalic ? FontStyles.Italic : FontStyles.Normal;
+        }
+
+        // Get and apply settings from Setting class to SettingWindow controls
         private void SettingToControl() {
             System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
             int numOfScreen = sc.Length;
@@ -93,6 +116,7 @@ namespace TextPresenter51456 {
             GetSettings();
 
             // for drawing screen map
+            // get full size of all of the monitors
             for (int i = 0; i < numOfScreen; i++) {
                 System.Drawing.Rectangle r = sc[i].Bounds;
                 int ithWidth = r.X + r.Width;
@@ -104,6 +128,7 @@ namespace TextPresenter51456 {
                     fullHeight = ithHeight;
                 }
             }
+            // calculate multiply factor
             if ((double)fullWidth / fullHeight <= threshold) {
                 multiplyFactor = 80.0 / fullHeight;
             } else {
@@ -116,12 +141,14 @@ namespace TextPresenter51456 {
             for (int i = 0; i < numOfScreen; i++) {
                 System.Drawing.Rectangle r = sc[i].Bounds;
 
+                // combo box item
                 ComboBoxItem cbi = new ComboBoxItem {
-                    // (2) 1024x768 (1920,0)
+                    // content of item example: (2) 1024x768 (1920,0)
                     Content = "(" + (i + 1).ToString() + ") " + r.Width.ToString() + "×" + r.Height.ToString() + " (" + r.X.ToString() + "," + r.Y.ToString() + ")"
                 };
                 ComboBoxPresenterScreen.Items.Add(cbi);
 
+                // screen map item
                 TextBlock tb = new TextBlock {
                     Text = (i + 1).ToString(),
                     VerticalAlignment = VerticalAlignment.Center,
@@ -197,26 +224,7 @@ namespace TextPresenter51456 {
             TextBoxScreenHeight.Text = resolutionSimulationHeight.ToString();
             ComboBoxTextAlign.SelectedIndex = textAlign - 1;
 
-            { // 이 부분 중복 있음
-                string fontInfo;
-                TextBlock tb = new TextBlock();
-
-                fontInfo = fontFamily;
-                if (fontWeightBold && fontStyleItalic) {
-                    fontInfo += " (굵게, 기울임)";
-                } else if (fontWeightBold) {
-                    fontInfo += " (굵게)";
-                } else if (fontStyleItalic) {
-                    fontInfo += " (기울임)";
-                } else {
-                    fontInfo += " (보통)";
-                }
-                tb.Text = fontInfo;
-                ButtonChangeFont.Content = tb;
-                ButtonChangeFont.FontFamily = new FontFamily(fontFamily);
-                ButtonChangeFont.FontWeight = fontWeightBold ? FontWeights.Bold : FontWeights.Regular;
-                ButtonChangeFont.FontStyle = fontStyleItalic ? FontStyles.Italic : FontStyles.Normal;
-            }
+            UpdateButtonChangeFont();
 
             TextBoxFontSize.Text = fontSize.ToString();
             TextBoxLineHeight.Text = lineHeight.ToString();
@@ -251,28 +259,11 @@ namespace TextPresenter51456 {
                 ShowEffects = false
             };
             if (fontDialog.ShowDialog() != System.Windows.Forms.DialogResult.Cancel) {
-                string fontInfo;
-                TextBlock tb = new TextBlock();
-
                 fontFamily = fontDialog.Font.Name;
                 fontWeightBold = fontDialog.Font.Bold;
                 fontStyleItalic = fontDialog.Font.Italic;
 
-                fontInfo = fontFamily;
-                if (fontWeightBold && fontStyleItalic) {
-                    fontInfo += " (굵게, 기울임)";
-                } else if (fontWeightBold) {
-                    fontInfo += " (굵게)";
-                } else if (fontStyleItalic) {
-                    fontInfo += " (기울임)";
-                } else {
-                    fontInfo += " (보통)";
-                }
-                tb.Text = fontInfo;
-                ButtonChangeFont.Content = tb;
-                ButtonChangeFont.FontFamily = new FontFamily(fontFamily);
-                ButtonChangeFont.FontWeight = fontWeightBold ? FontWeights.Bold : FontWeights.Regular;
-                ButtonChangeFont.FontStyle = fontStyleItalic ? FontStyles.Italic : FontStyles.Normal;
+                UpdateButtonChangeFont();
             }
         }
 

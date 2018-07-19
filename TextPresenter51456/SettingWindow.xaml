@@ -265,10 +265,12 @@
                         <TextBox
                             x:Name="TextBoxTitleColor"
                             Width="60"
+                            MaxLength="6"
                             VerticalAlignment="Center"
+                            TextChanged="TextBoxTitleColor_TextChanged"
                             PreviewTextInput="TextBoxHex_PreviewTextInput" />
                         <Rectangle
-                            x:Name="RectangleFontColor"
+                            x:Name="RectangleTitleColor"
                             Width="20"
                             Height="20"
                             Margin="5,0,0,0"

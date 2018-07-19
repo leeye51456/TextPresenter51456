@@ -238,7 +238,7 @@ namespace TextPresenter51456 {
             UpdateButtonChangeFont();
             TextBoxFontSize.Text = fontSize.ToString();
             TextBoxTitleColor.Text = titleColor.ToString("X6");
-            RectangleFontColor.Fill = MiscConverter.IntToSolidColorBrush(titleColor);
+            RectangleTitleColor.Fill = MiscConverter.IntToSolidColorBrush(titleColor);
             TextBoxLineHeight.Text = lineHeight.ToString();
             TextBoxMarginBasic.Text = marginBasic.ToString();
             TextBoxMarginOverflow.Text = marginOverflow.ToString();
@@ -251,6 +251,12 @@ namespace TextPresenter51456 {
             InitializeComponent();
 
             SettingToControl();
+        }
+
+        private void TextBoxTitleColor_TextChanged(object sender, TextChangedEventArgs e) {
+            if (TextBoxTitleColor.Text.Count() == 6) {
+                RectangleTitleColor.Fill = MiscConverter.IntToSolidColorBrush(MiscConverter.StringToIntColor(TextBoxTitleColor.Text));
+            }
         }
 
         private void TextBoxDouble_PreviewTextInput(object sender, TextCompositionEventArgs e) {

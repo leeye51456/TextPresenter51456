@@ -160,10 +160,10 @@ namespace TextPresenter51456 {
             LabelPresenterText.FontStyle = fontStyleItalic ? FontStyles.Italic : FontStyles.Normal;
 
             // FontSize
-            LabelPresenterText.FontSize = RelativeToAbsolute.MakeAbsolute(fontSize, Height);
+            LabelPresenterText.FontSize = MiscConverter.RelativeToAbsolute(fontSize, Height);
 
             // TextBlock.LineHeight
-            LabelPresenterText.SetValue(TextBlock.LineHeightProperty, RelativeToAbsolute.MakeAbsolute(fontSize * lineHeight, Height));
+            LabelPresenterText.SetValue(TextBlock.LineHeightProperty, MiscConverter.RelativeToAbsolute(fontSize * lineHeight, Height));
 
             // TextBlock.TextAlignment
             switch (textAlign) {

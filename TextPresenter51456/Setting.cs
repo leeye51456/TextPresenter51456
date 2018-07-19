@@ -31,20 +31,21 @@ namespace TextPresenter51456 {
         public static void InitializeToDefault() {
             settings.Clear();
             // default values
-            SetAttribute("presenterScreen", System.Windows.Forms.Screen.AllScreens.Length.ToString()); // last screen
+            SetAttribute("fontFamily", "NanumBarunGothic");
+            SetAttribute("fontSize", "8.75");
+            SetAttribute("fontStyle", "normal");
+            SetAttribute("fontWeight", "regular");
+            SetAttribute("lineHeight", "140");
             SetAttribute("marginBasic", "5"); // normal margin
             SetAttribute("marginOverflow", "1"); // margin at text overflow
+            SetAttribute("presenterScreen", System.Windows.Forms.Screen.AllScreens.Length.ToString()); // last screen
+            SetAttribute("textAlign", "2");
             SetAttribute("textEncoding", "0");
             SetAttribute("textPosition", "5");
-            SetAttribute("textAlign", "2");
-            SetAttribute("fontFamily", "NanumBarunGothic");
-            SetAttribute("fontWeight", "regular");
-            SetAttribute("fontStyle", "normal");
-            SetAttribute("fontSize", "8.75");
-            SetAttribute("lineHeight", "140");
+            SetAttribute("titleColor", "#FFFF00");
             SetAttribute("resolutionSimulation", "false");
-            SetAttribute("resolutionSimulationWidth", "1024");
             SetAttribute("resolutionSimulationHeight", "768");
+            SetAttribute("resolutionSimulationWidth", "1024");
         }
 
         private static void InterpretString(string str) {

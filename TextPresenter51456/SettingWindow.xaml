@@ -12,9 +12,9 @@
         WindowStartupLocation="CenterOwner"
         Unloaded="Window_Unloaded">
 
-    
+
     <Window.Resources>
-        
+
         <Style x:Key="ScreenBorder" TargetType="Button">
             <Setter Property="OverridesDefaultStyle" Value="True" />
             <Setter Property="Template">
@@ -172,14 +172,16 @@
                             Text="1024"
                             Width="50"
                             HorizontalContentAlignment="Right"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            PreviewTextInput="TextBoxInt_PreviewTextInput" />
                         <Label Content="×" />
                         <TextBox
                             x:Name="TextBoxScreenHeight"
                             Text="768"
                             Width="50"
                             HorizontalContentAlignment="Right"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            PreviewTextInput="TextBoxInt_PreviewTextInput" />
                         <Label Content="(출력 화면보다 크면 잘립니다.)" />
                     </WrapPanel>
                 </StackPanel>
@@ -254,8 +256,23 @@
                             Width="50"
                             HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"
-                            KeyDown="TextBoxDouble_KeyDown" />
+                            PreviewTextInput="TextBoxDouble_PreviewTextInput" />
                         <Label Content="%" />
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,0,5">
+                        <Label Content="제목 색상:" />
+                        <Label Content="#" />
+                        <TextBox
+                            x:Name="TextBoxTitleColor"
+                            Width="60"
+                            VerticalAlignment="Center"
+                            PreviewTextInput="TextBoxHex_PreviewTextInput" />
+                        <Rectangle
+                            x:Name="RectangleFontColor"
+                            Width="20"
+                            Height="20"
+                            Margin="5,0,0,0"
+                            Stroke="Black" />
                     </WrapPanel>
                     <WrapPanel Margin="0,0,0,5">
                         <Label Content="줄 간격:" />
@@ -266,7 +283,7 @@
                             Margin="5,0,0,0"
                             HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"
-                            KeyDown="TextBoxDouble_KeyDown" />
+                            PreviewTextInput="TextBoxDouble_PreviewTextInput" />
                         <Label Content="%" />
                     </WrapPanel>
                     <WrapPanel Margin="0,0,0,5">
@@ -277,7 +294,7 @@
                             Width="50"
                             HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"
-                            KeyDown="TextBoxDouble_KeyDown" />
+                            PreviewTextInput="TextBoxDouble_PreviewTextInput" />
                         <Label Content="%" />
                     </WrapPanel>
                     <WrapPanel Margin="0,0,0,5">
@@ -288,13 +305,13 @@
                             Width="50"
                             HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"
-                            KeyDown="TextBoxDouble_KeyDown" />
+                            PreviewTextInput="TextBoxDouble_PreviewTextInput" />
                         <Label Content="%" />
                     </WrapPanel>
                 </StackPanel>
 
-                </StackPanel>
-            </ScrollViewer>
+            </StackPanel>
+        </ScrollViewer>
 
     </DockPanel>
 

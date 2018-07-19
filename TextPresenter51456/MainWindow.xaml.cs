@@ -27,7 +27,7 @@ namespace TextPresenter51456 {
         string fileName;
 
         List<string> textList;
-        List<int> colorList;
+        List<bool> isTitleList;
         PageNumberLog pageNum = new PageNumberLog();
         PageNumberManager pvwManager = new PageNumberManager(1, 1, false);
         PageNumberManager pgmManager = new PageNumberManager(0, 0, true);
@@ -39,9 +39,10 @@ namespace TextPresenter51456 {
         Regex trimmer = new Regex(@"(^\n+|\n+$)");
         Regex fileNameTrimmer = new Regex(@"^(.*\\)(.*?)$");
 
-        SolidColorBrush DEFAULT_BORDER_COLOR = new SolidColorBrush(Color.FromRgb(0xe0, 0xe0, 0xe0));
-        SolidColorBrush PVW_BORDER_COLOR = new SolidColorBrush(Color.FromRgb(0, 0xa0, 0));
-        SolidColorBrush PGM_BORDER_COLOR = new SolidColorBrush(Color.FromRgb(0xc0, 0, 0));
+        SolidColorBrush DEFAULT_BORDER_COLOR = MiscConverter.IntToSolidColorBrush(0xe0e0e0);
+        SolidColorBrush PVW_BORDER_COLOR = MiscConverter.IntToSolidColorBrush(0x00a000);
+        SolidColorBrush PGM_BORDER_COLOR = MiscConverter.IntToSolidColorBrush(0xc00000);
+        SolidColorBrush titleColor;
 
         PresenterWindow pw;
         SettingWindow sw;
@@ -51,9 +52,41 @@ namespace TextPresenter51456 {
         string processRemoteReturn;
 
 
+        public void GetTitleColor() {
+            try {
+                titleColor = MiscConverter.IntToSolidColorBrush(MiscConverter.StringToIntColor(Setting.GetAttribute("titleColor")));
+            } catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+                titleColor = MiscConverter.IntToSolidColorBrush(0xffff00);
+            }
+
+            if (WrapPanelPageList != null && WrapPanelPageList.Children.Count > 1) {
+                // if a text file is open, the minimum of Count is 2
+                int len = textList.Count;
+                for (int i = 1; i < len; i++) {
+                    if (isTitleList[i]) {
+                        (WrapPanelPageList.Children[i - 1] as Button).Foreground = titleColor;
+                    }
+                }
+            }
+
+            if (PgmContent != null && isTitleList[pgmManager.PageNumber]) {
+                PgmContent.Foreground = titleColor;
+                if (pw != null) {
+                    pw.LabelPresenterText.Foreground = titleColor;
+                }
+            }
+
+            if (PvwContent != null && isTitleList[pvwManager.PageNumber]) {
+                PvwContent.Foreground = titleColor;
+            }
+        }
+
         public MainWindow() {
             SynSocketListener.mw = this;
+
             Setting.Load();
+            GetTitleColor();
 
             InitializeComponent();
 
@@ -112,17 +145,11 @@ namespace TextPresenter51456 {
                 pw.LabelPresenterText.Content = "";
             }
         }
-        private SolidColorBrush GetColorFromInt(int c) {
-            byte r = (byte)(c / 0x10000 % 0x100);
-            byte g = (byte)(c / 0x100 % 0x100);
-            byte b = (byte)(c % 0x100);
-            return new SolidColorBrush(Color.FromRgb(r, g, b));
-        }
         private void UpdatePgm() {
             if (textList == null || pgmManager.PageNumber == 0) {
                 return;
             }
-            SolidColorBrush fg = GetColorFromInt(colorList[pgmManager.PageNumber]); // 수정 필요
+            SolidColorBrush fg = isTitleList[pgmManager.PageNumber] ? titleColor : Brushes.White;
             PgmContent.Content = textList[pgmManager.PageNumber];
             PgmContent.Foreground = fg;
             PgmPage.Content = pgmManager.PageNumber;
@@ -138,7 +165,7 @@ namespace TextPresenter51456 {
             }
             UpdateBorders();
             PvwContent.Content = textList[pvwManager.PageNumber];
-            PvwContent.Foreground = GetColorFromInt(colorList[pvwManager.PageNumber]);
+            PvwContent.Foreground = isTitleList[pvwManager.PageNumber] ? titleColor : Brushes.White;
             PvwPage.Content = pvwManager.PageNumber;
         }
 
@@ -176,11 +203,9 @@ namespace TextPresenter51456 {
             try {
                 int len = textList.Count;
                 Style pageListItemStyle = FindResource("PageListItem") as Style;
-                SolidColorBrush yellowColorBrush = Brushes.Yellow; //////////////////////////
 
-                /////////////////////////
-                colorList = new List<int>(len) {
-                    0xffffff
+                isTitleList = new List<bool>(len) {
+                    false
                 };
 
                 WrapPanelPageList.Children.Clear();
@@ -193,10 +218,10 @@ namespace TextPresenter51456 {
                     };
                     if (sharp.IsMatch(textList[i])) { // remove beginning #s and make these pages "header pages"
                         textList[i] = sharp.Replace(textList[i], "");
-                        colorList.Add(0xffff00); /////////////////////
-                        pageListItem.Foreground = yellowColorBrush; //////////////////////
+                        isTitleList.Add(true);
+                        pageListItem.Foreground = titleColor;
                     } else {
-                        colorList.Add(0xffffff); //////////////////
+                        isTitleList.Add(false);
                     }
                     if (sharpEscaped.IsMatch(textList[i])) { // escaped # (\#)
                         textList[i] = sharpEscaped.Replace(textList[i], "#$1");
@@ -500,6 +525,7 @@ namespace TextPresenter51456 {
         }
         private void MenuItemReloadSettings_Click(object sender, RoutedEventArgs e) {
             Setting.Load();
+            GetTitleColor();
             if (pw != null) {
                 pw.ApplySettings();
             }
@@ -532,10 +558,10 @@ namespace TextPresenter51456 {
         private string PackPageListToString() {
             string result = "";
             /*
-             *  int colorList[i]
+             *  int isTitleList[i]
              *  string textList[i]
              *  
-             *  int colorList[i + 1]
+             *  int isTitleList[i + 1]
              *  string textList[i + 1]
              *  
              *  ...
@@ -543,9 +569,9 @@ namespace TextPresenter51456 {
             if (textList.Count < 1) {
                 return result;
             }
-            result += colorList[1].ToString() + "\n" + textList[1];
+            result += isTitleList[1].ToString() + "\n" + textList[1];
             for (int i = 2; i < textList.Count; i++) {
-                result += "\n\n" + colorList[i].ToString() + "\n" + textList[i];
+                result += "\n\n" + isTitleList[i].ToString() + "\n" + textList[i];
             }
             return result;
         }

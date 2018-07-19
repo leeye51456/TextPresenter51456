@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,12 +21,16 @@ namespace TextPresenter51456 {
         MainWindow mw;
         PresenterWindow pw;
 
-        int presenterScreen, textEncoding, textPosition, textAlign, resolutionSimulationWidth, resolutionSimulationHeight;
+        int presenterScreen, textEncoding, textPosition, textAlign, resolutionSimulationWidth, resolutionSimulationHeight, titleColor;
         decimal marginBasic, marginOverflow, fontSize, lineHeight;
         bool resolutionSimulation, fontWeightBold = false, fontStyleItalic = false;
         string fontFamily;
 
         Thickness borderThickness = new Thickness(1.0);
+
+        readonly Regex notHexText = new Regex("[^0-9A-Fa-f]+");
+        readonly Regex notPositiveRealText = new Regex("[^0-9.]+");
+        readonly Regex notPositiveIntText = new Regex("[^0-9]+");
 
 
         // Load current settings from Setting class
@@ -69,6 +74,13 @@ namespace TextPresenter51456 {
             }
             if (!decimal.TryParse(Setting.GetAttribute("fontSize"), out fontSize) || fontSize <= 0) {
                 fontSize = 8.75m;
+            }
+            try {
+                titleColor = MiscConverter.StringToIntColor(Setting.GetAttribute("titleColor"));
+            } catch (Exception ex) {
+                // invalid color format
+                Console.WriteLine(ex.Message);
+                titleColor = 0xffff00;
             }
             if (!decimal.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight) || lineHeight < 0) {
                 lineHeight = 140;
@@ -223,10 +235,10 @@ namespace TextPresenter51456 {
             TextBoxScreenWidth.Text = resolutionSimulationWidth.ToString();
             TextBoxScreenHeight.Text = resolutionSimulationHeight.ToString();
             ComboBoxTextAlign.SelectedIndex = textAlign - 1;
-
             UpdateButtonChangeFont();
-
             TextBoxFontSize.Text = fontSize.ToString();
+            TextBoxTitleColor.Text = titleColor.ToString("X6");
+            RectangleFontColor.Fill = MiscConverter.IntToSolidColorBrush(titleColor);
             TextBoxLineHeight.Text = lineHeight.ToString();
             TextBoxMarginBasic.Text = marginBasic.ToString();
             TextBoxMarginOverflow.Text = marginOverflow.ToString();
@@ -241,15 +253,17 @@ namespace TextPresenter51456 {
             SettingToControl();
         }
 
-        private void TextBoxDouble_KeyDown(object sender, KeyEventArgs e) {
-            if (!(e.Key == Key.Back || (e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Decimal)) {
-                // 숫자, 백스페이스, 점만 처리
-                e.Handled = true;
-            }
+        private void TextBoxDouble_PreviewTextInput(object sender, TextCompositionEventArgs e) {
+            e.Handled = notPositiveRealText.IsMatch(e.Text);
+        }
+        private void TextBoxInt_PreviewTextInput(object sender, TextCompositionEventArgs e) {
+            e.Handled = notPositiveIntText.IsMatch(e.Text);
+        }
+        private void TextBoxHex_PreviewTextInput(object sender, TextCompositionEventArgs e) {
+            e.Handled = notHexText.IsMatch(e.Text);
         }
 
         private void ButtonChangeFont_Click(object sender, RoutedEventArgs e) {
-            System.Drawing.FontConverter cvt = new System.Drawing.FontConverter();
             System.Drawing.FontStyle fs = (fontWeightBold ? System.Drawing.FontStyle.Bold : 0) | (fontStyleItalic ? System.Drawing.FontStyle.Italic : 0);
             System.Drawing.Font font = new System.Drawing.Font(fontFamily, 16, fs);
             System.Windows.Forms.FontDialog fontDialog = new System.Windows.Forms.FontDialog {
@@ -296,28 +310,33 @@ namespace TextPresenter51456 {
                 MessageBoxImage.Error);
         }
         private bool Apply() {
-            decimal tempd;
-            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationWidth"), out resolutionSimulationWidth) || resolutionSimulationWidth <= 0) {
+            int tempInt;
+            decimal tempDec;
+            if (!int.TryParse(TextBoxScreenWidth.Text, out tempInt) || tempInt <= 0) {
                 ShowWrongFormatMessage("해상도 시뮬레이션 가로 길이", "양의 정수");
                 return false;
             }
-            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationHeight"), out resolutionSimulationHeight) || resolutionSimulationHeight <= 0) {
+            if (!int.TryParse(TextBoxScreenHeight.Text, out tempInt) || tempInt <= 0) {
                 ShowWrongFormatMessage("해상도 시뮬레이션 세로 길이", "양의 정수");
                 return false;
             }
-            if (!decimal.TryParse(TextBoxFontSize.Text, out tempd) || tempd <= 0) {
+            if (!decimal.TryParse(TextBoxFontSize.Text, out tempDec) || tempDec <= 0) {
                 ShowWrongFormatMessage("텍스트 크기", "양수");
                 return false;
             }
-            if (!decimal.TryParse(TextBoxLineHeight.Text, out tempd) || tempd <= 0) {
+            if (notHexText.IsMatch(TextBoxTitleColor.Text)) {
+                ShowWrongFormatMessage("제목 색상", "6자리 16진수 색상 코드(rrggbb)");
+                return false;
+            }
+            if (!decimal.TryParse(TextBoxLineHeight.Text, out tempDec) || tempDec <= 0) {
                 ShowWrongFormatMessage("줄 간격", "양수");
                 return false;
             }
-            if (!decimal.TryParse(TextBoxMarginBasic.Text, out tempd) || tempd < 0) {
+            if (!decimal.TryParse(TextBoxMarginBasic.Text, out tempDec) || tempDec < 0) {
                 ShowWrongFormatMessage("기본 여백", "0 또는 양수");
                 return false;
             }
-            if (!decimal.TryParse(TextBoxMarginOverflow.Text, out tempd) || tempd < 0) {
+            if (!decimal.TryParse(TextBoxMarginOverflow.Text, out tempDec) || tempDec < 0) {
                 ShowWrongFormatMessage("넘치는 부분 여백", "0 또는 양수");
                 return false;
             }
@@ -337,25 +356,27 @@ namespace TextPresenter51456 {
                     break;
             }
 
+            Setting.SetAttribute("fontFamily", fontFamily);
+            Setting.SetAttribute("fontSize", TextBoxFontSize.Text.Trim());
+            Setting.SetAttribute("fontStyle", fontStyleItalic ? "italic" : "normal");
+            Setting.SetAttribute("fontWeight", fontWeightBold ? "bold" : "regular");
+            Setting.SetAttribute("lineHeight", TextBoxLineHeight.Text.Trim());
+            Setting.SetAttribute("marginBasic", TextBoxMarginBasic.Text.Trim());
+            Setting.SetAttribute("marginOverflow", TextBoxMarginOverflow.Text.Trim());
             Setting.SetAttribute("presenterScreen", (ComboBoxPresenterScreen.SelectedIndex + 1).ToString());
             Setting.SetAttribute("resolutionSimulation", CheckBoxResolutionSimulation.IsChecked.ToString());
-            Setting.SetAttribute("resolutionSimulationWidth", TextBoxScreenWidth.Text);
-            Setting.SetAttribute("resolutionSimulationHeight", TextBoxScreenHeight.Text);
-            Setting.SetAttribute("marginBasic", TextBoxMarginBasic.Text);
-            Setting.SetAttribute("marginOverflow", TextBoxMarginOverflow.Text);
+            Setting.SetAttribute("resolutionSimulationHeight", TextBoxScreenHeight.Text.Trim());
+            Setting.SetAttribute("resolutionSimulationWidth", TextBoxScreenWidth.Text.Trim());
+            Setting.SetAttribute("textAlign", (ComboBoxTextAlign.SelectedIndex + 1).ToString());
             Setting.SetAttribute("textEncoding", textEncoding.ToString());
             Setting.SetAttribute("textPosition", GetCheckedTextPosition().ToString());
-            Setting.SetAttribute("textAlign", (ComboBoxTextAlign.SelectedIndex + 1).ToString());
-            Setting.SetAttribute("fontFamily", fontFamily);
-            Setting.SetAttribute("fontWeight", fontWeightBold ? "bold" : "regular");
-            Setting.SetAttribute("fontStyle", fontStyleItalic ? "italic" : "normal");
-            Setting.SetAttribute("fontSize", TextBoxFontSize.Text.ToString());
-            Setting.SetAttribute("lineHeight", TextBoxLineHeight.Text.ToString());
+            Setting.SetAttribute("titleColor", TextBoxTitleColor.Text.Trim());
             Setting.Save();
 
             if (pw != null) {
                 pw.ApplySettings();
             }
+            mw.GetTitleColor();
 
             return true;
         }

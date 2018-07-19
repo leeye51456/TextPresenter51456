@@ -83,7 +83,7 @@
     <Compile Include="HelpWindow.xaml.cs">
       <DependentUpon>HelpWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RelativeToAbsolute.cs" />
+    <Compile Include="MiscConverter.cs" />
     <Compile Include="Setting.cs" />
     <Compile Include="SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>

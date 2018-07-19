@@ -283,7 +283,7 @@
                         Orientation="Horizontal"
                         Margin="5,5,0,0">
 
-                        <GroupBox Header="자유 송출" Width="240" Padding="3">
+                        <GroupBox Header="자유 송출" Width="280" Padding="3">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="25" />
@@ -291,8 +291,8 @@
                                     <RowDefinition Height="1*" />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="140" />
                                     <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="80" />
                                 </Grid.ColumnDefinitions>
                                 
                                 <StackPanel
@@ -307,14 +307,21 @@
                                     <TextBox
                                         x:Name="TextBoxFreeLines"
                                         Text="3"
+                                        MaxLength="3"
                                         Width="40"
-                                        IsEnabled="False"
                                         Margin="2,0,2,0"
                                         HorizontalContentAlignment="Right"
                                         VerticalContentAlignment="Center" />
                                     <TextBlock
                                         Text="줄 송출"
                                         VerticalAlignment="Center" />
+                                    <Button
+                                        x:Name="ButtonApplyFreeLine"
+                                        Content="적용"
+                                        Width="40"
+                                        Margin="6,0,0,0"
+                                        Focusable="False"
+                                        Click="ButtonApplyFreeLine_Click" />
                                 </StackPanel>
 
                                 <Button
@@ -333,7 +340,7 @@
                                     x:Name="CheckBoxFreeLive"
                                     Grid.Row="1"
                                     Grid.Column="0"
-                                    Content="즉시 업데이트"
+                                    Content="입력할 때 업데이트"
                                     Focusable="False"
                                     Margin="0,3,0,2"
                                     VerticalContentAlignment="Center" />

@@ -29,6 +29,7 @@ namespace TextPresenter51456 {
         List<string> textList;
         List<bool> isTitleList;
         string freePresentationText;
+        int freePresentationLine = 3;
         PageNumberLog pageNum = new PageNumberLog();
         PageNumberManager pvwManager = new PageNumberManager(1, 1, false);
         PageNumberManager pgmManager = new PageNumberManager(0, 0, true);
@@ -310,11 +311,16 @@ namespace TextPresenter51456 {
             }
         }
         private void FreeCut() {
+            string[] freeTextSplit;
             pgmManager.PageNumber = 0;
             PgmPage.Content = "자유송출";
             UpdateBorders();
-            freePresentationText = newLineUnifier.Replace(TextBoxFreeContent.Text, "\n");
-            freePresentationText = trimmer.Replace(freePresentationText, "");
+            freePresentationText = newLineUnifier.Replace(TextBoxFreeContent.Text, "\n"); //freePresentationLine
+            freeTextSplit = freePresentationText.Split('\n');
+            freePresentationText = "";
+            for (int i = 0, last = freeTextSplit.Count() - 1; i < freePresentationLine && last - i >= 0; i++) {
+                freePresentationText = freeTextSplit[last - i] + "\n" + freePresentationText;
+            }
             UpdateFree();
         }
 
@@ -425,6 +431,23 @@ namespace TextPresenter51456 {
             }
         }
 
+        private void CheckFreeLine() {
+            if (!int.TryParse(TextBoxFreeLines.Text, out freePresentationLine)) {
+                MessageBox.Show("양의 정수만 입력 가능합니다.",
+                    "TextPresenter51456",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+            if (freePresentationText != null) {
+                FreeCut();
+            }
+        }
+
+        private void ButtonApplyFreeLine_Click(object sender, RoutedEventArgs e) {
+            CheckFreeLine();
+        }
+
         private void TextBoxFreeContent_KeyUp(object sender, KeyEventArgs e) {
             if (CheckBoxFreeLive.IsChecked == true) {
                 FreeCut();
@@ -445,17 +468,21 @@ namespace TextPresenter51456 {
                 return;
             }
 
-            if (TextBoxFreeContent.IsFocused) { // the free text presentation box is focused
+            if (TextBoxFreeContent.IsFocused) { // free text presentation box is focused
                 switch (e.Key) {
                 case Key.Escape:
                     KillFocus();
                     break;
                 case Key.OemPeriod: // normal .(>) key
                 case Key.Decimal: // keypad .(Del) key
-                    if (Keyboard.Modifiers == ModifierKeys.Control) {
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) {
                         ClearPgm();
                     }
                     break;
+                }
+            } else if (TextBoxFreeLines.IsFocused) { // free text presentation line limit box is focused
+                if (e.Key == Key.Enter && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control) {
+                    CheckFreeLine();
                 }
             } else {
                 if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) { // numpad
@@ -469,39 +496,39 @@ namespace TextPresenter51456 {
                     return;
                 }
                 switch (e.Key) {
-                case Key.Enter:
-                    CutAction();
-                    KillFocus();
-                    e.Handled = true;
-                    break;
-                case Key.Up:
-                    ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
-                    KillFocus();
-                    e.Handled = true;
-                    break;
-                case Key.Down:
-                    ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
-                    KillFocus();
-                    e.Handled = true;
-                    break;
-                case Key.OemPeriod: // normal  .(>) key
-                case Key.Decimal: // keypad .(Del) key
-                    ClearPgm();
-                    KillFocus();
-                    e.Handled = true;
-                    break;
-                case Key.Left:
-                    pvwManager.PageNumber -= 1;
-                    UpdatePvw();
-                    KillFocus();
-                    e.Handled = true;
-                    break;
-                case Key.Right:
-                    pvwManager.PageNumber += 1;
-                    UpdatePvw();
-                    KillFocus();
-                    e.Handled = true;
-                    break;
+                    case Key.Enter:
+                        CutAction();
+                        KillFocus();
+                        e.Handled = true;
+                        break;
+                    case Key.Up:
+                        ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
+                        KillFocus();
+                        e.Handled = true;
+                        break;
+                    case Key.Down:
+                        ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
+                        KillFocus();
+                        e.Handled = true;
+                        break;
+                    case Key.OemPeriod: // normal  .(>) key
+                    case Key.Decimal: // keypad .(Del) key
+                        ClearPgm();
+                        KillFocus();
+                        e.Handled = true;
+                        break;
+                    case Key.Left:
+                        pvwManager.PageNumber -= 1;
+                        UpdatePvw();
+                        KillFocus();
+                        e.Handled = true;
+                        break;
+                    case Key.Right:
+                        pvwManager.PageNumber += 1;
+                        UpdatePvw();
+                        KillFocus();
+                        e.Handled = true;
+                        break;
                 }
             }
         }
@@ -730,5 +757,6 @@ namespace TextPresenter51456 {
                 SynSocketListener.TerminateListening();
             }
         }
+
     }
 }

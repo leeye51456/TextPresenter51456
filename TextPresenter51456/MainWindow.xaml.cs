@@ -28,6 +28,7 @@ namespace TextPresenter51456 {
 
         List<string> textList;
         List<bool> isTitleList;
+        string freePresentationText;
         PageNumberLog pageNum = new PageNumberLog();
         PageNumberManager pvwManager = new PageNumberManager(1, 1, false);
         PageNumberManager pgmManager = new PageNumberManager(0, 0, true);
@@ -60,6 +61,10 @@ namespace TextPresenter51456 {
                 titleColor = MiscConverter.IntToSolidColorBrush(0xffff00);
             }
 
+            if (freePresentationText != null) {
+                // free text presentation: don't change contents
+                UpdateFree();
+            }
             if (WrapPanelPageList != null && WrapPanelPageList.Children.Count > 1) {
                 // if a text file is open, the minimum of Count is 2
                 int len = textList.Count;
@@ -138,6 +143,7 @@ namespace TextPresenter51456 {
         private void ClearPgm() {
             pgmManager.PageNumber = 0;
             UpdateBorders();
+            freePresentationText = null;
             PgmContent.Content = "";
             PgmPage.Content = "-";
             // PresenterWindow is open
@@ -277,10 +283,19 @@ namespace TextPresenter51456 {
         }
 
         private void UpdateFree() {
-            string text = newLineUnifier.Replace(TextBoxFreeContent.Text, "\n"); // unify newline characters
-            text = trimmer.Replace(text, ""); // trimming newlines
+            SolidColorBrush fg;
+            string text = freePresentationText;
 
-            SolidColorBrush fg = Brushes.White;
+            if (sharp.IsMatch(text)) { // remove beginning #s and make this page "header page"
+                text = sharp.Replace(text, "");
+                fg = titleColor;
+            } else {
+                fg = Brushes.White;
+            }
+            if (sharpEscaped.IsMatch(text)) { // escaped # (\#)
+                text = sharpEscaped.Replace(text, "#$1");
+            }
+
             PgmContent.Content = text;
             PgmContent.Foreground = fg;
             // PresenterWindow is open
@@ -293,6 +308,8 @@ namespace TextPresenter51456 {
             pgmManager.PageNumber = 0;
             PgmPage.Content = "자유송출";
             UpdateBorders();
+            freePresentationText = newLineUnifier.Replace(TextBoxFreeContent.Text, "\n");
+            freePresentationText = trimmer.Replace(freePresentationText, "");
             UpdateFree();
         }
 
@@ -383,6 +400,7 @@ namespace TextPresenter51456 {
         private void CutAction() {
             int p = pageNum.getPageNumber();
             pageNum.ClearLog();
+            freePresentationText = null;
             if (pvwManager.Enabled) {
                 if (p < 0) {
                     // pageNum "": PVW++ -> PGM

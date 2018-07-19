@@ -335,10 +335,9 @@
                                     Grid.Column="0"
                                     Content="즉시 업데이트"
                                     Focusable="False"
-                                    IsEnabled="False"
                                     Margin="0,3,0,2"
                                     VerticalContentAlignment="Center" />
-                                
+
                                 <TextBox
                                     x:Name="TextBoxFreeContent"
                                     Grid.Row="2"
@@ -348,7 +347,8 @@
                                     AcceptsReturn="True"
                                     AutoWordSelection="True"
                                     TextWrapping="Wrap"
-                                    VerticalScrollBarVisibility="Visible" />
+                                    VerticalScrollBarVisibility="Visible"
+                                    KeyUp="TextBoxFreeContent_KeyUp" />
                             </Grid>
                         </GroupBox>
 

@@ -124,23 +124,26 @@ namespace TextPresenter51456 {
         }
 
         private void UpdateBorders() {
-            try {
-                // for update order is pvw -> pgm, border color should be updated during UpdatePvw
-                foreach (Button item in WrapPanelPageList.Children) {
-                    item.BorderBrush = DEFAULT_BORDER_COLOR;
-                }
-                // for page list is 0-based index, number should be -1
-                Button pvwBtn = WrapPanelPageList.Children[pvwManager.PageNumber - 1] as Button;
-                pvwBtn.BorderBrush = PVW_BORDER_COLOR;
-                if (pgmManager.PageNumber > 0) {
-                    Button pgmBtn = WrapPanelPageList.Children[pgmManager.PageNumber - 1] as Button;
-                    pgmBtn.BorderBrush = PGM_BORDER_COLOR;
-                }
-            } catch (Exception ex) {
-                // when there exists what is not the Button control (ex: initial state)
+            if (WrapPanelPageList.Children.Count <= 1) {
+                // if a text file is open, the minimum of Count is 2.
+                // in this case, no text file is open.
+                return;
+            }
+
+            // for update order is pvw -> pgm, border color should be updated during UpdatePvw
+            foreach (Button item in WrapPanelPageList.Children) {
+                item.BorderBrush = DEFAULT_BORDER_COLOR;
+            }
+            // for page list is 0-based index, number should be -1
+            Button pvwBtn = WrapPanelPageList.Children[pvwManager.PageNumber - 1] as Button;
+            pvwBtn.BorderBrush = PVW_BORDER_COLOR;
+            if (pgmManager.PageNumber > 0) {
+                Button pgmBtn = WrapPanelPageList.Children[pgmManager.PageNumber - 1] as Button;
+                pgmBtn.BorderBrush = PGM_BORDER_COLOR;
             }
         }
         private void ClearPgm() {
+            CheckBoxFreeLive.IsChecked = false;
             pgmManager.PageNumber = 0;
             UpdateBorders();
             freePresentationText = null;
@@ -155,6 +158,8 @@ namespace TextPresenter51456 {
             if (textList == null || pgmManager.PageNumber == 0) {
                 return;
             }
+            CheckBoxFreeLive.IsChecked = false;
+            freePresentationText = null;
             SolidColorBrush fg = isTitleList[pgmManager.PageNumber] ? titleColor : Brushes.White;
             PgmContent.Content = textList[pgmManager.PageNumber];
             PgmContent.Foreground = fg;
@@ -400,7 +405,6 @@ namespace TextPresenter51456 {
         private void CutAction() {
             int p = pageNum.getPageNumber();
             pageNum.ClearLog();
-            freePresentationText = null;
             if (pvwManager.Enabled) {
                 if (p < 0) {
                     // pageNum "": PVW++ -> PGM
@@ -418,6 +422,12 @@ namespace TextPresenter51456 {
                     pvwManager.PageNumber -= 1;
                     UpdatePvw();
                 }
+            }
+        }
+
+        private void TextBoxFreeContent_KeyUp(object sender, KeyEventArgs e) {
+            if (CheckBoxFreeLive.IsChecked == true) {
+                FreeCut();
             }
         }
 
@@ -720,6 +730,5 @@ namespace TextPresenter51456 {
                 SynSocketListener.TerminateListening();
             }
         }
-
     }
 }

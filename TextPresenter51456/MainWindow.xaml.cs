@@ -76,15 +76,17 @@ namespace TextPresenter51456 {
                 }
             }
 
-            if (PgmContent != null && isTitleList[pgmManager.PageNumber]) {
-                PgmContent.Foreground = titleColor;
-                if (pw != null) {
-                    pw.LabelPresenterText.Foreground = titleColor;
+            if (isTitleList != null) {
+                if (PgmContent != null && isTitleList[pgmManager.PageNumber]) {
+                    PgmContent.Foreground = titleColor;
+                    if (pw != null) {
+                        pw.LabelPresenterText.Foreground = titleColor;
+                    }
                 }
-            }
 
-            if (PvwContent != null && isTitleList[pvwManager.PageNumber]) {
-                PvwContent.Foreground = titleColor;
+                if (PvwContent != null && isTitleList[pvwManager.PageNumber]) {
+                    PvwContent.Foreground = titleColor;
+                }
             }
         }
 

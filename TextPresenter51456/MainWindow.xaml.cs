@@ -252,6 +252,8 @@ namespace TextPresenter51456 {
                 errMsg += "\nSource" + e.Source;
                 MessageBox.Show(errMsg, "TextPresenter51456");
             }
+
+            MenuItemRefresh.IsEnabled = true;
         }
 
         private bool SetFileNameAndPath(string src) {
@@ -286,7 +288,6 @@ namespace TextPresenter51456 {
                     return;
                 }
                 OpenTxtFile(true);
-                MenuItemRefresh.IsEnabled = true;
             }
         }
 

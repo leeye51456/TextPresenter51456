@@ -38,6 +38,12 @@ namespace TextPresenter51456 {
         Regex pageBreaker = new Regex(@"\n{2,}");
         Regex sharp = new Regex(@"^#+\s*");
         Regex sharpEscaped = new Regex(@"^\\#(#*\s*)");
+        Regex partialLineComment = new Regex(@"[ \t]*\/\/.*?(\n|$)"); // -> $1
+        Regex firstFullLineComment = new Regex(@"^[ \t]*\/\/.*?\n");
+        Regex middleFullLineComment = new Regex(@"\n[ \t]*\/\/.*?\n");
+        Regex lastFullLineComment = new Regex(@"\n[ \t]*\/\/.*?$");
+        Regex pageComment = new Regex(@"^([ \t]*\/\/.*?\n?)+$");
+        Regex commentEscaped = new Regex(@"(\\\/\/|\/\\\/|\\\/\\\/)"); // \//, /\/, \/\/
         Regex trimmer = new Regex(@"(^\n+|\n+$)");
         Regex fileNameTrimmer = new Regex(@"^(.*\\)(.*?)$");
 
@@ -204,7 +210,6 @@ namespace TextPresenter51456 {
                 textList = new List<string>(pageBreaker.Split(fullText)); // split pages
                 textList.Insert(0, ""); // leave index 0 empty for convenience
                 textList.Add(""); // add an empty page at the end
-                pgmManager.LastPageNumber = pvwManager.LastPageNumber = textList.Count - 1;
                 WindowMainWindow.Title = "TextPresenter51456 - " + fileName + " (" + filePath + ")";
             } catch (Exception e) {
                 string errMsg = "Fail to read the file";
@@ -216,6 +221,7 @@ namespace TextPresenter51456 {
             // show the file read as the page list
             try {
                 int len = textList.Count;
+                int i = 1;
                 Style pageListItemStyle = FindResource("PageListItem") as Style;
 
                 isTitleList = new List<bool>(len) {
@@ -225,7 +231,35 @@ namespace TextPresenter51456 {
                 WrapPanelPageList.Children.Clear();
 
                 // construct page list
-                for (int i = 1; i < len; i++) {
+                while (i < len) {
+                    // unify escaped comments
+                    if (commentEscaped.IsMatch(textList[i])) {
+                        textList[i] = commentEscaped.Replace(textList[i], @"/\/");
+                    }
+                    // remove comments
+                    if (pageComment.IsMatch(textList[i])) { // page comment -> remove the page
+                        textList.RemoveAt(i);
+                        textList.Capacity -= 1;
+                        len -= 1;
+                        continue;
+                    }
+                    if (middleFullLineComment.IsMatch(textList[i])) { // full line comment (the middle line of the page) -> remove the line
+                        textList[i] = middleFullLineComment.Replace(textList[i], "\n");
+                    }
+                    if (firstFullLineComment.IsMatch(textList[i])) { // full line comment (the 1st line of the page) -> remove the line
+                        textList[i] = firstFullLineComment.Replace(textList[i], "");
+                    }
+                    if (lastFullLineComment.IsMatch(textList[i])) { // full line comment (the last line of the page) -> remove the line
+                        textList[i] = lastFullLineComment.Replace(textList[i], "");
+                    }
+                    if (partialLineComment.IsMatch(textList[i])) { // partial line comment -> remove the comment
+                        textList[i] = partialLineComment.Replace(textList[i], "$1");
+                    }
+                    // correct escaped comments
+                    if (commentEscaped.IsMatch(textList[i])) {
+                        textList[i] = commentEscaped.Replace(textList[i], "//");
+                    }
+
                     Button pageListItem = new Button {
                         Style = pageListItemStyle,
                         Tag = i
@@ -243,7 +277,10 @@ namespace TextPresenter51456 {
                     pageListItem.Content = textList[i];
 
                     WrapPanelPageList.Children.Add(pageListItem);
+
+                    i++;
                 }
+                pgmManager.LastPageNumber = pvwManager.LastPageNumber = len - 1;
                 LabelPageIndicator.Content = "/" + (len - 1).ToString();
                 UpdatePvw();
             } catch (Exception e) {

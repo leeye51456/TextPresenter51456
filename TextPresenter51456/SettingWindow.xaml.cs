@@ -259,6 +259,15 @@ namespace TextPresenter51456 {
             }
         }
 
+        private void ButtonTitleColor_Click(object sender, RoutedEventArgs e) {
+            System.Windows.Forms.ColorDialog cd = new System.Windows.Forms.ColorDialog {
+                FullOpen = true
+            };
+            if (cd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                TextBoxTitleColor.Text = (cd.Color.R * 0x10000 + cd.Color.G * 0x100 + cd.Color.B).ToString("X6");
+            }
+        }
+
         private void TextBoxDouble_PreviewTextInput(object sender, TextCompositionEventArgs e) {
             e.Handled = notPositiveRealText.IsMatch(e.Text);
         }

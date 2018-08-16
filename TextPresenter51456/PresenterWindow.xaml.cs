@@ -22,6 +22,9 @@ namespace TextPresenter51456 {
 
         public PresenterWindow(MainWindow mw) {
             int presenterScreen;
+            double dpiX = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice.M11;
+            double dpiY = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice.M22;
+
             this.mw = mw;
 
             Setting.Load();
@@ -44,10 +47,10 @@ namespace TextPresenter51456 {
             // specify the position and the size of PresenterWindow
             // default: top-left of last monitor on fullscreen
             System.Drawing.Rectangle r = sc[presenterScreen - 1].Bounds;
-            Left = r.Left;
-            Top = r.Top;
-            Width = r.Width;
-            Height = r.Height;
+            Left = r.Left / dpiX;
+            Top = r.Top / dpiY;
+            Width = r.Width / dpiX;
+            Height = r.Height / dpiY;
 
             InitializeComponent();
 

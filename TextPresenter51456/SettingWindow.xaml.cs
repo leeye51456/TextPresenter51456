@@ -121,27 +121,64 @@ namespace TextPresenter51456 {
         private void SettingToControl() {
             System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
             int numOfScreen = sc.Length;
-            int fullWidth = 0, fullHeight = 0;
+            double fullWidth = 0, fullHeight = 0, offsetX = 0, offsetY = 0;
+            double dpiX = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice.M11;
+            double dpiY = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice.M22;
             double threshold = 6.25; // 500 / 80 = 6.25
             double multiplyFactor = 1.0;
+
+            List<ActualScreenRect> screenList = new List<ActualScreenRect>(numOfScreen);
 
             GetSettings();
 
             // for drawing screen map
             // get full size of all of the monitors
+            // and get x, y offsets for negative positions
             for (int i = 0; i < numOfScreen; i++) {
                 System.Drawing.Rectangle r = sc[i].Bounds;
-                int ithWidth = r.X + r.Width;
-                int ithHeight = r.Y + r.Height;
-                if (fullWidth < ithWidth) {
-                    fullWidth = ithWidth;
-                }
-                if (fullHeight < ithHeight) {
-                    fullHeight = ithHeight;
+
+                if (sc[i].Primary) {
+                    if (offsetX > r.X) {
+                        offsetX = r.X;
+                    }
+                    if (offsetY > r.Y) {
+                        offsetY = r.Y;
+                    }
+                    if (fullWidth < r.Width) {
+                        fullWidth = r.X + r.Width;
+                    }
+                    if (fullHeight < r.Height) {
+                        fullHeight = r.Y + r.Height;
+                    }
+                    screenList.Add(new ActualScreenRect(r.X, r.Y, r.Width, r.Height));
+                } else {
+                    double ithX = r.X / dpiX;
+                    double ithY = r.Y / dpiY;
+                    double ithWidth = r.Width / dpiX;
+                    double ithHeight = r.Height / dpiY;
+                    double ithFullWidth = ithX + ithWidth;
+                    double ithFullHeight = ithY + ithHeight;
+                    if (offsetX > ithX) {
+                        offsetX = ithX;
+                    }
+                    if (offsetY > ithY) {
+                        offsetY = ithY;
+                    }
+                    if (fullWidth < ithFullWidth) {
+                        fullWidth = ithFullWidth;
+                    }
+                    if (fullHeight < ithFullHeight) {
+                        fullHeight = ithFullHeight;
+                    }
+                    screenList.Add(new ActualScreenRect(ithX, ithY, ithWidth, ithHeight));
                 }
             }
+            offsetX *= -1;
+            offsetY *= -1;
+            fullWidth += offsetX;
+            fullHeight += offsetY;
             // calculate multiply factor
-            if ((double)fullWidth / fullHeight <= threshold) {
+            if (fullWidth / fullHeight <= threshold) {
                 multiplyFactor = 80.0 / fullHeight;
             } else {
                 multiplyFactor = 500.0 / fullWidth;
@@ -152,11 +189,14 @@ namespace TextPresenter51456 {
             CanvasScreens.Children.Clear();
             for (int i = 0; i < numOfScreen; i++) {
                 System.Drawing.Rectangle r = sc[i].Bounds;
+                double ithWidth = screenList[i].width;
+                double ithHeight = screenList[i].height;
+                double ithX = screenList[i].x;
+                double ithY = screenList[i].y;
 
                 // combo box item
                 ComboBoxItem cbi = new ComboBoxItem {
-                    // content of item example: (2) 1024x768 (1920,0)
-                    Content = "(" + (i + 1).ToString() + ") " + r.Width.ToString() + "×" + r.Height.ToString() + " (" + r.X.ToString() + "," + r.Y.ToString() + ")"
+                    Content = "(" + (i + 1).ToString() + ") " + sc[i].DeviceName
                 };
                 ComboBoxPresenterScreen.Items.Add(cbi);
 
@@ -169,14 +209,14 @@ namespace TextPresenter51456 {
                     FontWeight = FontWeight.FromOpenTypeWeight(700)
                 };
                 Border b = new Border {
-                    Width = r.Width * multiplyFactor,
-                    Height = r.Height * multiplyFactor,
+                    Width = ithWidth * multiplyFactor,
+                    Height = ithHeight * multiplyFactor,
                     BorderBrush = Brushes.Black,
                     BorderThickness = borderThickness,
                     Child = tb
                 };
-                Canvas.SetLeft(b, 5 + r.X * multiplyFactor);
-                Canvas.SetTop(b, 5 + r.Y * multiplyFactor);
+                Canvas.SetLeft(b, 5 + (ithX + offsetX) * multiplyFactor);
+                Canvas.SetTop(b, 5 + (ithY + offsetY) * multiplyFactor);
                 CanvasScreens.Children.Add(b);
             }
             if (presenterScreen <= numOfScreen) {

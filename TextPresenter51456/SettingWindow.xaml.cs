@@ -127,7 +127,7 @@ namespace TextPresenter51456 {
             double threshold = 6.25; // 500 / 80 = 6.25
             double multiplyFactor = 1.0;
 
-            List<ActualScreenRect> screenList = new List<ActualScreenRect>(numOfScreen);
+            List<ScreenRect> actualScreenRectList = new List<ScreenRect>(numOfScreen);
 
             GetSettings();
 
@@ -150,7 +150,7 @@ namespace TextPresenter51456 {
                     if (fullHeight < r.Height) {
                         fullHeight = r.Y + r.Height;
                     }
-                    screenList.Add(new ActualScreenRect(r.X, r.Y, r.Width, r.Height));
+                    actualScreenRectList.Add(new ScreenRect(r.X, r.Y, r.Width, r.Height));
                 } else {
                     double ithX = r.X / dpiX;
                     double ithY = r.Y / dpiY;
@@ -170,7 +170,7 @@ namespace TextPresenter51456 {
                     if (fullHeight < ithFullHeight) {
                         fullHeight = ithFullHeight;
                     }
-                    screenList.Add(new ActualScreenRect(ithX, ithY, ithWidth, ithHeight));
+                    actualScreenRectList.Add(new ScreenRect(ithX, ithY, ithWidth, ithHeight));
                 }
             }
             offsetX *= -1;
@@ -189,10 +189,10 @@ namespace TextPresenter51456 {
             CanvasScreens.Children.Clear();
             for (int i = 0; i < numOfScreen; i++) {
                 System.Drawing.Rectangle r = sc[i].Bounds;
-                double ithWidth = screenList[i].width;
-                double ithHeight = screenList[i].height;
-                double ithX = screenList[i].x;
-                double ithY = screenList[i].y;
+                double ithWidth = actualScreenRectList[i].width;
+                double ithHeight = actualScreenRectList[i].height;
+                double ithX = actualScreenRectList[i].x;
+                double ithY = actualScreenRectList[i].y;
 
                 // combo box item
                 ComboBoxItem cbi = new ComboBoxItem {

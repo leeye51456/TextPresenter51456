@@ -343,6 +343,10 @@ namespace TextPresenter51456 {
             }
         }
 
+        private void TextBoxes_GotFocus(object sender, RoutedEventArgs e) {
+            (sender as TextBox).SelectAll();
+        }
+
         private int GetCheckedTextPosition() {
             if ((bool)RadioButtonTextPosition1.IsChecked)
                 return 1;

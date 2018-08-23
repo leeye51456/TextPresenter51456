@@ -212,14 +212,16 @@
                             Text="4"
                             Width="50"
                             VerticalAlignment="Center"
-                            PreviewTextInput="TextBoxInt_PreviewTextInput" />
+                            PreviewTextInput="TextBoxInt_PreviewTextInput"
+                            GotFocus="TextBoxes_GotFocus" />
                         <Label Content=":" />
                         <TextBox
                             x:Name="TextBoxScreenHeight"
                             Text="3"
                             Width="50"
                             VerticalAlignment="Center"
-                            PreviewTextInput="TextBoxInt_PreviewTextInput" />
+                            PreviewTextInput="TextBoxInt_PreviewTextInput"
+                            GotFocus="TextBoxes_GotFocus" />
                     </WrapPanel>
                     <TextBlock
                         LineHeight="18"
@@ -302,7 +304,8 @@
                             Width="50"
                             HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"
-                            PreviewTextInput="TextBoxDouble_PreviewTextInput" />
+                            PreviewTextInput="TextBoxDouble_PreviewTextInput"
+                            GotFocus="TextBoxes_GotFocus" />
                         <Label Content="%" />
                     </WrapPanel>
                     <WrapPanel Margin="0,0,0,5">
@@ -314,7 +317,8 @@
                             MaxLength="6"
                             VerticalAlignment="Center"
                             TextChanged="TextBoxTitleColor_TextChanged"
-                            PreviewTextInput="TextBoxHex_PreviewTextInput" />
+                            PreviewTextInput="TextBoxHex_PreviewTextInput"
+                            GotFocus="TextBoxes_GotFocus" />
                         <Button
                             x:Name="ButtonTitleColor"
                             Width="100"
@@ -342,7 +346,8 @@
                             Margin="5,0,0,0"
                             HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"
-                            PreviewTextInput="TextBoxDouble_PreviewTextInput" />
+                            PreviewTextInput="TextBoxDouble_PreviewTextInput"
+                            GotFocus="TextBoxes_GotFocus" />
                         <Label Content="%" />
                     </WrapPanel>
                     <WrapPanel Margin="0,0,0,5">
@@ -353,7 +358,8 @@
                             Width="50"
                             HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"
-                            PreviewTextInput="TextBoxDouble_PreviewTextInput" />
+                            PreviewTextInput="TextBoxDouble_PreviewTextInput"
+                            GotFocus="TextBoxes_GotFocus" />
                         <Label Content="%" />
                     </WrapPanel>
                     <WrapPanel Margin="0,0,0,5">
@@ -364,7 +370,8 @@
                             Width="50"
                             HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"
-                            PreviewTextInput="TextBoxDouble_PreviewTextInput" />
+                            PreviewTextInput="TextBoxDouble_PreviewTextInput"
+                            GotFocus="TextBoxes_GotFocus" />
                         <Label Content="%" />
                     </WrapPanel>
                 </StackPanel>

@@ -15,30 +15,64 @@
 
     <Window.Resources>
 
-        <Style x:Key="ScreenBorder" TargetType="Button">
+        <Style x:Key="ScreenBorder" TargetType="ToggleButton">
             <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="TextBlock.Foreground" Value="Black" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid x:Name="Grid">
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid
+                            x:Name="Grid"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
+                            Background="{TemplateBinding Background}">
                             <Border
                                 x:Name="Border"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderBrush="Black"
                                 BorderThickness="1" />
                             <ContentPresenter
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 TextBlock.TextAlignment="Center"
                                 TextBlock.Foreground="{TemplateBinding TextBlock.Foreground}"
+                                TextBlock.FontSize="16"
+                                TextBlock.FontWeight="Bold"
                                 RecognizesAccessKey="False" />
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter
                                     Property="Background"
-                                    Value="#40808000"
-                                    TargetName="Border" />
+                                    TargetName="Border"
+                                    Value="#40808080">
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter
+                                    Property="Background"
+                                    TargetName="Grid">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter
+                                    Property="TextBlock.Foreground">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter
+                                    Property="Background"
+                                    TargetName="Grid"
+                                    Value="White">
+                                </Setter>
+                                <Setter
+                                    Property="TextBlock.Foreground"
+                                    Value="Black">
+                                </Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

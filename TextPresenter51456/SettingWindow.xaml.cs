@@ -117,6 +117,17 @@ namespace TextPresenter51456 {
             ButtonChangeFont.FontStyle = fontStyleItalic ? FontStyles.Italic : FontStyles.Normal;
         }
 
+        private void ScreenBorder_Click(object sender, RoutedEventArgs e) {
+            System.Windows.Controls.Primitives.ToggleButton tb = sender as System.Windows.Controls.Primitives.ToggleButton;
+            int t = (int)tb.Tag;
+            int len = ComboBoxPresenterScreen.Items.Count;
+            for (int i = 0; i < len; i++) {
+                (CanvasScreens.Children[i] as System.Windows.Controls.Primitives.ToggleButton).IsChecked = false;
+            }
+            tb.IsChecked = true;
+            ComboBoxPresenterScreen.SelectedIndex = t;
+        }
+
         // Get and apply settings from Setting class to SettingWindow controls
         private void SettingToControl() {
             System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
@@ -200,30 +211,26 @@ namespace TextPresenter51456 {
                 };
                 ComboBoxPresenterScreen.Items.Add(cbi);
 
-                // screen map item
-                TextBlock tb = new TextBlock {
-                    Text = (i + 1).ToString(),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    FontSize = 16.0,
-                    FontWeight = FontWeight.FromOpenTypeWeight(700)
-                };
-                Border b = new Border {
+                // screen map item as button
+                Style screenBorderStyle = FindResource("ScreenBorder") as Style;
+                System.Windows.Controls.Primitives.ToggleButton btn = new System.Windows.Controls.Primitives.ToggleButton {
+                    Style = screenBorderStyle,
+                    Content = (i + 1).ToString(),
                     Width = ithWidth * multiplyFactor,
                     Height = ithHeight * multiplyFactor,
-                    BorderBrush = Brushes.Black,
-                    BorderThickness = borderThickness,
-                    Child = tb
+                    Tag = i,
                 };
-                Canvas.SetLeft(b, 5 + (ithX + offsetX) * multiplyFactor);
-                Canvas.SetTop(b, 5 + (ithY + offsetY) * multiplyFactor);
-                CanvasScreens.Children.Add(b);
+                btn.Click += ScreenBorder_Click;
+                Canvas.SetLeft(btn, 5 + (ithX + offsetX) * multiplyFactor);
+                Canvas.SetTop(btn, 5 + (ithY + offsetY) * multiplyFactor);
+                CanvasScreens.Children.Add(btn);
             }
             if (presenterScreen <= numOfScreen) {
                 ComboBoxPresenterScreen.SelectedIndex = presenterScreen - 1;
             } else {
                 ComboBoxPresenterScreen.SelectedIndex = numOfScreen - 1;
             }
+            (CanvasScreens.Children[ComboBoxPresenterScreen.SelectedIndex] as System.Windows.Controls.Primitives.ToggleButton).IsChecked = true;
 
             // textEncoding = ComboBoxTextEncoding.SelectedIndex;
             switch (textEncoding) {

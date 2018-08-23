@@ -23,13 +23,12 @@ namespace TextPresenter51456 {
         MainWindow mw;
         PresenterWindow pw;
 
-        public HelpWindow(int tabNum, MainWindow mw, PresenterWindow pw) {
+        public HelpWindow(MainWindow mw, PresenterWindow pw) {
             this.mw = mw;
             this.pw = pw;
 
             InitializeComponent();
 
-            TabControlBody.SelectedIndex = tabNum;
             TextBlockVersion.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
@@ -38,9 +37,10 @@ namespace TextPresenter51456 {
             try {
                 WebClient client = new WebClient();
                 string reply = client.DownloadString(@"https://raw.githubusercontent.com/leeye51456/TextPresenter51456/master/TextPresenter51456/VersionInfo.txt");
-                ButtonCheckVersion.Content = "최신 버전 " + reply;
+                ButtonCheckVersion.Content = "최신 버전: " + reply;
             } catch (Exception ex) {
                 ButtonCheckVersion.Content = "최신 버전 확인 실패";
+                Console.WriteLine(ex.Message);
             }
         }
 

@@ -635,22 +635,10 @@ namespace TextPresenter51456 {
         }
 
         private void MenuItemHelp_Click(object sender, RoutedEventArgs e) {
-            if (sender == MenuItemHelpEdit) {
-                hw = new HelpWindow(0, this, pw) {
-                    Owner = this
-                };
-                hw.Show();
-            } else if (sender == MenuItemHelpPresentation) {
-                hw = new HelpWindow(1, this, pw) {
-                    Owner = this
-                };
-                hw.Show();
-            } else if (sender == MenuItemInfo) {
-                hw = new HelpWindow(2, this, pw) {
-                    Owner = this
-                };
-                hw.Show();
-            }
+            hw = new HelpWindow(this, pw) {
+                Owner = this
+            };
+            hw.Show();
             if (pw != null) {
                 pw.IsEnabled = false;
             }

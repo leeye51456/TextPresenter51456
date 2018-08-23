@@ -162,16 +162,6 @@
                     Header="원격 제어 사용(_R)"
                     IsCheckable="True"
                     Click="MenuItemRemote_Click" />
-            </MenuItem>
-            <MenuItem Header="도움말(_H)" Focusable="False">
-                <MenuItem
-                    x:Name="MenuItemHelpEdit"
-                    Header="텍스트 파일 편집 도움말(_E)..."
-                    Click="MenuItemHelp_Click" />
-                <MenuItem
-                    x:Name="MenuItemHelpPresentation"
-                    Header="송출 도움말(_P)..."
-                    Click="MenuItemHelp_Click" />
                 <Separator />
                 <MenuItem
                     x:Name="MenuItemInfo"

@@ -198,7 +198,15 @@ namespace TextPresenter51456 {
                 textEncoding = 0;
                 encoding = Encoding.Default;
             } else {
-                encoding = Encoding.GetEncoding(textEncoding);
+                try {
+                    encoding = Encoding.GetEncoding(textEncoding);
+                } catch (Exception ex) {
+                    MessageBox.Show(
+                        ex.Message + "\n프로그램의 인코딩 설정(" + textEncoding.ToString() + ")이 잘못되었습니다.",
+                        "TextPresenter51456");
+                    textEncoding = 0;
+                    encoding = Encoding.Default;
+                }
             }
             // read the selected file
             try {

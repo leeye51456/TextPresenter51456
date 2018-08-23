@@ -19,9 +19,14 @@ namespace TextPresenter51456 {
     public partial class PresenterWindow : Window {
 
         MainWindow mw;
+        int presenterScreen;
+        System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
+
+        GridLength zeroPixels = new GridLength(0, GridUnitType.Pixel);
+        GridLength oneStar = new GridLength(1, GridUnitType.Star);
+
 
         public PresenterWindow(MainWindow mw) {
-            int presenterScreen;
             double dpiX = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice.M11;
             double dpiY = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice.M22;
 
@@ -30,7 +35,6 @@ namespace TextPresenter51456 {
             Setting.Load();
             ContentRendered += PresenterWindow_ContentRendered;
 
-            System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
             // single monitor warning
             if (sc.Length < 2) {
                 MessageBox.Show("화면 표시 장치가 하나입니다. 이 경우 별도의 설정이 없으면 화면을 모두 덮는 창이 나타나며, Shift+ESC로 닫을 수 있습니다.", "TextPresenter51456");
@@ -38,7 +42,7 @@ namespace TextPresenter51456 {
 
             // load and apply presenterScreen property
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
-                presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
+                presenterScreen = sc.Length;
             }
             if (presenterScreen > sc.Length) {
                 presenterScreen = sc.Length;
@@ -83,15 +87,17 @@ namespace TextPresenter51456 {
                 VerticalAlignment
             */
 
-            int presenterScreen, textPosition, textAlign, resolutionSimulationWidth, resolutionSimulationHeight;
-            double marginBasic, marginOverflow, fontSize, lineHeight;
-            bool resolutionSimulation, fontWeightBold = false, fontStyleItalic = false;
+            int textPosition, textAlign;
+            double marginBasic, marginOverflow, fontSize, lineHeight, screenRatioSimulationWidth, screenRatioSimulationHeight;
+            bool screenRatioSimulation, fontWeightBold = false, fontStyleItalic = false;
             string fontFamily;
 
             // load and apply properties
+            /*
             if (!int.TryParse(Setting.GetAttribute("presenterScreen"), out presenterScreen)) {
                 presenterScreen = System.Windows.Forms.Screen.AllScreens.Length;
             }
+            */
             if (!double.TryParse(Setting.GetAttribute("marginBasic"), out marginBasic) || marginBasic < 0) {
                 marginBasic = 5;
             }
@@ -119,32 +125,44 @@ namespace TextPresenter51456 {
             if (!double.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight) || lineHeight < 0) {
                 lineHeight = 140;
             }
-            if (!bool.TryParse(Setting.GetAttribute("resolutionSimulation"), out resolutionSimulation)) {
-                resolutionSimulation = false;
+            if (!bool.TryParse(Setting.GetAttribute("screenRatioSimulation"), out screenRatioSimulation)) {
+                screenRatioSimulation = false;
             }
-            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationWidth"), out resolutionSimulationWidth) || resolutionSimulationWidth <= 0) {
-                resolutionSimulationWidth = 1024;
+            if (!double.TryParse(Setting.GetAttribute("screenRatioSimulationWidth"), out screenRatioSimulationWidth) || screenRatioSimulationWidth <= 0) {
+                screenRatioSimulationWidth = 4;
             }
-            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationHeight"), out resolutionSimulationHeight) || resolutionSimulationHeight <= 0) {
-                resolutionSimulationHeight = 768;
+            if (!double.TryParse(Setting.GetAttribute("screenRatioSimulationHeight"), out screenRatioSimulationHeight) || screenRatioSimulationHeight <= 0) {
+                screenRatioSimulationHeight = 3;
             }
 
-            // Resolution simulation
-            if (resolutionSimulation) {
-                GridExCol1.Width = new GridLength(1, GridUnitType.Star);
-                GridExCol2.Width = new GridLength(resolutionSimulationWidth, GridUnitType.Pixel);
-                GridExCol3.Width = new GridLength(1, GridUnitType.Star);
-                GridExRow1.Height = new GridLength(1, GridUnitType.Star);
-                GridExRow2.Height = new GridLength(resolutionSimulationHeight, GridUnitType.Pixel);
-                GridExRow3.Height = new GridLength(1, GridUnitType.Star);
-                fontSize = fontSize * resolutionSimulationHeight / Height;
+            // Screen ratio simulation
+            if (screenRatioSimulation) {
+                double currentRatio = (double)sc[presenterScreen - 1].Bounds.Width / sc[presenterScreen - 1].Bounds.Height;
+                double simulationRatio = screenRatioSimulationWidth / screenRatioSimulationHeight;
+                double ratio = currentRatio / simulationRatio;
+                if (ratio < 1) { // < 1: wider simulation ratio
+                    GridExCol1.Width = zeroPixels;
+                    GridExCol2.Width = oneStar;
+                    GridExCol3.Width = zeroPixels;
+                    GridExRow1.Height = oneStar;
+                    GridExRow2.Height = new GridLength(sc[presenterScreen - 1].Bounds.Height * ratio, GridUnitType.Pixel);
+                    GridExRow3.Height = oneStar;
+                    fontSize = fontSize * ratio;
+                } else {
+                    GridExCol1.Width = oneStar;
+                    GridExCol2.Width = new GridLength(sc[presenterScreen - 1].Bounds.Width / ratio, GridUnitType.Pixel);
+                    GridExCol3.Width = oneStar;
+                    GridExRow1.Height = zeroPixels;
+                    GridExRow2.Height = oneStar;
+                    GridExRow3.Height = zeroPixels;
+                }
             } else {
-                GridExCol1.Width = new GridLength(0, GridUnitType.Pixel);
-                GridExCol2.Width = new GridLength(1, GridUnitType.Star);
-                GridExCol3.Width = new GridLength(0, GridUnitType.Pixel);
-                GridExRow1.Height = new GridLength(0, GridUnitType.Pixel);
-                GridExRow2.Height = new GridLength(1, GridUnitType.Star);
-                GridExRow3.Height = new GridLength(0, GridUnitType.Pixel);
+                GridExCol1.Width = zeroPixels;
+                GridExCol2.Width = oneStar;
+                GridExCol3.Width = zeroPixels;
+                GridExRow1.Height = zeroPixels;
+                GridExRow2.Height = oneStar;
+                GridExRow3.Height = zeroPixels;
             }
 
             // unit correction

@@ -43,9 +43,9 @@ namespace TextPresenter51456 {
             SetAttribute("textEncoding", "0");
             SetAttribute("textPosition", "5");
             SetAttribute("titleColor", "#FFFF00");
-            SetAttribute("resolutionSimulation", "false");
-            SetAttribute("resolutionSimulationHeight", "768");
-            SetAttribute("resolutionSimulationWidth", "1024");
+            SetAttribute("screenRatioSimulation", "false");
+            SetAttribute("screenRatioSimulationHeight", "3");
+            SetAttribute("screenRatioSimulationWidth", "4");
         }
 
         private static void InterpretString(string str) {

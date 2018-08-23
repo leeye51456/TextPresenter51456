@@ -80,7 +80,7 @@
             FocusVisualStyle="{x:Null}">
             <StackPanel>
                 <Label
-                    Content="파일 처리 방식(파일을 다시 불러올 때부터 적용)"
+                    Content="파일 처리 방식"
                     FontWeight="Bold" />
                 <StackPanel Margin="10,0,0,10">
                     <WrapPanel Margin="0">
@@ -95,12 +95,12 @@
                             <ComboBoxItem Content="UTF-16 Little Endian" />
                             <ComboBoxItem Content="UTF-16 Big Endian" />
                         </ComboBox>
+                        <Label Content="(파일을 다시 불러올 때부터 적용)" />
                     </WrapPanel>
                     <TextBlock
                         LineHeight="18"
+                        Margin="5,0,0,0"
                         TextWrapping="Wrap">
-                        ※ 참고
-                        <LineBreak />
                         - 텍스트 파일을 편집할 때 사용한 편집기에 따라서
                         엉뚱한 인코딩을 선택하더라도 정상적으로 열릴 수 있습니다.
                         (예: Windows 메모장)
@@ -111,8 +111,14 @@
                 </StackPanel>
 
                 <Label
-                    Content="출력 대상 화면(DPI 설정이 100%가 아니면 주 모니터가 아닌 것의 크기가 다르게 보일 수 있습니다.)"
+                    Content="출력 대상 화면"
                     FontWeight="Bold" />
+                <TextBlock
+                    LineHeight="18"
+                    Margin="5,0,0,0"
+                    TextWrapping="Wrap">
+                    - DPI 설정이 100%가 아니면 주 모니터가 아닌 것의 크기가 다르게 보일 수 있습니다.
+                </TextBlock>
                 <Canvas
                     x:Name="CanvasScreens"
                     Height="90">
@@ -150,7 +156,7 @@
                         <Label Content="출력 대상:" />
                         <ComboBox
                             x:Name="ComboBoxPresenterScreen"
-                            Width="160"
+                            Width="300"
                             Margin="5,0,0,0"
                             VerticalAlignment="Center">
                             <!-- 내용 예시 시작 -->
@@ -162,28 +168,34 @@
                         </ComboBox>
                         <Label Content="(송출 창을 다시 켤 때부터 적용)" />
                     </WrapPanel>
-                    <WrapPanel Margin="0,0,0,5">
+                    <WrapPanel Margin="0">
                         <CheckBox
-                            x:Name="CheckBoxResolutionSimulation"
-                            Content="해상도 시뮬레이션:"
+                            x:Name="CheckBoxScreenRatioSimulation"
+                            Content="화면비 시뮬레이션: "
                             Margin="5,5,5,5" />
                         <TextBox
                             x:Name="TextBoxScreenWidth"
-                            Text="1024"
+                            Text="4"
                             Width="50"
-                            HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"
                             PreviewTextInput="TextBoxInt_PreviewTextInput" />
-                        <Label Content="×" />
+                        <Label Content=":" />
                         <TextBox
                             x:Name="TextBoxScreenHeight"
-                            Text="768"
+                            Text="3"
                             Width="50"
-                            HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"
                             PreviewTextInput="TextBoxInt_PreviewTextInput" />
-                        <Label Content="(출력 화면보다 크면 잘립니다.)" />
                     </WrapPanel>
+                    <TextBlock
+                        LineHeight="18"
+                        Margin="25,0,0,0"
+                        TextWrapping="Wrap">
+                        - 알려진 것이 실제 화면과 차이가 있는 화면비를 시뮬레이션하려면,
+                        실제 화면 크기(또는 그것을 약분한 실제 화면비)를 입력합니다.
+                        예를 들어, 21:9라고 알려져 있는 2560×1080(64:27)을
+                        시뮬레이션하려면, 21:9 대신 2560:1080이나 64:27을 입력합니다.
+                    </TextBlock>
                 </StackPanel>
 
                 <Label Content="텍스트" FontWeight="Bold" />

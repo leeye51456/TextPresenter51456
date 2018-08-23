@@ -21,9 +21,9 @@ namespace TextPresenter51456 {
         MainWindow mw;
         PresenterWindow pw;
 
-        int presenterScreen, textEncoding, textPosition, textAlign, resolutionSimulationWidth, resolutionSimulationHeight, titleColor;
+        int presenterScreen, textEncoding, textPosition, textAlign, screenRatioSimulationWidth, screenRatioSimulationHeight, titleColor;
         decimal marginBasic, marginOverflow, fontSize, lineHeight;
-        bool resolutionSimulation, fontWeightBold = false, fontStyleItalic = false;
+        bool screenRatioSimulation, fontWeightBold = false, fontStyleItalic = false;
         string fontFamily;
 
         Thickness borderThickness = new Thickness(1.0);
@@ -85,14 +85,14 @@ namespace TextPresenter51456 {
             if (!decimal.TryParse(Setting.GetAttribute("lineHeight"), out lineHeight) || lineHeight < 0) {
                 lineHeight = 140;
             }
-            if (!bool.TryParse(Setting.GetAttribute("resolutionSimulation"), out resolutionSimulation)) {
-                resolutionSimulation = false;
+            if (!bool.TryParse(Setting.GetAttribute("screenRatioSimulation"), out screenRatioSimulation)) {
+                screenRatioSimulation = false;
             }
-            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationWidth"), out resolutionSimulationWidth) || resolutionSimulationWidth <= 0) {
-                resolutionSimulationWidth = 1024;
+            if (!int.TryParse(Setting.GetAttribute("screenRatioSimulationWidth"), out screenRatioSimulationWidth) || screenRatioSimulationWidth <= 0) {
+                screenRatioSimulationWidth = 4;
             }
-            if (!int.TryParse(Setting.GetAttribute("resolutionSimulationHeight"), out resolutionSimulationHeight) || resolutionSimulationHeight <= 0) {
-                resolutionSimulationHeight = 768;
+            if (!int.TryParse(Setting.GetAttribute("screenRatioSimulationHeight"), out screenRatioSimulationHeight) || screenRatioSimulationHeight <= 0) {
+                screenRatioSimulationHeight = 3;
             }
         }
 
@@ -196,7 +196,7 @@ namespace TextPresenter51456 {
 
                 // combo box item
                 ComboBoxItem cbi = new ComboBoxItem {
-                    Content = "(" + (i + 1).ToString() + ") " + sc[i].DeviceName
+                    Content = "(" + (i + 1).ToString() + ") " + sc[i].DeviceName + ": " + ithWidth.ToString() + "×" + ithHeight.ToString() + " (" + ithX.ToString() + "," + ithY.ToString() + ")"
                 };
                 ComboBoxPresenterScreen.Items.Add(cbi);
 
@@ -271,9 +271,9 @@ namespace TextPresenter51456 {
                 break;
             }
 
-            CheckBoxResolutionSimulation.IsChecked = resolutionSimulation;
-            TextBoxScreenWidth.Text = resolutionSimulationWidth.ToString();
-            TextBoxScreenHeight.Text = resolutionSimulationHeight.ToString();
+            CheckBoxScreenRatioSimulation.IsChecked = screenRatioSimulation;
+            TextBoxScreenWidth.Text = screenRatioSimulationWidth.ToString();
+            TextBoxScreenHeight.Text = screenRatioSimulationHeight.ToString();
             ComboBoxTextAlign.SelectedIndex = textAlign - 1;
             UpdateButtonChangeFont();
             TextBoxFontSize.Text = fontSize.ToString();
@@ -419,9 +419,9 @@ namespace TextPresenter51456 {
             Setting.SetAttribute("marginBasic", TextBoxMarginBasic.Text.Trim());
             Setting.SetAttribute("marginOverflow", TextBoxMarginOverflow.Text.Trim());
             Setting.SetAttribute("presenterScreen", (ComboBoxPresenterScreen.SelectedIndex + 1).ToString());
-            Setting.SetAttribute("resolutionSimulation", CheckBoxResolutionSimulation.IsChecked.ToString());
-            Setting.SetAttribute("resolutionSimulationHeight", TextBoxScreenHeight.Text.Trim());
-            Setting.SetAttribute("resolutionSimulationWidth", TextBoxScreenWidth.Text.Trim());
+            Setting.SetAttribute("screenRatioSimulation", CheckBoxScreenRatioSimulation.IsChecked.ToString());
+            Setting.SetAttribute("screenRatioSimulationHeight", TextBoxScreenHeight.Text.Trim());
+            Setting.SetAttribute("screenRatioSimulationWidth", TextBoxScreenWidth.Text.Trim());
             Setting.SetAttribute("textAlign", (ComboBoxTextAlign.SelectedIndex + 1).ToString());
             Setting.SetAttribute("textEncoding", textEncoding.ToString());
             Setting.SetAttribute("textPosition", GetCheckedTextPosition().ToString());

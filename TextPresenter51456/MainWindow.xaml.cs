@@ -533,58 +533,69 @@ namespace TextPresenter51456 {
                     CheckFreeLine();
                 }
             } else {
-                if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) { // numpad
-                    pageNum.Add(e.Key - Key.NumPad0);
-                    UpdatePageIndicator();
-                    return;
-                }
-                if (e.Key >= Key.D0 && e.Key <= Key.D9) { // number keys above Q-P
-                    pageNum.Add(e.Key - Key.D0);
-                    UpdatePageIndicator();
-                    return;
-                }
-                switch (e.Key) {
-                    case Key.Enter:
-                        CutAction();
-                        KillFocus();
-                        e.Handled = true;
-                        break;
-                    case Key.Up:
-                        if (WrapPanelPageList != null && WrapPanelPageList.Children.Count > 1) {
-                            pvwManager.PageNumber -= (int)(WrapPanelPageList.ActualWidth / ((WrapPanelPageList.Children[0] as Button).ActualWidth + 4));
+                if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift) { // + Shift
+                    switch (e.Key) {
+                        case Key.Up:
+                            ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
+                            e.Handled = true;
+                            break;
+                        case Key.Down:
+                            ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
+                            e.Handled = true;
+                            break;
+                    }
+                } else { // no modifier
+                    if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) { // numpad
+                        pageNum.Add(e.Key - Key.NumPad0);
+                        UpdatePageIndicator();
+                        return;
+                    }
+                    if (e.Key >= Key.D0 && e.Key <= Key.D9) { // number keys above Q-P
+                        pageNum.Add(e.Key - Key.D0);
+                        UpdatePageIndicator();
+                        return;
+                    }
+                    switch (e.Key) {
+                        case Key.Enter:
+                            CutAction();
+                            KillFocus();
+                            e.Handled = true;
+                            break;
+                        case Key.Up:
+                            if (WrapPanelPageList != null && WrapPanelPageList.Children.Count > 1) {
+                                pvwManager.PageNumber -= (int)(WrapPanelPageList.ActualWidth / ((WrapPanelPageList.Children[0] as Button).ActualWidth + 4));
+                                UpdatePvw();
+                            }
+                            KillFocus();
+                            e.Handled = true;
+                            break;
+                        case Key.Down:
+                            if (WrapPanelPageList != null && WrapPanelPageList.Children.Count > 1) {
+                                pvwManager.PageNumber += (int)(WrapPanelPageList.ActualWidth / ((WrapPanelPageList.Children[0] as Button).ActualWidth + 4));
+                                UpdatePvw();
+                            }
+                            KillFocus();
+                            e.Handled = true;
+                            break;
+                        case Key.OemPeriod: // normal  .(>) key
+                        case Key.Decimal: // keypad .(Del) key
+                            ClearPgm();
+                            KillFocus();
+                            e.Handled = true;
+                            break;
+                        case Key.Left:
+                            pvwManager.PageNumber -= 1;
                             UpdatePvw();
-                        }
-                        //ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
-                        KillFocus();
-                        e.Handled = true;
-                        break;
-                    case Key.Down:
-                        if (WrapPanelPageList != null && WrapPanelPageList.Children.Count > 1) {
-                            pvwManager.PageNumber += (int)(WrapPanelPageList.ActualWidth / ((WrapPanelPageList.Children[0] as Button).ActualWidth + 4));
+                            KillFocus();
+                            e.Handled = true;
+                            break;
+                        case Key.Right:
+                            pvwManager.PageNumber += 1;
                             UpdatePvw();
-                        }
-                        //ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
-                        KillFocus();
-                        e.Handled = true;
-                        break;
-                    case Key.OemPeriod: // normal  .(>) key
-                    case Key.Decimal: // keypad .(Del) key
-                        ClearPgm();
-                        KillFocus();
-                        e.Handled = true;
-                        break;
-                    case Key.Left:
-                        pvwManager.PageNumber -= 1;
-                        UpdatePvw();
-                        KillFocus();
-                        e.Handled = true;
-                        break;
-                    case Key.Right:
-                        pvwManager.PageNumber += 1;
-                        UpdatePvw();
-                        KillFocus();
-                        e.Handled = true;
-                        break;
+                            KillFocus();
+                            e.Handled = true;
+                            break;
+                    }
                 }
             }
         }

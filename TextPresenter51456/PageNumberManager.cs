@@ -28,8 +28,16 @@ namespace TextPresenter51456 {
         public int PageNumber {
             get { return pageNumber; }
             set {
-                if (enabled && ((value > 0 && value <= lastPageNumber) || (allowZero && value == 0))) {
-                    pageNumber = value;
+                if (enabled) {
+                    if (allowZero && value < 0) {
+                        pageNumber = 0;
+                    } else if (!allowZero && value <= 0) {
+                        pageNumber = 1;
+                    } else if (value > lastPageNumber) {
+                        pageNumber = lastPageNumber;
+                    } else {
+                        pageNumber = value;
+                    }
                 }
             }
         }

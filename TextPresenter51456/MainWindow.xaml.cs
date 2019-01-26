@@ -550,12 +550,20 @@ namespace TextPresenter51456 {
                         e.Handled = true;
                         break;
                     case Key.Up:
-                        ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
+                        if (WrapPanelPageList != null && WrapPanelPageList.Children.Count > 1) {
+                            pvwManager.PageNumber -= (int)(WrapPanelPageList.ActualWidth / ((WrapPanelPageList.Children[0] as Button).ActualWidth + 4));
+                            UpdatePvw();
+                        }
+                        //ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
                         KillFocus();
                         e.Handled = true;
                         break;
                     case Key.Down:
-                        ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
+                        if (WrapPanelPageList != null && WrapPanelPageList.Children.Count > 1) {
+                            pvwManager.PageNumber += (int)(WrapPanelPageList.ActualWidth / ((WrapPanelPageList.Children[0] as Button).ActualWidth + 4));
+                            UpdatePvw();
+                        }
+                        //ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
                         KillFocus();
                         e.Handled = true;
                         break;

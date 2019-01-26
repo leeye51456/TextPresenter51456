@@ -20,8 +20,8 @@ namespace TextPresenter51456 {
     /// MainWindow.xaml에 대한 상호 작용 논리
     /// </summary>
     public partial class MainWindow : Window {
-        const int PAGE_CANVAS_WIDTH = 224;
-        const int PAGE_CANVAS_HEIGHT = 126;
+        const int PAGE_ITEM_FULL_WIDTH = 228;
+        const int PAGE_ITEM_FULL_HEIGHT = 130;
 
         string filePath;
         string fileName;
@@ -536,11 +536,11 @@ namespace TextPresenter51456 {
                 if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift) { // + Shift
                     switch (e.Key) {
                         case Key.Up:
-                            ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - 130);
+                            ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset - PAGE_ITEM_FULL_HEIGHT);
                             e.Handled = true;
                             break;
                         case Key.Down:
-                            ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + 130);
+                            ScrollViewerPageList.ScrollToVerticalOffset(ScrollViewerPageList.VerticalOffset + PAGE_ITEM_FULL_HEIGHT);
                             e.Handled = true;
                             break;
                     }
@@ -563,7 +563,7 @@ namespace TextPresenter51456 {
                             break;
                         case Key.Up:
                             if (WrapPanelPageList != null && WrapPanelPageList.Children.Count > 1) {
-                                pvwManager.PageNumber -= (int)(WrapPanelPageList.ActualWidth / ((WrapPanelPageList.Children[0] as Button).ActualWidth + 4));
+                                pvwManager.PageNumber -= (int)(WrapPanelPageList.ActualWidth / PAGE_ITEM_FULL_WIDTH);
                                 UpdatePvw();
                             }
                             KillFocus();
@@ -571,7 +571,7 @@ namespace TextPresenter51456 {
                             break;
                         case Key.Down:
                             if (WrapPanelPageList != null && WrapPanelPageList.Children.Count > 1) {
-                                pvwManager.PageNumber += (int)(WrapPanelPageList.ActualWidth / ((WrapPanelPageList.Children[0] as Button).ActualWidth + 4));
+                                pvwManager.PageNumber += (int)(WrapPanelPageList.ActualWidth / PAGE_ITEM_FULL_WIDTH);
                                 UpdatePvw();
                             }
                             KillFocus();

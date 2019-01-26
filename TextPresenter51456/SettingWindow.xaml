@@ -192,7 +192,8 @@
                             x:Name="ComboBoxPresenterScreen"
                             Width="300"
                             Margin="5,0,0,0"
-                            VerticalAlignment="Center">
+                            VerticalAlignment="Center"
+                            SelectionChanged="ComboBoxPresenterScreen_SelectionChanged">
                             <!-- 내용 예시 시작 -->
                             <!--
                             <ComboBoxItem Content="(1) 1920x1080 (0,0)" />

@@ -127,6 +127,13 @@ namespace TextPresenter51456 {
             tb.IsChecked = true;
             ComboBoxPresenterScreen.SelectedIndex = t;
         }
+        private void ComboBoxPresenterScreen_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            int len = ComboBoxPresenterScreen.Items.Count;
+            for (int i = 0; i < len; i++) {
+                (CanvasScreens.Children[i] as System.Windows.Controls.Primitives.ToggleButton).IsChecked = false;
+            }
+            (CanvasScreens.Children[ComboBoxPresenterScreen.SelectedIndex] as System.Windows.Controls.Primitives.ToggleButton).IsChecked = true;
+        }
 
         // Get and apply settings from Setting class to SettingWindow controls
         private void SettingToControl() {

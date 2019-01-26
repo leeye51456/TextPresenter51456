@@ -10,7 +10,8 @@
         Height="480"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterOwner"
-        Unloaded="Window_Unloaded">
+        Unloaded="Window_Unloaded"
+        KeyDown="Window_KeyDown">
 
 
     <Window.Resources>
@@ -91,13 +92,13 @@
             Margin="10">
             <Button
                 x:Name="ButtonOk"
-                Content="확인"
+                Content="확인(_O)"
                 Width="100"
                 Margin="10,0,0,0"
                 Click="ButtonOk_Click" />
             <Button
                 x:Name="ButtonCancel"
-                Content="취소"
+                Content="취소(_C)"
                 Width="100"
                 Margin="10,0,0,0"
                 Click="ButtonCancel_Click" />

@@ -475,5 +475,11 @@ namespace TextPresenter51456 {
             mw.Focus();
         }
 
+        private void Window_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Escape) {
+                ButtonCancel_Click(ButtonCancel, null);
+            }
+        }
+
     }
 }

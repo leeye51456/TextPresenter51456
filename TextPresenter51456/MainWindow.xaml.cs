@@ -192,7 +192,6 @@ namespace TextPresenter51456 {
                 int rowSize = (int)(WrapPanelPageList.ActualWidth / PAGE_ITEM_FULL_WIDTH);
                 int firstFullyDisplayedRow = (int)Math.Ceiling(offset / PAGE_ITEM_FULL_HEIGHT);
                 int lastFullyDisplayedRow = (int)Math.Floor((offset + ScrollViewerPageList.ViewportHeight) / PAGE_ITEM_FULL_HEIGHT) - 1;
-                Console.WriteLine(ScrollViewerPageList.ViewportHeight);
                 int currentPvwRow = (pvwManager.PageNumber - 1) / rowSize;
                 if (currentPvwRow < firstFullyDisplayedRow) {
                     ScrollViewerPageList.ScrollToVerticalOffset(currentPvwRow * PAGE_ITEM_FULL_HEIGHT);

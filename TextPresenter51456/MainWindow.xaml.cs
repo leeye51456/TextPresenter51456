@@ -187,6 +187,19 @@ namespace TextPresenter51456 {
             PvwContent.Content = textList[pvwManager.PageNumber];
             PvwContent.Foreground = isTitleList[pvwManager.PageNumber] ? titleColor : Brushes.White;
             PvwPage.Content = pvwManager.PageNumber;
+            if (WrapPanelPageList != null && WrapPanelPageList.Children.Count > 1) {
+                double offset = ScrollViewerPageList.VerticalOffset;
+                int rowSize = (int)(WrapPanelPageList.ActualWidth / PAGE_ITEM_FULL_WIDTH);
+                int firstFullyDisplayedRow = (int)Math.Ceiling(offset / PAGE_ITEM_FULL_HEIGHT);
+                int lastFullyDisplayedRow = (int)Math.Floor((offset + ScrollViewerPageList.ViewportHeight) / PAGE_ITEM_FULL_HEIGHT) - 1;
+                Console.WriteLine(ScrollViewerPageList.ViewportHeight);
+                int currentPvwRow = (pvwManager.PageNumber - 1) / rowSize;
+                if (currentPvwRow < firstFullyDisplayedRow) {
+                    ScrollViewerPageList.ScrollToVerticalOffset(currentPvwRow * PAGE_ITEM_FULL_HEIGHT);
+                } else if (currentPvwRow > lastFullyDisplayedRow) {
+                    ScrollViewerPageList.ScrollToVerticalOffset((currentPvwRow - lastFullyDisplayedRow + firstFullyDisplayedRow) * PAGE_ITEM_FULL_HEIGHT);
+                }
+            }
         }
 
         private void OpenTxtFile(bool resetPvw) {

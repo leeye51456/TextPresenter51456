@@ -42,7 +42,7 @@ namespace TextPresenter51456 {
             SetAttribute("textAlign", "2");
             SetAttribute("textEncoding", "0");
             SetAttribute("textPosition", "5");
-            SetAttribute("titleColor", "#FFFF00");
+            SetAttribute("titleColor", "FFFF00");
             SetAttribute("screenRatioSimulation", "false");
             SetAttribute("screenRatioSimulationHeight", "3");
             SetAttribute("screenRatioSimulationWidth", "4");
@@ -50,7 +50,7 @@ namespace TextPresenter51456 {
 
         private static void InterpretString(string str) {
             try {
-                Regex splitter = new Regex(@"^(.*?):(.*)$");
+                Regex splitter = new Regex(@"^ *([^ :=]+?) *(?:=|:) *(.+?) *$");
                 string key = splitter.Replace(str, "$1");
                 string value = splitter.Replace(str, "$2");
                 SetAttribute(key, value);
@@ -59,7 +59,7 @@ namespace TextPresenter51456 {
             }
         }
 
-        public static bool Load(string fileName = "TextPresenter51456.settings") {
+        public static bool Load(string fileName = "TextPresenter51456.conf") {
             Regex newLineUnifier = new Regex(@"(\r\n|\r)");
             string fullText;
 
@@ -93,7 +93,10 @@ namespace TextPresenter51456 {
                 StreamWriter sw = new StreamWriter(fileName, false, utf8);
                 try {
                     foreach (KeyValuePair<string, string> item in settings) {
-                        sw.WriteLine("{0}:{1}", item.Key, item.Value);
+                        // if any keys or values contain '\n', don't save them to prevent from crashing when load settings
+                        if (!(item.Key.Contains('\n')) || !(item.Value.Contains('\n'))) {
+                            sw.WriteLine("{0}={1}", item.Key, item.Value);
+                        }
                     }
                 } catch (Exception exw) {
                     Console.WriteLine(exw.Message);

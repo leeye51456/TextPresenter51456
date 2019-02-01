@@ -25,7 +25,7 @@ namespace TextPresenter51456 {
 
 
         private static string ProcessMessage() {
-            return mw.PreProcessRemote(cmd, param);
+            return ""; // mw.PreProcessRemote(cmd, param);
         }
 
 

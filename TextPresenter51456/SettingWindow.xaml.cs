@@ -76,7 +76,12 @@ namespace TextPresenter51456 {
                 fontSize = 8.75m;
             }
             try {
-                titleColor = MiscConverter.StringToIntColor(Setting.GetAttribute("titleColor"));
+                string tempTitleColor = Setting.GetAttribute("titleColor");
+                if (tempTitleColor == null) {
+                    titleColor = 0xffff00;
+                } else {
+                    titleColor = MiscConverter.StringToIntColor(tempTitleColor);
+                }
             } catch (Exception ex) {
                 // invalid color format
                 Console.WriteLine(ex.Message);

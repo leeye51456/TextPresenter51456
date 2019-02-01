@@ -56,8 +56,7 @@ namespace TextPresenter51456 {
         SettingWindow sw;
         HelpWindow hw;
 
-        Thread threadRemote;
-        string processRemoteReturn;
+        // Thread threadRemote;
 
 
         public void GetTitleColor() {
@@ -677,128 +676,7 @@ namespace TextPresenter51456 {
         }
 
 
-        private string PackPageListToString() {
-            string result = "";
-            /*
-             *  int isTitleList[i]
-             *  string textList[i]
-             *  
-             *  int isTitleList[i + 1]
-             *  string textList[i + 1]
-             *  
-             *  ...
-             */
-            if (textList.Count < 1) {
-                return result;
-            }
-            result += isTitleList[1].ToString() + "\n" + textList[1];
-            for (int i = 2; i < textList.Count; i++) {
-                result += "\n\n" + isTitleList[i].ToString() + "\n" + textList[i];
-            }
-            return result;
-        }
-        private void ProcessRemote(string cmd, string param) {
-            processRemoteReturn = "";
-
-            if (cmd.Equals("pgm")) {
-                // change PGM
-                // SEND   pgm:page<EndOfCommand>
-                // RETURN -
-                if (int.TryParse(param, out int pageNum)) {
-                    // if valid
-                    pgmManager.PageNumber = pageNum;
-                    pvwManager.PageNumber = pageNum + 1;
-                    UpdatePgm();
-                    UpdatePvw();
-                }
-
-                processRemoteReturn = "pgm:" + pgmManager.PageNumber + "<EndOfCommand>";
-
-            } else if (cmd.Equals("pvw")) {
-                // change PVW
-                // SEND   pvw:page<EndOfCommand>
-                // RETURN -
-                if (int.TryParse(param, out int pageNum)) {
-                    // if valid
-                    pvwManager.PageNumber = pageNum;
-                    UpdatePvw();
-                }
-
-                processRemoteReturn = "pvw:" + pvwManager.PageNumber + "<EndOfCommand>";
-
-            } else if (cmd.Equals("cut")) {
-                // cut
-                // SEND   cut:<EndOfCommand>
-                // RETURN -
-                CutAction();
-
-                processRemoteReturn = "cut:" + pgmManager.PageNumber + "<EndOfCommand>";
-
-            } else if (cmd.Equals("clear")) {
-                // clear presenter window screen
-                // SEND   clear:<EndOfCommand>
-                // RETURN -
-                ClearPgm();
-
-                processRemoteReturn = "clear:<EndOfCommand>";
-
-            } else if (cmd.Equals("free:")) {
-                // free text presentation
-                // SEND   free:str<EndOfCommand>
-                // RETURN -
-                TextBoxFreeContent.Text = param;
-                FreeCut();
-
-                processRemoteReturn = "free:<EndOfCommand>";
-
-            } else if (cmd.Equals("update")) {
-                // page list synchronization
-                // SEND   update:<EndOfCommand>
-                // RETURN string pageList
-
-                processRemoteReturn = "update:" + PackPageListToString() + "<EndOfCommand>";
-
-            } else if (cmd.Equals("open")) {
-                // open the other file or reload current file
-                // SEND   open:path<EndOfCommand>
-                // RETURN string pageList
-                if (param.Equals("")) {
-                    // reload current file
-                    OpenTxtFile(false);
-                } else {
-                    // open the other file
-                    fileName = fileNameTrimmer.Replace(param, "$2");
-                    filePath = fileNameTrimmer.Replace(param, "$1");
-                    OpenTxtFile(true);
-                }
-
-                processRemoteReturn = "open:" + PackPageListToString() + "<EndOfCommand>";
-
-            } else if (cmd.Equals("ls")) {
-                // request the file list
-                // SEND   ls:<EndOfCommand>
-                // RETURN string fileList
-                processRemoteReturn = "ls:" /*+ "FILE LIST SEPERATED BY LF" */+ "<EndOfCommand>";
-
-            } else if (cmd.Equals("presenter")) {
-                // toggle the presenter window
-                // SEND   presenter:<EndOfCommand>
-                // RETURN bool isOpen (창 열었으면 "true")
-                processRemoteReturn = "presenter:" + OpenAndClosePresenterWindow().ToString().ToLower() + "<EndOfCommand>";
-
-            } else if (cmd.Equals("terminate")) {
-                // terminate server
-                // SEND   terminate:<EndOfCommand>
-                // RETURN -
-                MenuItemRemote.IsChecked = false;
-                processRemoteReturn = "terminate:<EndOfCommand>";
-
-            } else {
-                // undefined command
-                processRemoteReturn = cmd + ":<EndOfCommand>";
-            }
-        }
-
+        /*
         public string PreProcessRemote(string cmd, string param) {
             // https://stackoverflow.com/questions/19009174/dispatcher-invoke-vs-begininvoke-confusion
             if (Dispatcher.CheckAccess()) {
@@ -824,6 +702,7 @@ namespace TextPresenter51456 {
                 SynSocketListener.TerminateListening();
             }
         }
+        */
 
     }
 }

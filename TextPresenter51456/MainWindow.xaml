@@ -157,12 +157,14 @@
                     Header="설정 다시 불러오기(_L)..."
                     Click="MenuItemReloadSettings_Click" />
                 <Separator />
+                <!--
                 <MenuItem
                     x:Name="MenuItemRemote"
                     Header="원격 제어 사용(_R)"
                     IsCheckable="True"
                     Click="MenuItemRemote_Click" />
                 <Separator />
+                -->
                 <MenuItem
                     x:Name="MenuItemInfo"
                     Header="TextPresenter51456 정보(_I)..."

@@ -1,0 +1,29 @@
+@charset "utf-8";
+
+body {
+  width: 600px;
+  max-width: 90vw;
+  margin: 5vh auto;
+  text-align: center;
+}
+
+ul {
+  padding: 0;
+  margin-top: 5vh;
+}
+ul li {
+  display: block;
+  margin: 2.5vh 0;
+}
+
+a {
+  display: block;
+  width: 100%;
+  padding: 2.5vh 0;
+  background-color: #404040;
+  color: #ffffff;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-decoration: none;
+  font-family: 나눔스퀘어OTF, 나눔스퀘어, 나눔바른고딕OTF, 나눔바른고딕, 나눔고딕OTF, 나눔고딕, sans-serif;
+}

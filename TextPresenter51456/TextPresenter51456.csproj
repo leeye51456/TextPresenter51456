@@ -167,4 +167,7 @@
     <None Include="Resources\TextPresenter51456.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy $(ProjectDir)web $(OutDir)web\ /s /y</PostBuildEvent>
+  </PropertyGroup>
 </Project>

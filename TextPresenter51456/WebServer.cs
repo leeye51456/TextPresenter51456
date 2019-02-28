@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -61,7 +62,7 @@ namespace TextPresenter51456 {
         }
 
         public static void ReadCallback(IAsyncResult ar) {
-            String content = String.Empty;
+            string request = string.Empty;
 
             StateObject state = (StateObject)ar.AsyncState;
             Socket handler = state.workSocket;
@@ -81,7 +82,7 @@ namespace TextPresenter51456 {
             }
         }
 
-        private static void Send(Socket handler, String data) {
+        private static void Send(Socket handler, string data) {
             byte[] byteData = Encoding.ASCII.GetBytes(data);
 
             handler.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), handler);

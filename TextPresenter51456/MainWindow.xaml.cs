@@ -98,6 +98,7 @@ namespace TextPresenter51456 {
         public MainWindow() {
             SynSocketListener.mw = this;
 
+            Session.New();
             Setting.Load();
             GetTitleColor();
 
@@ -149,6 +150,8 @@ namespace TextPresenter51456 {
                 Button pgmBtn = WrapPanelPageList.Children[pgmManager.PageNumber - 1] as Button;
                 pgmBtn.BorderBrush = PGM_BORDER_COLOR;
             }
+
+            Session.IncreaseState();
         }
         private void ClearPgm() {
             CheckBoxFreeLive.IsChecked = false;
@@ -310,6 +313,7 @@ namespace TextPresenter51456 {
             }
 
             MenuItemRefresh.IsEnabled = true;
+            Session.New();
         }
 
         private bool SetFileNameAndPath(string src) {

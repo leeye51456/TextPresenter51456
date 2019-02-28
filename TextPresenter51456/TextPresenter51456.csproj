@@ -85,6 +85,7 @@
       <DependentUpon>HelpWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MiscConverter.cs" />
+    <Compile Include="Session.cs" />
     <Compile Include="Setting.cs" />
     <Compile Include="SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>

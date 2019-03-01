@@ -98,7 +98,7 @@ namespace TextPresenter51456 {
         public MainWindow() {
             SynSocketListener.mw = this;
 
-            Session.New();
+            Session.New("", "", "");
             Setting.Load();
             GetTitleColor();
 
@@ -151,7 +151,7 @@ namespace TextPresenter51456 {
                 pgmBtn.BorderBrush = PGM_BORDER_COLOR;
             }
 
-            Session.IncreaseState();
+            Session.IncreaseState(PgmContent.Content as string, textList[pvwManager.PageNumber], textList[pgmManager.PageNumber + 1]);
         }
         private void ClearPgm() {
             CheckBoxFreeLive.IsChecked = false;
@@ -313,7 +313,7 @@ namespace TextPresenter51456 {
             }
 
             MenuItemRefresh.IsEnabled = true;
-            Session.New();
+            Session.New(PgmContent.Content as string, textList[pvwManager.PageNumber], textList[pgmManager.PageNumber + 1]);
         }
 
         private bool SetFileNameAndPath(string src) {
